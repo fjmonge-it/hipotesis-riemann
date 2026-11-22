@@ -8,14 +8,17 @@ export const formatGap = value => value < 1e-8 ? scientific.format(value) : form
 export function renderZetaChart(figure, { sums, products, reference, compare, caption }) {
   const limit = sums.length;
   const left = 66;
-  const right = 456;
+  const width = Math.max(240, Math.floor(figure.clientWidth) || 480);
+  const right = width - 24;
   const top = 28;
-  const bottom = 176;
+  const bottom = width < 360 ? 158 : 176;
   const x = n => left + Math.log(n) / Math.log(limit) * (right - left);
   const y = value => bottom - (value - 1) / (reference - 1) * (bottom - top);
   const coord = value => value.toFixed(2);
-  const ticks = [1, 2, 5, 10, 25, 50, 100, 250, 500]
-    .filter(n => n < limit && right - x(n) > 42);
+  const ticks = [1];
+  for (const n of [2, 5, 10, 25, 50, 100, 250, 500]) {
+    if (n < limit && x(n) - x(ticks.at(-1)) >= 36 && right - x(n) >= 44) ticks.push(n);
+  }
   ticks.push(limit);
   const horizontal = [1, 1 + (reference - 1) / 2, reference];
   const yLabels = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 4 });
@@ -27,8 +30,8 @@ export function renderZetaChart(figure, { sums, products, reference, compare, ca
   }).join('');
   const marks = ticks.map(n => {
     const column = coord(x(n));
-    return '<path class="axis" d="M' + column + ' 176v5"/>'
-      + '<text text-anchor="middle" x="' + column + '" y="198">' + formatCount(n) + '</text>';
+    return '<path class="axis" d="M' + column + ' ' + bottom + 'v5"/>'
+      + '<text text-anchor="middle" x="' + column + '" y="' + (bottom + 22) + '">' + formatCount(n) + '</text>';
   }).join('');
   const sumPath = sums.map((value, index) => (
     (index === 0 ? 'M' : 'H') + coord(x(index + 1)) + (index === 0 ? ' ' : 'V') + coord(y(value))
@@ -43,16 +46,16 @@ export function renderZetaChart(figure, { sums, products, reference, compare, ca
       ${compare ? '<li class="legend-li">Producto parcial</li>' : ''}
       <li class="legend-limit">Límite ζ(s)</li>
     </ul>
-    <svg viewBox="0 0 480 232" role="img" aria-label="${label}">
+    <svg viewBox="0 0 ${width} ${bottom + 56}" role="img" aria-label="${label}">
       <g class="plot-text">
         <text x="66" y="17">Valor</text>
         ${grid}${marks}
-        <text x="261" y="224" text-anchor="middle">Límite N · escala logarítmica</text>
+        <text x="${width / 2}" y="${bottom + 48}" text-anchor="middle">Límite N · escala logarítmica</text>
       </g>
-      <path class="axis" d="M66 28V176H456"/>
+      <path class="axis" d="M${left} ${top}V${bottom}H${right}"/>
       <path class="line-primes" d="${sumPath}"/>
       ${compare ? '<path class="line-li" d="' + productPath + '"/>' : ''}
-      <circle class="prime-dots" cx="456" cy="${coord(y(sums.at(-1)))}" r="3.5"/>
+      <circle class="prime-dots" cx="${right}" cy="${coord(y(sums.at(-1)))}" r="3.5"/>
     </svg>
     <figcaption>${caption} El eje horizontal deja más espacio a los primeros pasos.</figcaption>`;
 }

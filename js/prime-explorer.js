@@ -23,15 +23,17 @@ export function initPrimeExplorer(root) {
     let explanation;
     if (selected === 1) {
       name.textContent = '1 · Unidad';
-      explanation = 'Solo tiene un divisor positivo. Los primos tienen dos.';
+      explanation = 'Su único divisor positivo es 1. La unidad queda fuera de los primos y de los compuestos.';
     } else if (factors.length === 1) {
       name.textContent = selected + ' · Primo';
       explanation = 'Sus únicos divisores positivos son 1 y ' + selected + '.';
     } else {
       name.textContent = selected + ' · Compuesto';
-      explanation = selected + ' = ' + factors.join(' × ') + '.';
+      explanation = document.createElement('span');
+      explanation.className = 'prime-factorization';
+      explanation.textContent = selected + ' = ' + factors.join(' × ');
     }
-    selection.replaceChildren(name, document.createTextNode(' ' + explanation));
+    selection.replaceChildren(name, ' ', explanation);
 
     const following = primes.findIndex(prime => prime > selected);
     const start = Math.min(primes.length - 5, Math.max(0, (following < 0 ? primes.length : following) - 3));
@@ -71,9 +73,10 @@ export function initPrimeExplorer(root) {
   grid.addEventListener('click', event => {
     const n = Number(event.target.dataset.number);
     if (!n) return;
+    moveTabStop(n);
+    if (n === selected) return;
     buttons[selected - 1].setAttribute('aria-pressed', 'false');
     selected = n;
-    moveTabStop(n);
     buttons[selected - 1].setAttribute('aria-pressed', 'true');
     showSelection();
   });
@@ -112,4 +115,5 @@ export function initPrimeExplorer(root) {
   showHighlights();
   root.hidden = false;
   document.querySelector('#figura-primos').hidden = true;
+  document.querySelector('#ejemplo-primos').hidden = true;
 }
