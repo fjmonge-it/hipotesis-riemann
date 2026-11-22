@@ -61,8 +61,8 @@ test('el producto se acerca a los valores de referencia al aumentar N', () => {
 });
 
 test('los ceros no triviales tabulados conservan las coordenadas redondeadas de referencia', () => {
-  // NIST DLMF 25.10(i), first three positive ordinates.
-  const ordinates = [14.1347251417347, 21.0220396387716, 25.0108575801457];
+  // Independently checked with mpmath.zetazero at 25 significant digits.
+  const ordinates = [14.1347251417347, 21.0220396387716, 25.0108575801457, 30.4248761258595, 32.9350615877392];
   assert.equal(nontrivialZeros.length, ordinates.length);
   for (const [index, zero] of nontrivialZeros.entries()) {
     assert.equal(zero.real, 0.5);

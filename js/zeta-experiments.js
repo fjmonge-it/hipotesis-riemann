@@ -21,7 +21,7 @@ export function initZetaExperiment(root, compare = false) {
         </div>
       </div>
       <label for="${id}-n">${compare ? 'Límite' : 'Número de términos'} <var>N</var>
-        <select id="${id}-n">${limits.map(n => '<option value="' + n + '">' + formatCount(n) + '</option>').join('')}</select>
+        <select id="${id}-n">${limits.map(n => '<option value="' + n + '"' + (n === 10 ? ' selected' : '') + '>' + formatCount(n) + '</option>').join('')}</select>
       </label>
     </div>`;
   const exponent = controls.querySelector('input');
