@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es-ES">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Un recorrido por los números primos, la función zeta y la hipótesis de Riemann, con ejemplos y gráficos.">
+  <title>La hipótesis de Riemann, explicada para todos</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./js/main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="hero" id="inicio">
+    <div class="hero-copy">
+      <h1>La hipótesis<br> de Riemann,<br> <em>explicada para todos</em></h1>
+      <p>Un viaje interactivo desde los números primos hasta uno de los grandes misterios de las matemáticas.</p>
+      <a class="hero-link" href="#primos">Empezar por los primos <span aria-hidden="true">↓</span></a>
+    </div>
+    <figure class="hero-figure">
+      <svg viewBox="0 0 360 330" role="img" aria-labelledby="hero-title hero-desc">
+        <title id="hero-title">Tres ceros de la función zeta</title>
+        <desc id="hero-desc">Sus partes imaginarias son aproximadamente 14,13, 21,02 y 25,01. Los tres tienen parte real 0,5.</desc>
+        <path class="grid" d="M34 42H338M34 102H338M34 162H338M34 222H338M34 282H338M64 26V282M124 26V282M184 26V282M244 26V282M304 26V282"/>
+        <rect class="band" x="64" y="26" width="240" height="256"/>
+        <path class="axis" d="M34 282H338M64 26V290"/>
+        <path class="critical" d="M184 26V282"/>
+        <g class="plot-text">
+          <text x="51" y="22">Im(s)</text><text x="331" y="305" text-anchor="end">Re(s)</text>
+          <text x="64" y="305" text-anchor="middle">0</text><text x="184" y="305" text-anchor="middle">½</text>
+          <text x="304" y="305" text-anchor="middle">1</text>
+        </g>
+        <g class="plot-label">
+          <circle cx="184" cy="155" r="5"/><text x="200" y="160">14,13</text>
+          <circle cx="184" cy="93" r="5"/><text x="200" y="98">21,02</text>
+          <circle cx="184" cy="57" r="5"/><text x="200" y="62">25,01</text>
+        </g>
+      </svg>
+      <figcaption>Tres ceros conocidos sobre la recta crítica.</figcaption>
+    </figure>
+  </header>
+
+  <div class="article-layout">
+    <nav class="contents" aria-label="Índice del artículo">
+      <p>En este artículo</p>
+      <ol>
+        <li><a href="#primos">El misterio de los primos</a></li>
+        <li><a href="#zeta">La función zeta</a></li>
+        <li><a href="#euler">El descubrimiento de Euler</a></li>
+        <li><a href="#ceros">Complejos y ceros</a></li>
+        <li><a href="#hipotesis">La hipótesis de Riemann</a></li>
+        <li><a href="#distribucion">El orden detrás del desorden</a></li>
+        <li><a href="#importancia">Por qué importa</a></li>
+      </ol>
+    </nav>
+
+    <main id="contenido" tabindex="-1">
+      <section id="primos" aria-labelledby="titulo-primos">
+        <h2 id="titulo-primos">El misterio de los números primos</h2>
+        <p>El 7 solo se puede dividir sin resto entre 1 y 7. El 8, en cambio, también se puede dividir entre 2 y 4. Llamamos <strong>primos</strong> a los enteros mayores que 1 que tienen exactamente dos divisores positivos, el 1 y ellos mismos. Los primeros son 2, 3, 5, 7, 11, 13, 17 y 19.</p>
+        <p>Todos los enteros mayores que 1 pueden escribirse como un producto de primos. Por ejemplo, 60 = 2² × 3 × 5. Si empiezas por 6 × 10 o por 4 × 15, al descomponer cada factor obtendrás los mismos primos, con las mismas repeticiones. Solo puede cambiar el orden.</p>
+        <figure class="diagram" id="figura-primos">
+          <!-- Espacio para el explorador de primos. -->
+          <svg viewBox="0 0 560 120" role="img" aria-labelledby="primos-fig-title">
+            <title id="primos-fig-title">En la recta del 1 al 24 se destacan 2, 3, 5, 7, 11, 13, 17, 19 y 23.</title>
+            <path class="axis" d="M32 64H528"/>
+            <path class="grid" d="M32 58V70M118 58V70M226 58V70M334 58V70M442 58V70M528 58V70"/>
+            <g class="plot-text" text-anchor="middle">
+              <text x="32" y="91">1</text><text x="118" y="91">5</text><text x="226" y="91">10</text>
+              <text x="334" y="91">15</text><text x="442" y="91">20</text><text x="528" y="91">24</text>
+            </g>
+            <g class="prime-dots">
+              <circle cx="54" cy="64" r="5"/><circle cx="75" cy="64" r="5"/><circle cx="118" cy="64" r="5"/>
+              <circle cx="161" cy="64" r="5"/><circle cx="248" cy="64" r="5"/><circle cx="291" cy="64" r="5"/>
+              <circle cx="377" cy="64" r="5"/><circle cx="420" cy="64" r="5"/><circle cx="506" cy="64" r="5"/>
+            </g>
+          </svg>
+          <figcaption>Del 11 al 13 hay dos pasos. Del 13 al 17 hay cuatro. Los saltos entre primos cambian incluso en un tramo corto.</figcaption>
+        </figure>
+        <p>Si ampliamos la mirada y contamos cuántos primos aparecen hasta números cada vez mayores, emerge una regularidad estadística. Entender cuánto se aparta el recuento real de esa tendencia es una de las preguntas que nos llevan a Riemann.</p>
+      </section>
+
+      <section id="zeta" aria-labelledby="titulo-zeta">
+        <h2 id="titulo-zeta">Una máquina matemática llamada función zeta</h2>
+        <p>Una función asigna un resultado a cada entrada admitida. La regla «multiplica por dos», por ejemplo, devuelve 6 cuando le damos 3 y devuelve 3 cuando le damos 1,5. La función zeta también sigue una regla, aunque para describirla empezamos con una suma infinita.</p>
+        <figure class="formula" id="figura-zeta">
+          <!-- Espacio para la suma parcial interactiva. -->
+          <div class="equation">ζ(<var>s</var>) = 1 + 1/2<sup><var>s</var></sup> + 1/3<sup><var>s</var></sup> + 1/4<sup><var>s</var></sup> + …</div>
+          <figcaption>ζ es la letra griega zeta. La entrada <var>s</var> es el exponente. Para cada entero positivo elevamos ese número a <var>s</var>, tomamos su inverso y lo añadimos a la suma.</figcaption>
+        </figure>
+        <p>Si elegimos <var>s</var> = 2, los primeros términos son 1, 1/4 y 1/9. Aunque sigamos añadiendo términos indefinidamente, la suma se acerca a un número finito. Decimos que <strong>converge</strong>. Esto sucede para cualquier exponente real mayor que 1, incluidos los decimales.</p>
+        <table>
+          <caption>Algunos valores de la función zeta</caption>
+          <thead><tr><th scope="col">Exponente <var>s</var></th><th scope="col">Valor aproximado de ζ(<var>s</var>)</th></tr></thead>
+          <tbody>
+            <tr><td>1,5</td><td>2,612375</td></tr><tr><td>2</td><td>1,644934</td></tr>
+            <tr><td>2,5</td><td>1,341487</td></tr><tr><td>3</td><td>1,202057</td></tr>
+            <tr><td>3,7</td><td>1,106288</td></tr><tr><td>4</td><td>1,082323</td></tr>
+          </tbody>
+        </table>
+        <p>La serie también admite entradas complejas, que veremos en la cuarta sección. Para que converja, la parte real de la entrada debe ser mayor que 1. Mediante una técnica llamada <strong>continuación analítica</strong> se amplía la función a todo el plano complejo salvo en <var>s</var> = 1, donde tiene un polo y su valor se hace ilimitado al acercarnos al punto.</p>
+        <p>En esa extensión aparecen valores como ζ(0) = −1/2, ζ(−1) = −1/12 y ζ(−2) = 0. La serie original diverge en esos puntos. En particular, la suma ordinaria 1 + 2 + 3 + … crece sin límite. El valor −1/12 corresponde a la función extendida en −1.</p>
+      </section>
+
+      <section id="euler" aria-labelledby="titulo-euler">
+        <h2 id="titulo-euler">El descubrimiento de Euler</h2>
+        <p>Euler encontró dos caminos hacia el mismo resultado. La serie suma un término por cada entero positivo. El otro camino multiplica un factor por cada primo.</p>
+        <figure class="formula" id="figura-euler">
+          <!-- Espacio para el comparador zeta–Euler. -->
+          <div class="equation">ζ(<var>s</var>) = ∏<sub><var>p</var> primo</sub> 1/(1 − <var>p</var><sup>−<var>s</var></sup>)</div>
+          <figcaption>∏ indica un producto. La letra <var>p</var> recorre únicamente los primos. La identidad vale cuando la parte real de <var>s</var> es mayor que 1.</figcaption>
+        </figure>
+        <p>Cada factor se puede escribir como una serie geométrica. El factor del 2, por ejemplo, contiene términos asociados a 1, 2, 4, 8 y las demás potencias de 2. Cuando multiplicamos todas esas series, el término de 60 aparece al combinar la potencia 2² con 3 y 5. La descomposición única en primos hace que cada entero aparezca una sola vez.</p>
+        <p>Con un límite de 10, la suma tiene diez términos y el producto tiene cuatro factores, correspondientes a 2, 3, 5 y 7. Los resultados parciales suelen ser distintos. Al subir el límite ambos se acercan al mismo valor, y cerca de <var>s</var> = 1 esa convergencia es especialmente lenta.</p>
+      </section>
+
+      <section id="ceros" aria-labelledby="titulo-ceros">
+        <h2 id="titulo-ceros">Los números complejos y los ceros de la zeta</h2>
+        <p>Un número complejo tiene dos coordenadas. En <var>s</var> = <var>a</var> + <var>b</var>i, <var>a</var> es la parte real y <var>b</var> la parte imaginaria. La unidad i cumple i² = −1. En un dibujo colocamos <var>a</var> en el eje horizontal y <var>b</var> en el vertical. Por ejemplo, 2 + 3i se dibuja dos unidades a la derecha y tres hacia arriba.</p>
+        <p>Un número real es el caso en que la coordenada imaginaria vale cero. La zeta también acepta entradas con coordenada imaginaria distinta de cero y en general devuelve otro número complejo. Hablamos de un <strong>cero</strong> cuando la salida vale exactamente 0, es decir, cuando las dos coordenadas de la salida se anulan.</p>
+        <p>En la zeta extendida, −2, −4, −6 y los demás enteros pares negativos son ceros llamados <strong>triviales</strong>. Los demás se llaman <strong>no triviales</strong> y están en la banda crítica, entre las partes reales 0 y 1, sin incluir los bordes. El primero con parte imaginaria positiva se sitúa aproximadamente en 0,5 + 14,134725i. Su parte real es exactamente 1/2 y la cifra decimal de su parte imaginaria está redondeada.</p>
+        <p>El <a href="#inicio">plano complejo de la cabecera</a> muestra los tres primeros ceros con parte imaginaria positiva. Hay también ceros reflejados bajo el eje horizontal. Estos puntos pertenecen a la continuación analítica, pues la serie original solo converge a la derecha de la banda.</p>
+      </section>
+
+      <section id="hipotesis" aria-labelledby="titulo-hipotesis">
+        <h2 id="titulo-hipotesis">¿Qué afirma la hipótesis de Riemann?</h2>
+        <figure class="formula" id="figura-recta-critica">
+          <!-- Espacio para el plano complejo interactivo. -->
+          <blockquote>Todos los ceros no triviales de la función zeta tienen parte real exactamente igual a 1/2.</blockquote>
+          <figcaption>En el plano complejo caerían todos sobre la misma línea vertical, la recta crítica. Su altura puede variar.</figcaption>
+        </figure>
+        <p>Se han verificado miles de millones de ceros sobre esa recta. Son evidencia a favor de la hipótesis. Una demostración tendría que cubrir todos los ceros, incluidos los que quedan más allá de cualquier altura que podamos examinar. Un solo cero fuera de la recta bastaría para refutarla.</p>
+        <p>La parte real importa porque determina la escala a la que un cero puede contribuir a las fluctuaciones del recuento de primos. Un cero más a la derecha contribuiría con un término cuyo tamaño puede crecer más rápido. Esto conecta la geometría del plano complejo con una pregunta sobre números enteros.</p>
+      </section>
+
+      <section id="distribucion" aria-labelledby="titulo-distribucion">
+        <h2 id="titulo-distribucion">El orden escondido detrás del desorden</h2>
+        <p>Escribimos π(<var>x</var>) para indicar cuántos primos son menores o iguales que <var>x</var>. Por ejemplo, π(10) = 4, π(100) = 25 y π(1.000) = 168. La letra π designa aquí una función de recuento.</p>
+        <p>Un buen punto de comparación es la <strong>integral logarítmica</strong>, escrita li(<var>x</var>). Para <var>x</var> ≥ 2, se obtiene empezando en li(2) ≈ 1,045164 y acumulando el área bajo la curva 1/ln(<var>t</var>) desde 2 hasta <var>x</var>. Aquí <var>t</var> recorre ese intervalo y ln es el logaritmo natural. El valor inicial forma parte de la definición estándar.</p>
+        <p>La desviación es <strong><var>E</var>(<var>x</var>) = π(<var>x</var>) − li(<var>x</var>)</strong>. Si es positiva, el recuento real supera la estimación. Si es negativa, queda por debajo. Por ejemplo, hasta 100 hay 25 primos y li(100) vale aproximadamente 30,13, así que la desviación es de unos −5,13.</p>
+        <figure class="diagram comparison" id="figura-distribucion">
+          <!-- Espacio para el simulador de distribución y desviaciones. -->
+          <ul class="legend" aria-label="Leyenda"><li class="legend-primes">π(x), recuento real</li><li class="legend-li">li(x), estimación</li></ul>
+
+          <svg viewBox="0 0 560 221" role="img" aria-labelledby="conteo-fig-title">
+            <title id="conteo-fig-title">Recuento de primos frente a la integral logarítmica. En 100, el recuento es 25 y la estimación es 30,13.</title>
+            <path class="grid" d="M48 43H538M48 91H538M48 139H538"/>
+            <path class="axis" d="M48 32V187H538"/>
+            <g class="plot-text" text-anchor="end"><text x="39" y="48">30</text><text x="39" y="96">20</text><text x="39" y="144">10</text><text x="39" y="192">0</text></g>
+            <g class="plot-text" transform="translate(0 211)"><text x="48.00" text-anchor="middle">2</text><text x="160.70" text-anchor="middle">25</text><text x="283.20" text-anchor="middle">50</text><text x="405.70" text-anchor="middle">75</text><text x="528.20" text-anchor="middle">100</text></g>
+            <path class="line-li" d="M48.00 181.98L52.90 176.61L57.80 172.76L62.70 169.55L67.60 166.73L72.50 164.17L77.40 161.78L82.30 159.54L87.20 157.41L92.10 155.36L97.00 153.40L101.90 151.50L106.80 149.65L111.70 147.86L116.60 146.11L121.50 144.39L126.40 142.72L131.30 141.07L136.20 139.45L141.10 137.87L146.00 136.30L150.90 134.76L155.80 133.24L160.70 131.74L165.60 130.26L170.50 128.79L175.40 127.34L180.30 125.91L185.20 124.49L190.10 123.09L195.00 121.70L199.90 120.32L204.80 118.95L209.70 117.59L214.60 116.25L219.50 114.92L224.40 113.59L229.30 112.28L234.20 110.97L239.10 109.67L244.00 108.38L248.90 107.10L253.80 105.83L258.70 104.57L263.60 103.31L268.50 102.06L273.40 100.82L278.30 99.58L283.20 98.35L288.10 97.13L293.00 95.91L297.90 94.70L302.80 93.49L307.70 92.29L312.60 91.09L317.50 89.91L322.40 88.72L327.30 87.54L332.20 86.37L337.10 85.20L342.00 84.03L346.90 82.87L351.80 81.71L356.70 80.56L361.60 79.41L366.50 78.27L371.40 77.13L376.30 76.00L381.20 74.86L386.10 73.74L391.00 72.61L395.90 71.49L400.80 70.37L405.70 69.26L410.60 68.15L415.50 67.04L420.40 65.94L425.30 64.84L430.20 63.74L435.10 62.65L440.00 61.56L444.90 60.47L449.80 59.39L454.70 58.30L459.60 57.22L464.50 56.15L469.40 55.08L474.30 54.00L479.20 52.94L484.10 51.87L489.00 50.81L493.90 49.75L498.80 48.69L503.70 47.64L508.60 46.58L513.50 45.53L518.40 44.48L523.30 43.44L528.20 42.39"/>
+            <path class="line-primes" d="M48.00 182.20L52.90 182.20V177.40L57.80 177.40L62.70 177.40V172.60L67.60 172.60L72.50 172.60V167.80L77.40 167.80L82.30 167.80L87.20 167.80L92.10 167.80V163.00L97.00 163.00L101.90 163.00V158.20L106.80 158.20L111.70 158.20L116.60 158.20L121.50 158.20V153.40L126.40 153.40L131.30 153.40V148.60L136.20 148.60L141.10 148.60L146.00 148.60L150.90 148.60V143.80L155.80 143.80L160.70 143.80L165.60 143.80L170.50 143.80L175.40 143.80L180.30 143.80V139.00L185.20 139.00L190.10 139.00V134.20L195.00 134.20L199.90 134.20L204.80 134.20L209.70 134.20L214.60 134.20L219.50 134.20V129.40L224.40 129.40L229.30 129.40L234.20 129.40L239.10 129.40V124.60L244.00 124.60L248.90 124.60V119.80L253.80 119.80L258.70 119.80L263.60 119.80L268.50 119.80V115.00L273.40 115.00L278.30 115.00L283.20 115.00L288.10 115.00L293.00 115.00L297.90 115.00V110.20L302.80 110.20L307.70 110.20L312.60 110.20L317.50 110.20L322.40 110.20L327.30 110.20V105.40L332.20 105.40L337.10 105.40V100.60L342.00 100.60L346.90 100.60L351.80 100.60L356.70 100.60L361.60 100.60L366.50 100.60V95.80L371.40 95.80L376.30 95.80L381.20 95.80L386.10 95.80V91.00L391.00 91.00L395.90 91.00V86.20L400.80 86.20L405.70 86.20L410.60 86.20L415.50 86.20L420.40 86.20L425.30 86.20V81.40L430.20 81.40L435.10 81.40L440.00 81.40L444.90 81.40V76.60L449.80 76.60L454.70 76.60L459.60 76.60L464.50 76.60L469.40 76.60L474.30 76.60V71.80L479.20 71.80L484.10 71.80L489.00 71.80L493.90 71.80L498.80 71.80L503.70 71.80L508.60 71.80L513.50 71.80V67.00L518.40 67.00L523.30 67.00L528.20 67.00"/>
+          </svg>
+          <svg viewBox="0 0 560 152" role="img" aria-labelledby="error-fig-title">
+            <title id="error-fig-title">Desviación igual al recuento menos la estimación. En 100, la diferencia es aproximadamente −5,13.</title>
+            <text class="plot-text" x="48" y="21">Desviación E(x)</text>
+            <path class="grid" d="M48 83H538M48 123H538"/>
+            <path class="axis" d="M48 37V123H538"/>
+            <path class="zero-axis" d="M48 43H538"/>
+            <g class="plot-text" text-anchor="end"><text x="39" y="48">0</text><text x="39" y="88">−4</text><text x="39" y="128">−8</text></g>
+            <g class="plot-text" transform="translate(0 146)"><text x="48.00" text-anchor="middle">2</text><text x="160.70" text-anchor="middle">25</text><text x="283.20" text-anchor="middle">50</text><text x="405.70" text-anchor="middle">75</text><text x="528.20" text-anchor="middle">100</text></g>
+            <path class="line-error" d="M48.00 43.45L52.90 54.64V44.64L57.80 52.68L62.70 59.35V49.35L67.60 55.22L72.50 60.57V50.57L77.40 55.54L82.30 60.21L87.20 64.66L92.10 68.91V58.91L97.00 63.01L101.90 66.97V56.97L106.80 60.81L111.70 64.55L116.60 68.20L121.50 71.76V61.76L126.40 65.26L131.30 68.69V58.69L136.20 62.05L141.10 65.36L146.00 68.62L150.90 71.84V61.84L155.80 65.00L160.70 68.13L165.60 71.22L170.50 74.27L175.40 77.29L180.30 80.27V70.27L185.20 73.23L190.10 76.15V66.15L195.00 69.05L199.90 71.92L204.80 74.77L209.70 77.60L214.60 80.40L219.50 83.18V73.18L224.40 75.94L229.30 78.68L234.20 81.40L239.10 84.10V74.10L244.00 76.78L248.90 79.45V69.45L253.80 72.10L258.70 74.73L263.60 77.35L268.50 79.96V69.96L273.40 72.55L278.30 75.12L283.20 77.69L288.10 80.24L293.00 82.77L297.90 85.30V75.30L302.80 77.81L307.70 80.31L312.60 82.80L317.50 85.28L322.40 87.75L327.30 90.21V80.21L332.20 82.65L337.10 85.09V75.09L342.00 77.52L346.90 79.94L351.80 82.35L356.70 84.75L361.60 87.14L366.50 89.52V79.52L371.40 81.89L376.30 84.26L381.20 86.62L386.10 88.97V78.97L391.00 81.31L395.90 83.64V73.64L400.80 75.97L405.70 78.29L410.60 80.60L415.50 82.91L420.40 85.21L425.30 87.50V77.50L430.20 79.79L435.10 82.06L440.00 84.34L444.90 86.60V76.60L449.80 78.86L454.70 81.12L459.60 83.36L464.50 85.61L469.40 87.84L474.30 90.07V80.07L479.20 82.30L484.10 84.52L489.00 86.73L493.90 88.94L498.80 91.15L503.70 93.34L508.60 95.54L513.50 97.73V87.73L518.40 89.91L523.30 92.09L528.20 94.26"/>
+          </svg>
+          <figcaption>Entre 2 y 100, el recuento da un salto cada vez que aparece un primo. El segundo gráfico amplía la diferencia con una escala propia y marca el nivel cero.</figcaption>
+        </figure>
+        <p>Hay fórmulas exactas para funciones de recuento relacionadas con π(<var>x</var>) en las que aparecen términos determinados por los ceros de la zeta. Al estudiar esos términos se pueden deducir límites para la diferencia entre el recuento y su estimación. Si la hipótesis es cierta, existe una constante que, multiplicada por √<var>x</var> ln(<var>x</var>), acota el tamaño del error para valores suficientemente grandes. Es una garantía sobre el recuento acumulado, distinta de localizar el siguiente primo.</p>
+      </section>
+
+      <section id="importancia" aria-labelledby="titulo-importancia">
+        <h2 id="titulo-importancia">¿Por qué importa demostrarla?</h2>
+        <p>Una demostración convertiría la evidencia sobre los ceros en una garantía para todos ellos. También proporcionaría el control sobre las desviaciones de los primos descrito arriba. Cuando un teorema depende de la hipótesis de Riemann como única condición pendiente, una demostración permitiría aplicar ese teorema sin dicha condición.</p>
+        <h3>Algoritmos y criptografía</h3>
+        <p>La <strong>hipótesis de Riemann generalizada</strong> extiende una afirmación análoga a otras funciones, como las funciones L de Dirichlet. Una demostración de la hipótesis original solo resolvería el caso de la zeta. En teoría computacional de números, PARI/GP distingue entre resultados de grupos de clases de números certificados y resultados de <code>bnfinit</code> cuya garantía puede depender de una versión generalizada de la hipótesis. Su función <code>bnfcertify</code> permite certificar esos resultados. SageMath también documenta opciones de prueba en sus cálculos de grupos de clases.</p>
+        <p>Para RSA, una cuestión práctica es si se puede factorizar con eficiencia el producto de dos primos grandes. Acotar cuántos primos hay hasta cierto número es un problema diferente. Una demostración de la hipótesis no aportaría automáticamente un algoritmo eficiente de factorización.</p>
+        <h3>Investigación e inteligencia artificial</h3>
+        <p>Las ideas necesarias para una demostración podrían aportar herramientas para otros problemas. Un sistema de IA puede buscar patrones, proponer ideas para una prueba o ayudar a traducir un argumento a un lenguaje formal. Un verificador formal comprueba que cada paso se deduce de las definiciones y premisas codificadas. Calcular ejemplos, descubrir un argumento y verificarlo son tareas distintas.</p>
+        <p>Un anuncio es el comienzo de la evaluación. Una comprobación formal aporta evidencia sobre el enunciado codificado. La revisión matemática examina que ese enunciado corresponde a la pregunta planteada, estudia los supuestos e interpreta el alcance del resultado. El reconocimiento científico llega tras esa evaluación.</p>
+      </section>
+
+      <aside class="sources" aria-labelledby="titulo-fuentes">
+        <h2 id="titulo-fuentes">Referencias</h2>
+        <ul>
+          <li><a href="https://dlmf.nist.gov/25">NIST DLMF, función zeta, producto de Euler y ceros</a></li>
+          <li><a href="https://www.lmfdb.org/zeros/zeta/">LMFDB, tabla de ceros de la zeta</a></li>
+          <li><a href="https://dlmf.nist.gov/6.2">NIST DLMF, definición de la integral logarítmica</a></li>
+          <li><a href="https://www.claymath.org/millennium/riemann-hypothesis/">Clay Mathematics Institute, hipótesis de Riemann</a></li>
+          <li><a href="https://pari.math.u-bordeaux.fr/dochtml/html/General_number_fields.html">PARI/GP, documentación de bnfinit y bnfcertify</a></li>
+          <li><a href="https://doc.sagemath.org/html/en/reference/number_fields/sage/rings/number_field/number_field.html">SageMath, documentación de class_group</a></li>
+        </ul>
+      </aside>
+    </main>
+  </div>
+  <footer><a href="#inicio">Volver al inicio ↑</a></footer>
+</body>
+</html>
