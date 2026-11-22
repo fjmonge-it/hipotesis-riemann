@@ -17,8 +17,8 @@ body { margin: 0; background: var(--paper); color: var(--ink); font: 1rem/1.7 va
 a { color: var(--accent); text-underline-offset: .2em; }
 a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--rust); outline-offset: 4px; }
-.skip-link { position: fixed; inset: .75rem auto auto .75rem; z-index: 2; padding: .5rem 1rem; background: var(--white); transform: translateY(-160%); }
-.skip-link:focus { transform: none; }
+.skip-link { position: fixed; inset: .75rem auto auto .75rem; z-index: 2; padding: .5rem 1rem; background: var(--white); clip-path: inset(50%); }
+.skip-link:focus { clip-path: none; }
 h1, h2, h3, blockquote { font-family: var(--serif); font-weight: 400; line-height: 1.12; }
 
 .hero {
@@ -98,3 +98,160 @@ footer { border-top: 1px solid var(--rule); text-align: center; padding: 1.25rem
   .article-layout { display: block; padding-top: 1.5rem; }
   .contents { position: static; max-height: none; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--rule); }
 }
+
+.experiment-question { color: var(--accent); font: 1.45rem/1.35 var(--serif); }
+.experiment {
+  margin: 1.6rem 0;
+  padding: clamp(.85rem, 3vw, 1.65rem);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--white);
+}
+.experiment-guide { margin: 0 0 .95rem; font-size: 1rem; }
+.experiment-guide ol { margin: .25rem 0 0; padding-left: 1.35rem; }
+.experiment-guide li + li { margin-top: .25rem; }
+.experiment h3 { margin: 0 0 .65rem; font-size: clamp(1.6rem, 3vw, 2rem); }
+.experiment-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: .65rem 1.2rem;
+  padding: 1rem 0;
+  border-block: 1px solid var(--rule);
+  margin-bottom: 1rem;
+}
+.experiment-controls label { display: block; font-weight: 650; }
+.experiment :is(button, select) {
+  min-height: 44px;
+  border: 1px solid #718678;
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+}
+.experiment button { cursor: pointer; }
+.experiment select { display: block; padding: .35rem .6rem; margin-top: .25rem; }
+.experiment label.check-control { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; cursor: pointer; }
+.check-control input { width: 1.2rem; height: 1.2rem; accent-color: var(--accent); }
+p.experiment-hint { font-size: .95rem; color: var(--muted); }
+.prime-selection { padding: .6rem .75rem; background: var(--mint); border-left: 3px solid var(--accent); }
+.prime-selection strong { display: block; font-size: 1.12rem; }
+.prime-factorization { display: block; font: 1.35rem/1.35 var(--serif); }
+.prime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(max(44px, calc((100% - 3.15rem) / 10)), 1fr));
+  gap: .35rem;
+  max-height: 21rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: .4rem;
+  margin: -.4rem;
+}
+.prime-grid button { position: relative; padding: .2rem 0; font-variant-numeric: tabular-nums; }
+.prime-grid button.unit-cell { border-style: dashed; }
+.prime-grid button[aria-pressed=true] { box-shadow: inset 0 0 0 2px var(--accent); font-weight: 750; }
+.prime-grid.show-primes .prime-cell { background: var(--mint); font-weight: 750; }
+.prime-grid.show-primes .prime-cell::after {
+  content: '';
+  position: absolute;
+  top: .24rem;
+  right: .24rem;
+  width: .27rem;
+  height: .27rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.prime-gaps, .math-note { margin: 1rem 0; }
+summary { color: var(--accent); font-weight: 650; cursor: pointer; }
+summary + p { margin-top: .55rem; }
+.gap-list { display: flex; flex-wrap: wrap; gap: .35rem 1.15rem; padding: 0; margin: 0; list-style: none; }
+.gap-list li { font-variant-numeric: tabular-nums; }
+.takeaway { border-left: 3px solid var(--accent); padding: .4rem 0 .4rem .85rem; font-weight: 680; }
+.euler-paths { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem 1rem; }
+.euler-paths .equation { font-size: clamp(1.2rem, 2.6vw, 1.75rem); }
+.euler-paths strong { font-size: .93rem; color: var(--accent); }
+.euler-paths > :nth-child(2) :is(strong, .equation) { color: var(--rust); }
+.zeta-controls { align-items: start; }
+.exponent-control { flex: 1 1 12rem; min-width: 0; }
+.exponent-value { margin-left: .4rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+.exponent-control input { width: 100%; display: block; margin: .25rem 0; min-height: 44px; accent-color: var(--accent); }
+.quick-values { display: flex; flex-wrap: wrap; gap: .35rem; }
+.quick-values button { padding: 0 .6rem; }
+.quick-values button[aria-pressed=true] { background: var(--mint); box-shadow: inset 0 0 0 1px var(--accent); font-weight: 700; }
+.experiment-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: .9rem 1rem;
+  margin: 1rem 0 1.2rem;
+}
+.experiment-results div { border-left: 3px solid var(--accent); padding-left: .65rem; }
+.experiment-results .result-product { border-color: var(--rust); }
+.experiment-results .result-limit { border-color: var(--muted); border-left-style: dotted; }
+#experimento-euler .result-limit { grid-column: 1 / -1; }
+.experiment-results dt { font-weight: 650; }
+.experiment-results dd { margin: 0; }
+.experiment-results strong { display: block; font: clamp(1.7rem, 5.8vw, 2rem)/1.25 var(--serif); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.experiment-results span { display: block; color: var(--muted); font-size: .88rem; }
+.experiment-chart { margin: 0 0 1.15rem; }
+.experiment-chart :is(.legend, figcaption) { font-size: .95rem; }
+.experiment-chart .plot-text { font-size: 13px; }
+.line-limit { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 2 4; }
+.legend .legend-limit::before { border-top: 2px dotted var(--muted); }
+.experiment .experiment-insight { border-top: 1px solid var(--rule); padding-top: .7rem; margin: 0; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 43rem) {
+  main p { font-size: 1.07rem; }
+  .euler-paths { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 28rem) {
+  .zeta-controls { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .zeta-controls select { width: 100%; }
+}
+
+.plane-figure { max-width: 26rem; margin: .7rem auto 0; }
+.plane-figure figcaption { margin-top: .35rem; }
+.plane-labels { font: 13px var(--sans); fill: var(--muted); }
+.plane-figure .plane-labels { font-size: 15px; }
+.coordinate-guide { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; }
+.example-point { fill: var(--accent); stroke: var(--white); stroke-width: 1.5; }
+.estimate-point { fill: var(--rust); stroke: var(--white); stroke-width: 1.5; }
+.selected-ring { fill: none; stroke: var(--accent); stroke-width: 2; }
+.plot-hidden { display: none; }
+.zero-controls .check-control { align-self: center; }
+#x-exacto {
+  display: block;
+  width: 8rem;
+  min-height: 44px;
+  margin-top: .25rem;
+  padding: .35rem .6rem;
+  border: 1px solid #718678;
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+}
+#experimento-distribucion .experiment-chart + h3 { margin-top: 1.35rem; }
+@media (max-width: 28rem) {
+  #experimento-distribucion .experiment-controls { display: grid; grid-template-columns: minmax(0, 1fr); }
+  #experimento-distribucion .experiment-controls :is(select, #x-exacto) { width: 100%; }
+}
+
+.distribution-shortcuts { margin: 0 0 1rem; }
+
+.closing-topics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem 2rem;
+  margin: 1.5rem 0;
+}
+.closing-topics > div { border-top: 1px solid var(--rule); padding-top: .9rem; }
+.closing-topics h3 { margin: 0 0 .55rem; color: var(--accent); }
+.closing-takeaway { background: var(--mint); padding: .8rem 1rem; }
+@media (max-width: 34rem) {
+  .closing-topics { grid-template-columns: 1fr; gap: 1rem; }
+}
+#experimento-ceros [data-band] { stroke: var(--muted); stroke-dasharray: 3 4; }
+#experimento-ceros [data-summary] { margin: 0; }
+#experimento-ceros [data-discovery] { margin-top: .4rem; font-weight: 700; }

@@ -41,3 +41,20 @@ export function logarithmicIntegral(x) {
 export function primeDeviation(x) {
   return primeCount(x) - logarithmicIntegral(x);
 }
+
+export function primeFactors(n) {
+  validateLimit(n);
+  if (n < 2) return [];
+
+  let remaining = n;
+  const factors = [];
+  for (const prime of primesUpTo(Math.floor(Math.sqrt(n)))) {
+    if (prime * prime > remaining) break;
+    while (remaining % prime === 0) {
+      factors.push(prime);
+      remaining /= prime;
+    }
+  }
+  if (remaining > 1) factors.push(remaining);
+  return factors;
+}

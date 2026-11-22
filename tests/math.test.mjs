@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { logarithmicIntegral, primeCount, primeDeviation, primesUpTo } from '../js/primes.js';
-import { eulerPartialProduct, nontrivialZeros, zetaPartialSum, zetaTailBounds } from '../js/zeta.js';
+import { logarithmicIntegral, primeCount, primeDeviation, primeFactors, primesUpTo } from '../js/primes.js';
+import { eulerPartialProduct, nontrivialZeros, zetaEvolution, zetaPartialSum, zetaReference, zetaTailBounds } from '../js/zeta.js';
 
 test('la criba excluye 0 y 1 e incluye los extremos primos', () => {
   assert.deepEqual(primesUpTo(0), []);
@@ -61,8 +61,8 @@ test('el producto se acerca a los valores de referencia al aumentar N', () => {
 });
 
 test('los ceros no triviales tabulados conservan las coordenadas redondeadas de referencia', () => {
-  // NIST DLMF 25.10(i), first three positive ordinates.
-  const ordinates = [14.1347251417347, 21.0220396387716, 25.0108575801457];
+  // Independently checked with mpmath.zetazero at 25 significant digits.
+  const ordinates = [14.1347251417347, 21.0220396387716, 25.0108575801457, 30.4248761258595, 32.9350615877392];
   assert.equal(nontrivialZeros.length, ordinates.length);
   for (const [index, zero] of nontrivialZeros.entries()) {
     assert.equal(zero.real, 0.5);
@@ -78,4 +78,70 @@ test('li utiliza la integral estándar y E conserva el signo de π menos li', ()
   }
   assert.ok(primeDeviation(3) < 0);
   assert.throws(() => logarithmicIntegral(1), RangeError);
+});
+
+test('la factorización reutiliza primos y conserva su multiplicidad', () => {
+  assert.deepEqual(primeFactors(0), []);
+  assert.deepEqual(primeFactors(1), []);
+  assert.deepEqual(primeFactors(2), [2]);
+  assert.deepEqual(primeFactors(21), [3, 7]);
+  assert.deepEqual(primeFactors(23), [23]);
+  assert.deepEqual(primeFactors(60), [2, 2, 3, 5]);
+  assert.throws(() => primeFactors(1.5), RangeError);
+  for (let n = 2; n <= 200; n += 1) {
+    const factors = primeFactors(n);
+    assert.equal(factors.reduce((product, factor) => product * factor, 1), n);
+    assert.ok(factors.every(factor => primesUpTo(factor).at(-1) === factor));
+  }
+});
+
+test('la referencia de zeta concuerda con valores independientes, incluso cerca del polo', () => {
+  // Special values and independent high-precision (mpmath) references.
+  const references = [
+    [1.01, 100.57794333849687], [1.2, 5.591582441177751], [1.3, 3.931949211809544],
+    [1.5, 2.612375348685488], [2, Math.PI ** 2 / 6], [2.5, 1.341487257250917],
+    [3, 1.202056903159594], [3.7, 1.106288241464679], [4, Math.PI ** 4 / 90],
+    [4.9, 1.039907544049356], [5, 1.036927755143370],
+  ];
+  for (const [s, expected] of references) {
+    // Covers double-precision rounding plus the Euler–Maclaurin remainder.
+    assert.ok(Math.abs(zetaReference(s) - expected) <= 8 * Number.EPSILON * expected, 's = ' + s);
+  }
+  for (const invalid of [1, 0, -1, NaN, Infinity]) {
+    assert.throws(() => zetaReference(invalid), RangeError);
+    assert.throws(() => zetaEvolution(invalid, 10, true), RangeError);
+  }
+  assert.throws(() => zetaEvolution(2, NaN), RangeError);
+});
+
+test('las gráficas reproducen las sumas y los saltos del producto en cada primo', () => {
+  for (const limit of [10, 25, 50, 100, 500, 1000]) {
+    const { sums, products, factorCount } = zetaEvolution(2, limit, true);
+    assert.equal(sums.length, limit);
+    assert.deepEqual(products.map(point => point.n), primesUpTo(limit));
+    assert.equal(factorCount, primeCount(limit));
+    assert.ok(Math.abs(sums.at(-1) - zetaPartialSum(2, limit)) <= 5e-15);
+    assert.equal(products.at(-1).value, eulerPartialProduct(2, limit).value);
+  }
+  assert.equal(zetaEvolution(2, 10, true).factorCount, 4);
+  assert.equal(zetaEvolution(2, 100, true).factorCount, 25);
+  assert.deepEqual(zetaEvolution(2, 10).products, []);
+});
+
+test('en todo el deslizador ambas aproximaciones crecen y quedan por debajo de la referencia', () => {
+  for (let step = 12; step <= 50; step += 1) {
+    const s = step / 10;
+    const { sums, products } = zetaEvolution(s, 1000, true);
+    const reference = zetaReference(s);
+    assert.ok(sums.every((value, index) => Number.isFinite(value) && value < reference &&
+      (index === 0 || value > sums[index - 1])));
+    assert.ok(products.every(({ value }, index) => Number.isFinite(value) && value < reference &&
+      (index === 0 || value > products[index - 1].value)));
+    const bounds = zetaTailBounds(s, sums.length);
+    const error = reference - sums.at(-1);
+    const rounding = 8 * Number.EPSILON * reference;
+    assert.ok(error >= bounds.lower - rounding && error <= bounds.upper + rounding);
+    assert.ok(reference - products.at(-1).value <= bounds.upper + rounding);
+  }
+  assert.ok(zetaReference(1.2) - zetaPartialSum(1.2, 1000) > 1);
 });
