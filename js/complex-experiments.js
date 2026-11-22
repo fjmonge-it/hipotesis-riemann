@@ -62,6 +62,7 @@ export function initZeroExplorer(root) {
   const showLine = root.querySelector('#mostrar-recta');
   const chart = root.querySelector('svg');
   const summary = root.querySelector('[data-summary]');
+  const discovery = root.querySelector('[data-discovery]');
   const zeroBounds = { xMin: -0.25, xMax: 1.25, yMin: 0, yMax: 36 };
   const zeroFrame = { left: 43, top: 22, width: 266, height: 242 };
   const position = (a, b) => project(a, b, zeroBounds, zeroFrame);
@@ -81,7 +82,7 @@ export function initZeroExplorer(root) {
       <path class="critical" data-line d="M${middle} 22V264"/>
       <text x="43" y="15">Im(s)</text><text x="309" y="301" text-anchor="end">Re(s)</text>
       <text x="${left}" y="283" text-anchor="middle">0</text>
-      <text x="${middle}" y="283" text-anchor="middle">½</text>
+      <text x="${middle}" y="283" text-anchor="middle" data-line-tick>½</text>
       <text x="${right}" y="283" text-anchor="middle">1</text>
     </g><g data-points></g>`;
   const points = chart.querySelector('[data-points]');
@@ -93,7 +94,9 @@ export function initZeroExplorer(root) {
     const active = Number(selected.value);
     const visible = nontrivialZeros.slice(0, Number(count.value));
     chart.querySelector('[data-band]').classList.toggle('plot-hidden', !showBand.checked);
-    chart.querySelector('[data-line]').classList.toggle('plot-hidden', !showLine.checked);
+    for (const marker of chart.querySelectorAll('[data-line], [data-line-tick]')) {
+      marker.classList.toggle('plot-hidden', !showLine.checked);
+    }
     points.innerHTML = visible.map(({ real, imaginary }, index) => {
       const p = position(real, imaginary);
       return '<circle class="example-point" cx="' + p.x + '" cy="' + p.y + '" r="4"/>'
@@ -104,8 +107,16 @@ export function initZeroExplorer(root) {
     const overlays = (showBand.checked ? ' Banda crítica visible.' : '')
       + (showLine.checked ? ' Recta crítica visible en la parte real un medio.' : '');
     chart.setAttribute('aria-label', plotted + ' con parte imaginaria positiva.' + overlays);
-    const coordinates = 'Cero ' + (active + 1) + ': s ≈ ' + complexLabel(zero.real, zero.imaginary, 6)
-      + '. La parte real es exactamente ½. La parte imaginaria está redondeada.';
+    const height = zero.imaginary.toFixed(6).replace('.', ',');
+    const coordinates = 'Cero ' + (active + 1) + ' · Parte real: ' + display(zero.real)
+      + ' · Parte imaginaria: ≈ ' + height + '.';
+    discovery.hidden = !showLine.checked;
+    if (showLine.checked) {
+      const conclusion = visible.length === 1
+        ? 'El cero mostrado está sobre la recta crítica: su parte real es exactamente ½.'
+        : 'Todos los ceros mostrados están sobre la recta crítica: su parte real es exactamente ½.';
+      if (discovery.textContent !== conclusion) discovery.textContent = conclusion;
+    }
     if (summary.textContent !== coordinates) summary.textContent = coordinates;
   }
 

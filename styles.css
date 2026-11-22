@@ -253,3 +253,5 @@ summary + p { margin-top: .55rem; }
   .closing-topics { grid-template-columns: 1fr; gap: 1rem; }
 }
 #experimento-ceros [data-band] { stroke: var(--muted); stroke-dasharray: 3 4; }
+#experimento-ceros [data-summary] { margin: 0; }
+#experimento-ceros [data-discovery] { margin-top: .4rem; font-weight: 700; }

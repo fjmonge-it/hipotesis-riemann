@@ -22,6 +22,7 @@ test('los ceros se revelan a partir de uno, con banda y sin recta', () => {
   assert.equal(defaultOption('cantidad-ceros'), '1');
   assert.match(startTag('input', 'mostrar-banda'), /\bchecked\b/);
   assert.doesNotMatch(startTag('input', 'mostrar-recta'), /\bchecked\b/);
+  assert.match(article, /<p data-discovery hidden>/);
 });
 
 test('el recuento comienza en 100, con el punto de lectura al final del intervalo', () => {

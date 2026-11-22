@@ -194,8 +194,8 @@
             <strong>Prueba este experimento</strong>
             <ol>
               <li>Localiza el primer cero dentro de la franja sombreada. Esa es la banda crítica, entre las partes reales 0 y 1.</li>
-              <li>Muestra más ceros y selecciónalos para comparar sus coordenadas horizontales.</li>
-              <li>Activa la recta crítica. ¿Qué tienen en común los puntos?</li>
+              <li>Muestra los cinco ceros y selecciona cada uno. Fíjate en su posición horizontal.</li>
+              <li>Activa la recta crítica para comprobar tu observación.</li>
             </ol>
           </div>
           <div class="experiment-controls zero-controls">
@@ -206,7 +206,10 @@
             <label class="check-control"><input type="checkbox" id="mostrar-banda" checked> Banda crítica</label>
             <label class="check-control"><input type="checkbox" id="mostrar-recta"> Recta crítica</label>
           </div>
-          <p class="prime-selection" data-summary role="status"></p>
+          <div class="prime-selection" role="status">
+            <p data-summary></p>
+            <p data-discovery hidden></p>
+          </div>
           <figure class="plane-figure">
             <svg viewBox="0 0 346 309" role="img"></svg>
             <figcaption>El anillo señala el cero elegido. Se muestran ceros tabulados con parte imaginaria positiva. Los ejes tienen escalas distintas para que se aprecien la anchura de la banda y las alturas de los puntos.</figcaption>
