@@ -46,6 +46,8 @@ export const nontrivialZeros = Object.freeze([
   Object.freeze({ real: 0.5, imaginary: 14.134725 }),
   Object.freeze({ real: 0.5, imaginary: 21.022040 }),
   Object.freeze({ real: 0.5, imaginary: 25.010858 }),
+  Object.freeze({ real: 0.5, imaginary: 30.424876 }),
+  Object.freeze({ real: 0.5, imaginary: 32.935062 }),
 ]);
 
 // Euler–Maclaurin for the tail starting at n + 1, through the B6 term.

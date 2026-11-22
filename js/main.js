@@ -1,3 +1,5 @@
+import { initComplexPlane, initZeroExplorer } from './complex-experiments.js';
+import { initDistributionExperiment } from './distribution-experiment.js';
 import { initPrimeExplorer } from './prime-explorer.js';
 import { initZetaExperiment } from './zeta-experiments.js';
 
@@ -20,3 +22,7 @@ window.addEventListener('hashchange', updateCurrentSection);
 initPrimeExplorer(document.querySelector('#explorador-primos'));
 initZetaExperiment(document.querySelector('#experimento-zeta'));
 initZetaExperiment(document.querySelector('#experimento-euler'), true);
+
+initComplexPlane(document.querySelector('#experimento-complejos'));
+initZeroExplorer(document.querySelector('#experimento-ceros'));
+initDistributionExperiment(document.querySelector('#experimento-distribucion'));

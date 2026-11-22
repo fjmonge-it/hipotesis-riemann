@@ -209,3 +209,33 @@ summary + p { margin-top: .55rem; }
   .zeta-controls { display: grid; grid-template-columns: minmax(0, 1fr); }
   .zeta-controls select { width: 100%; }
 }
+
+.plane-figure { max-width: 26rem; margin: .7rem auto 0; }
+.plane-figure figcaption { margin-top: .35rem; }
+.plane-labels { font: 13px var(--sans); fill: var(--muted); }
+.plane-figure .plane-labels { font-size: 15px; }
+.coordinate-guide { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; }
+.example-point { fill: var(--accent); stroke: var(--white); stroke-width: 1.5; }
+.estimate-point { fill: var(--rust); stroke: var(--white); stroke-width: 1.5; }
+.selected-ring { fill: none; stroke: var(--accent); stroke-width: 2; }
+.plot-hidden { display: none; }
+.zero-controls .check-control { align-self: center; }
+#x-exacto {
+  display: block;
+  width: 8rem;
+  min-height: 44px;
+  margin-top: .25rem;
+  padding: .35rem .6rem;
+  border: 1px solid #82988a;
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+}
+#experimento-distribucion .experiment-chart + h3 { margin-top: 1.35rem; }
+@media (max-width: 28rem) {
+  #experimento-distribucion .experiment-controls { display: grid; grid-template-columns: minmax(0, 1fr); }
+  #experimento-distribucion .experiment-controls :is(select, #x-exacto) { width: 100%; }
+}
+
+.distribution-shortcuts { margin: 0 0 1rem; }
