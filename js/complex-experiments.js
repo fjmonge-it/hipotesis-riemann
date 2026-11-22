@@ -25,7 +25,7 @@ export function initComplexPlane(root) {
     <g class="plane-labels">
       ${grid}
       <path class="axis" d="M39 ${origin.y}H301M${origin.x} 16V278"/>
-      <text x="162" y="164" text-anchor="end">0</text>
+      <text x="176" y="164">0</text>
       <text x="303" y="151">Real</text><text x="170" y="14" text-anchor="middle">Imaginaria</text>
     </g>
     <path class="coordinate-guide"/><circle class="example-point" r="6"/>`;

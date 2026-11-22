@@ -19,7 +19,9 @@ export function drawDistributionChart(figure, model, errorChart) {
     }
     bounds.yMin = Math.floor(bounds.yMin);
     bounds.yMax = Math.ceil(bounds.yMax);
-    yTicks = [...new Set([bounds.yMin, Math.round(bounds.yMin / 2), 0, bounds.yMax])];
+    yTicks = [bounds.yMin, Math.round(bounds.yMin / 2), 0];
+    if (bounds.yMax * frame.height / (bounds.yMax - bounds.yMin) >= 22) yTicks.push(bounds.yMax);
+    yTicks = [...new Set(yTicks)];
   } else {
     const last = samples.at(-1);
     const step = Math.ceil(Math.max(last.estimate, last.count) / 3);
