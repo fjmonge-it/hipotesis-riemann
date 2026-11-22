@@ -56,10 +56,26 @@
     <main id="contenido" tabindex="-1">
       <section id="primos" aria-labelledby="titulo-primos">
         <h2 id="titulo-primos">El misterio de los números primos</h2>
-        <p>El 7 solo se puede dividir sin resto entre 1 y 7. El 8, en cambio, también se puede dividir entre 2 y 4. Llamamos <strong>primos</strong> a los enteros mayores que 1 que tienen exactamente dos divisores positivos, el 1 y ellos mismos. Los primeros son 2, 3, 5, 7, 11, 13, 17 y 19.</p>
-        <p>Todos los enteros mayores que 1 pueden escribirse como un producto de primos. Por ejemplo, 60 = 2² × 3 × 5. Si empiezas por 6 × 10 o por 4 × 15, al descomponer cada factor obtendrás los mismos primos, con las mismas repeticiones. Solo puede cambiar el orden.</p>
+        <p class="experiment-question">¿Puedes descubrir dónde se esconden los números primos?</p>
+        <p>Un <strong>primo</strong> es un entero mayor que 1 cuyos únicos divisores positivos son 1 y él mismo. El 7 es primo. El 8 es compuesto porque también se puede dividir exactamente entre 2 y 4.</p>
+        <div class="experiment" id="explorador-primos" hidden role="group" aria-labelledby="explorador-titulo">
+          <h3 id="explorador-titulo">Explora la cuadrícula</h3>
+          <div class="experiment-controls">
+            <label for="intervalo-primos">Intervalo
+              <select id="intervalo-primos"><option value="30">Del 1 al 30</option><option value="100" selected>Del 1 al 100</option><option value="200">Del 1 al 200</option></select>
+            </label>
+            <label class="check-control"><input type="checkbox" id="mostrar-primos" checked> Resaltar primos</label>
+          </div>
+          <p class="experiment-hint" id="guia-primos">Elige una casilla. Con el teclado, usa las flechas y pulsa Intro o Espacio. El punto distingue los primos cuando están resaltados y el borde discontinuo señala la unidad.</p>
+          <p class="prime-selection" id="numero-elegido" role="status"></p>
+          <div class="prime-grid" role="group" aria-label="Números naturales" aria-describedby="guia-primos"></div>
+          <details class="prime-gaps">
+            <summary>Ver saltos entre primos consecutivos</summary>
+            <p>Elige un número para ver los saltos entre los primos que lo rodean.</p>
+            <ul class="gap-list" aria-label="Distancias entre primos"></ul>
+          </details>
+        </div>
         <figure class="diagram" id="figura-primos">
-          <!-- Espacio para el explorador de primos. -->
           <svg viewBox="0 0 560 120" role="img" aria-labelledby="primos-fig-title">
             <title id="primos-fig-title">En la recta del 1 al 24 se destacan 2, 3, 5, 7, 11, 13, 17, 19 y 23.</title>
             <path class="axis" d="M32 64H528"/>
@@ -76,47 +92,64 @@
           </svg>
           <figcaption>Del 11 al 13 hay dos pasos. Del 13 al 17 hay cuatro. Los saltos entre primos cambian incluso en un tramo corto.</figcaption>
         </figure>
-        <p>Si ampliamos la mirada y contamos cuántos primos aparecen hasta números cada vez mayores, emerge una regularidad estadística. Entender cuánto se aparta el recuento real de esa tendencia es una de las preguntas que nos llevan a Riemann.</p>
+        <p>Prueba con 21 y 23. El 21 se descompone en 3 × 7, mientras que el 23 solo tiene los divisores 1 y 23. Todo entero mayor que 1 tiene una factorización en primos única salvo el orden. Por ejemplo, tanto 6 × 10 como 4 × 15 dan 60 = 2² × 3 × 5.</p>
+        <p>Entre el 11 y el 13 hay dos pasos y entre el 13 y el 17 hay cuatro. Los saltos varían. Al contar los primos en intervalos cada vez mayores, sí aparece una regularidad estadística, que retomaremos en la <a href="#distribucion">sexta sección</a>.</p>
+        <p class="takeaway">Los primos siguen reglas exactas para identificarlos, pero sus posiciones no forman una secuencia sencilla.</p>
       </section>
 
       <section id="zeta" aria-labelledby="titulo-zeta">
         <h2 id="titulo-zeta">Una máquina matemática llamada función zeta</h2>
-        <p>Una función asigna un resultado a cada entrada admitida. La regla «multiplica por dos», por ejemplo, devuelve 6 cuando le damos 3 y devuelve 3 cuando le damos 1,5. La función zeta también sigue una regla, aunque para describirla empezamos con una suma infinita.</p>
-        <figure class="formula" id="figura-zeta">
-          <!-- Espacio para la suma parcial interactiva. -->
+        <p class="experiment-question">¿Cómo puede una suma de infinitos términos acercarse a un número finito?</p>
+        <p>Una función asigna una salida a cada entrada que admite. Por ejemplo, la regla «multiplica por dos» recibe 3 y devuelve 6. En la función zeta, la entrada es el exponente <var>s</var>.</p>
+        <figure class="formula">
           <div class="equation">ζ(<var>s</var>) = 1 + 1/2<sup><var>s</var></sup> + 1/3<sup><var>s</var></sup> + 1/4<sup><var>s</var></sup> + …</div>
-          <figcaption>ζ es la letra griega zeta. La entrada <var>s</var> es el exponente. Para cada entero positivo elevamos ese número a <var>s</var>, tomamos su inverso y lo añadimos a la suma.</figcaption>
+          <figcaption>ζ se lee «zeta». Elevamos cada entero positivo a <var>s</var> y sumamos los inversos. Con <var>s</var> = 2, empezamos por 1, 1/4 y 1/9.</figcaption>
         </figure>
-        <p>Si elegimos <var>s</var> = 2, los primeros términos son 1, 1/4 y 1/9. Aunque sigamos añadiendo términos indefinidamente, la suma se acerca a un número finito. Decimos que <strong>converge</strong>. Esto sucede para cualquier exponente real mayor que 1, incluidos los decimales.</p>
-        <table>
-          <caption>Algunos valores de la función zeta</caption>
-          <thead><tr><th scope="col">Exponente <var>s</var></th><th scope="col">Valor aproximado de ζ(<var>s</var>)</th></tr></thead>
-          <tbody>
-            <tr><td>1,5</td><td>2,612375</td></tr><tr><td>2</td><td>1,644934</td></tr>
-            <tr><td>2,5</td><td>1,341487</td></tr><tr><td>3</td><td>1,202057</td></tr>
-            <tr><td>3,7</td><td>1,106288</td></tr><tr><td>4</td><td>1,082323</td></tr>
-          </tbody>
-        </table>
-        <p>La serie también admite entradas complejas, que veremos en la cuarta sección. Para que converja, la parte real de la entrada debe ser mayor que 1. Mediante una técnica llamada <strong>continuación analítica</strong> se amplía la función a todo el plano complejo salvo en <var>s</var> = 1, donde tiene un polo y su valor se hace ilimitado al acercarnos al punto.</p>
-        <p>En esa extensión aparecen valores como ζ(0) = −1/2, ζ(−1) = −1/12 y ζ(−2) = 0. La serie original diverge en esos puntos. En particular, la suma ordinaria 1 + 2 + 3 + … crece sin límite. El valor −1/12 corresponde a la función extendida en −1.</p>
+        <div class="experiment" id="experimento-zeta" hidden role="group" aria-labelledby="experimento-zeta-titulo">
+          <h3 id="experimento-zeta-titulo">Acércate al límite</h3>
+          <p>Cambia primero el número de sumandos. Después, compara qué ocurre con <var>s</var> = 1,2 y con <var>s</var> = 4.</p>
+          <div data-controls></div>
+          <dl class="experiment-results" data-results></dl>
+          <figure class="experiment-chart" data-chart></figure>
+          <p class="experiment-insight" data-insight></p>
+        </div>
+        <p id="ejemplo-zeta">Con <var>s</var> = 2, diez términos dan aproximadamente 1,549768 y mil términos dan 1,643935. El límite es 1,644934. Los términos siguen añadiendo cantidades positivas, cada vez menores.</p>
+        <p>Cuando la suma se acerca a un valor finito, decimos que <strong>converge</strong>. Esta serie converge para todo exponente real mayor que 1, incluidos los decimales. Por ejemplo, ζ(1,5) ≈ 2,612375 y ζ(2,5) ≈ 1,341487. En el <a href="#continuacion-zeta">plano complejo</a>, la serie converge si la parte real de <var>s</var> es mayor que 1.</p>
+        <p class="takeaway">Una suma infinita puede tener un valor finito, y el exponente determina lo rápido que nos acercamos a él.</p>
       </section>
 
       <section id="euler" aria-labelledby="titulo-euler">
         <h2 id="titulo-euler">El descubrimiento de Euler</h2>
-        <p>Euler encontró dos caminos hacia el mismo resultado. La serie suma un término por cada entero positivo. El otro camino multiplica un factor por cada primo.</p>
-        <figure class="formula" id="figura-euler">
-          <!-- Espacio para el comparador zeta–Euler. -->
-          <div class="equation">ζ(<var>s</var>) = ∏<sub><var>p</var> primo</sub> 1/(1 − <var>p</var><sup>−<var>s</var></sup>)</div>
-          <figcaption>∏ indica un producto. La letra <var>p</var> recorre únicamente los primos. La identidad vale cuando la parte real de <var>s</var> es mayor que 1.</figcaption>
+        <p class="experiment-question">¿Pueden todos los números naturales y solo los números primos llevarnos al mismo resultado?</p>
+        <figure class="formula">
+          <div class="euler-paths">
+            <div><strong>Suma de la zeta</strong><div class="equation">ζ(<var>s</var>) = ∑<sub><var>n</var> ≥ 1</sub> <var>n</var><sup>−<var>s</var></sup></div></div>
+            <div><strong>Producto de Euler</strong><div class="equation">ζ(<var>s</var>) = ∏<sub><var>p</var> primo</sub> (1 − <var>p</var><sup>−<var>s</var></sup>)<sup>−1</sup></div></div>
+          </div>
+          <figcaption>∑ indica una suma sobre todos los enteros positivos <var>n</var>. ∏ indica un producto sobre todos los primos <var>p</var>. La identidad se cumple cuando Re(<var>s</var>), la parte real de <var>s</var>, es mayor que 1.</figcaption>
         </figure>
-        <p>Cada factor se puede escribir como una serie geométrica. El factor del 2, por ejemplo, contiene términos asociados a 1, 2, 4, 8 y las demás potencias de 2. Cuando multiplicamos todas esas series, el término de 60 aparece al combinar la potencia 2² con 3 y 5. La descomposición única en primos hace que cada entero aparezca una sola vez.</p>
-        <p>Con un límite de 10, la suma tiene diez términos y el producto tiene cuatro factores, correspondientes a 2, 3, 5 y 7. Los resultados parciales suelen ser distintos. Al subir el límite ambos se acercan al mismo valor, y cerca de <var>s</var> = 1 esa convergencia es especialmente lenta.</p>
+        <div class="experiment" id="experimento-euler" hidden role="group" aria-labelledby="experimento-euler-titulo">
+          <h3 id="experimento-euler-titulo">Compara los dos caminos</h3>
+          <p>El mismo límite <var>N</var> se aplica a ambas operaciones. Fíjate en qué puntos cambia el producto cuando subes el límite.</p>
+          <div data-controls></div>
+          <dl class="experiment-results" data-results></dl>
+          <figure class="experiment-chart" data-chart></figure>
+          <p class="experiment-insight" data-insight></p>
+        </div>
+        <p id="ejemplo-euler">Con <var>N</var> = 10 hay diez sumandos, pero solo cuatro factores: 2, 3, 5 y 7 aportan un factor cada uno. Con <var>s</var> = 2, la suma vale aproximadamente 1,549768 y el producto 1,595052. Su límite común es 1,644934.</p>
+        <p>El factor del 2 contiene términos asociados a las potencias 1, 2, 4, 8… Al multiplicar los factores, el término de 60 se obtiene combinando 2², 3 y 5. Como cada entero tiene una descomposición única en primos, cada término de la suma aparece una sola vez. Los dos resultados parciales pueden diferir porque se cortan operaciones distintas.</p>
+        <p class="takeaway">La suma utiliza todos los números naturales. El producto utiliza únicamente los primos. Y ambos conducen al mismo valor en el límite.</p>
       </section>
 
       <section id="ceros" aria-labelledby="titulo-ceros">
         <h2 id="titulo-ceros">Los números complejos y los ceros de la zeta</h2>
         <p>Un número complejo tiene dos coordenadas. En <var>s</var> = <var>a</var> + <var>b</var>i, <var>a</var> es la parte real y <var>b</var> la parte imaginaria. La unidad i cumple i² = −1. En un dibujo colocamos <var>a</var> en el eje horizontal y <var>b</var> en el vertical. Por ejemplo, 2 + 3i se dibuja dos unidades a la derecha y tres hacia arriba.</p>
         <p>Un número real es el caso en que la coordenada imaginaria vale cero. La zeta también acepta entradas con coordenada imaginaria distinta de cero y en general devuelve otro número complejo. Hablamos de un <strong>cero</strong> cuando la salida vale exactamente 0, es decir, cuando las dos coordenadas de la salida se anulan.</p>
+        <details class="math-note" id="continuacion-zeta">
+          <summary>¿Qué ocurre cuando la serie deja de converger?</summary>
+          <p>La serie original converge cuando la parte real de <var>s</var> es mayor que 1. La <strong>continuación analítica</strong> extiende la función al resto del plano complejo, salvo en <var>s</var> = 1, donde tiene un polo y su magnitud crece sin límite al acercarnos al punto.</p>
+          <p>La función extendida da ζ(0) = −1/2, ζ(−1) = −1/12 y ζ(−2) = 0. La serie original diverge en esas entradas. En particular, la suma ordinaria 1 + 2 + 3 + … crece sin límite.</p>
+        </details>
         <p>En la zeta extendida, −2, −4, −6 y los demás enteros pares negativos son ceros llamados <strong>triviales</strong>. Los demás se llaman <strong>no triviales</strong> y están en la banda crítica, entre las partes reales 0 y 1, sin incluir los bordes. El primero con parte imaginaria positiva se sitúa aproximadamente en 0,5 + 14,134725i. Su parte real es exactamente 1/2 y la cifra decimal de su parte imaginaria está redondeada.</p>
         <p>El <a href="#inicio">plano complejo de la cabecera</a> muestra los tres primeros ceros con parte imaginaria positiva. Hay también ceros reflejados bajo el eje horizontal. Estos puntos pertenecen a la continuación analítica, pues la serie original solo converge a la derecha de la banda.</p>
       </section>
