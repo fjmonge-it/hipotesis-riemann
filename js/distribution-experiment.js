@@ -10,6 +10,8 @@ export function initDistributionExperiment(root) {
   const exact = root.querySelector('#x-exacto');
   const results = root.querySelector('[data-results]');
   const summary = root.querySelector('[data-summary]');
+  const announcement = root.querySelector('[data-announcement]');
+  let announcementTimer;
   const countChart = root.querySelector('#grafico-recuento');
   const errorChart = root.querySelector('#grafico-desviacion');
   const shortcuts = root.querySelectorAll('[data-reading]');
@@ -55,9 +57,20 @@ export function initDistributionExperiment(root) {
     draw();
   }
 
+  function announce() {
+    clearTimeout(announcementTimer);
+    announcementTimer = setTimeout(() => {
+      announcement.textContent = summary.textContent;
+    }, 220);
+  }
+
+  limit.value = limit.querySelector('option[selected]').value;
   root.hidden = false;
   changeLimit();
-  limit.addEventListener('change', () => changeLimit());
+  limit.addEventListener('change', () => {
+    changeLimit();
+    announce();
+  });
   for (const button of shortcuts) {
     button.addEventListener('click', () => {
       const x = Number(button.dataset.reading);
@@ -67,12 +80,18 @@ export function initDistributionExperiment(root) {
       } else {
         update(x);
       }
+      announce();
     });
   }
-  slider.addEventListener('input', () => update(slider.valueAsNumber));
+  slider.addEventListener('input', () => {
+    clearTimeout(announcementTimer);
+    update(slider.valueAsNumber);
+  });
+  slider.addEventListener('change', announce);
   exact.addEventListener('change', () => {
     const x = exact.valueAsNumber;
     update(Number.isFinite(x) ? Math.min(model.limit, Math.max(2, Math.round(x))) : reading.x);
+    announce();
   });
   new ResizeObserver(() => {
     if (countChart.clientWidth !== width) draw();

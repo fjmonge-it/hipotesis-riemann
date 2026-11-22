@@ -123,7 +123,7 @@ footer { border-top: 1px solid var(--rule); text-align: center; padding: 1.25rem
 .experiment-controls label { display: block; font-weight: 650; }
 .experiment :is(button, select) {
   min-height: 44px;
-  border: 1px solid #82988a;
+  border: 1px solid #718678;
   border-radius: 4px;
   background: var(--white);
   color: var(--ink);
@@ -226,7 +226,7 @@ summary + p { margin-top: .55rem; }
   min-height: 44px;
   margin-top: .25rem;
   padding: .35rem .6rem;
-  border: 1px solid #82988a;
+  border: 1px solid #718678;
   border-radius: 4px;
   background: var(--white);
   color: var(--ink);
@@ -239,3 +239,17 @@ summary + p { margin-top: .55rem; }
 }
 
 .distribution-shortcuts { margin: 0 0 1rem; }
+
+.closing-topics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem 2rem;
+  margin: 1.5rem 0;
+}
+.closing-topics > div { border-top: 1px solid var(--rule); padding-top: .9rem; }
+.closing-topics h3 { margin: 0 0 .55rem; color: var(--accent); }
+.closing-takeaway { background: var(--mint); padding: .8rem 1rem; }
+@media (max-width: 34rem) {
+  .closing-topics { grid-template-columns: 1fr; gap: 1rem; }
+}
+#experimento-ceros [data-band] { stroke: var(--muted); stroke-dasharray: 3 4; }

@@ -17,7 +17,7 @@
       <a class="hero-link" href="#primos">Empezar por los primos <span aria-hidden="true">↓</span></a>
     </div>
     <figure class="hero-figure">
-      <svg viewBox="0 0 360 330" role="img" aria-labelledby="hero-title hero-desc">
+      <svg viewBox="0 0 360 330" role="img" aria-labelledby="hero-title" aria-describedby="hero-desc">
         <title id="hero-title">Tres ceros de la función zeta</title>
         <desc id="hero-desc">Sus partes imaginarias son aproximadamente 14,13, 21,02 y 25,01. Los tres tienen parte real 0,5.</desc>
         <path class="grid" d="M34 42H338M34 102H338M34 162H338M34 222H338M34 282H338M64 26V282M124 26V282M184 26V282M244 26V282M304 26V282"/>
@@ -134,7 +134,7 @@
             <div><strong>Camino A · Todos los números</strong><div class="equation">ζ(<var>s</var>) = ∑<sub><var>n</var> ≥ 1</sub> <var>n</var><sup>−<var>s</var></sup></div></div>
             <div><strong>Camino B · Solo los primos</strong><div class="equation">ζ(<var>s</var>) = ∏<sub><var>p</var> primo</sub> (1 − <var>p</var><sup>−<var>s</var></sup>)<sup>−1</sup></div></div>
           </div>
-          <figcaption>∑ indica una suma sobre todos los enteros positivos <var>n</var>. ∏ indica un producto sobre todos los primos <var>p</var>. La identidad se cumple cuando Re(<var>s</var>), la parte real de <var>s</var>, es mayor que 1.</figcaption>
+          <figcaption>∑ indica una suma sobre todos los enteros positivos <var>n</var>. ∏ indica un producto sobre todos los primos <var>p</var>. En este experimento usamos exponentes reales mayores que 1. La identidad también vale para exponentes complejos cuya parte real sea mayor que 1. Veremos qué significa esa coordenada en la siguiente sección.</figcaption>
         </figure>
         <div class="experiment" id="experimento-euler" hidden role="group" aria-labelledby="experimento-euler-titulo">
           <h3 id="experimento-euler-titulo">Compara los dos caminos</h3>
@@ -151,7 +151,7 @@
           <p class="experiment-insight" data-insight></p>
         </div>
         <p id="ejemplo-euler">Con <var>N</var> = 10 hay diez sumandos, pero solo cuatro factores: 2, 3, 5 y 7 aportan un factor cada uno. Con <var>s</var> = 2, la suma vale aproximadamente 1,549768 y el producto 1,595052. Su límite común es aproximadamente 1,644934.</p>
-        <p>El factor del 2 contiene términos asociados a las potencias 1, 2, 4, 8… Al multiplicar los factores, el término de 60 se obtiene combinando 2², 3 y 5. Como cada entero tiene una descomposición única en primos, cada término de la suma aparece una sola vez. Las aproximaciones ilustran la identidad. Lo que permite establecer la igualdad es la factorización única y la convergencia de ambas expresiones infinitas.</p>
+        <p>Al desarrollar el factor del 2 aparecen los inversos 1, 1/2<sup><var>s</var></sup>, 1/4<sup><var>s</var></sup>, 1/8<sup><var>s</var></sup>… Al multiplicar los factores, el término de 60 se obtiene combinando 2², 3 y 5. Como cada entero tiene una descomposición única en primos, cada término de la suma aparece una sola vez. Las aproximaciones ilustran la identidad. Lo que permite establecer la igualdad es la factorización única y la convergencia de ambas expresiones infinitas.</p>
         <p class="takeaway">La suma utiliza todos los números naturales. El producto utiliza solo los primos. Ambos conducen al mismo valor en el límite.</p>
       </section>
 
@@ -176,7 +176,7 @@
         <p class="takeaway">Un número complejo puede representarse como un punto con dos coordenadas.</p>
         <h3>¿Qué significa que la zeta tenga un cero?</h3>
         <p>La zeta puede recibir un número complejo y devolver otro. Un <strong>cero</strong> es una entrada para la que el resultado vale exactamente 0. Eso significa que ambas partes de la salida, real e imaginaria, se anulan.</p>
-        <p>La serie original converge cuando Re(<var>s</var>) &gt; 1. Para estudiar sus ceros usamos la zeta extendida mediante <strong>continuación analítica</strong>. Esta técnica amplía la función conservando los valores de la serie donde sí converge.</p>
+        <p>La serie original converge cuando la parte real de <var>s</var> es mayor que 1. Lo escribimos Re(<var>s</var>) &gt; 1. Para estudiar sus ceros usamos la zeta extendida mediante <strong>continuación analítica</strong>. Esta técnica amplía la función conservando los valores de la serie donde sí converge.</p>
         <details class="math-note" id="continuacion-zeta">
           <summary>¿Qué ocurre cuando la serie deja de converger?</summary>
           <p>La serie original converge cuando la parte real de <var>s</var> es mayor que 1. La <strong>continuación analítica</strong> extiende la función al resto del plano complejo, salvo en <var>s</var> = 1, donde tiene un polo y su magnitud crece sin límite al acercarnos al punto.</p>
@@ -190,7 +190,14 @@
         <p class="experiment-question">¿Qué tienen en común los primeros ceros no triviales de la función zeta?</p>
         <div class="experiment" id="experimento-ceros" hidden role="group" aria-labelledby="titulo-explorador-ceros">
           <h3 id="titulo-explorador-ceros">Busca una alineación</h3>
-          <p class="experiment-guide"><strong>Prueba este experimento.</strong> Muestra más ceros y selecciona alguno. Activa la recta crítica. ¿Qué tienen en común sus coordenadas horizontales?</p>
+          <div class="experiment-guide">
+            <strong>Prueba este experimento</strong>
+            <ol>
+              <li>Localiza el primer cero dentro de la franja sombreada. Esa es la banda crítica, entre las partes reales 0 y 1.</li>
+              <li>Muestra más ceros y selecciónalos para comparar sus coordenadas horizontales.</li>
+              <li>Activa la recta crítica. ¿Qué tienen en común los puntos?</li>
+            </ol>
+          </div>
           <div class="experiment-controls zero-controls">
             <label for="cantidad-ceros">Primeros ceros visibles
               <select id="cantidad-ceros"><option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
@@ -202,7 +209,7 @@
           <p class="prime-selection" data-summary role="status"></p>
           <figure class="plane-figure">
             <svg viewBox="0 0 346 309" role="img"></svg>
-            <figcaption>El anillo señala el cero elegido. El gráfico muestra ceros tabulados con parte imaginaria positiva y usa escalas distintas en los dos ejes. La banda va de Re(s) = 0 a Re(s) = 1. Su centro es la recta crítica, Re(s) = ½.</figcaption>
+            <figcaption>El anillo señala el cero elegido. Se muestran ceros tabulados con parte imaginaria positiva. Los ejes tienen escalas distintas para que se aprecien la anchura de la banda y las alturas de los puntos.</figcaption>
           </figure>
         </div>
         <p id="ejemplo-ceros">El <a href="#inicio">plano de la cabecera</a> muestra los tres primeros ceros con parte imaginaria positiva. El primero es aproximadamente 0,5 + 14,134725i. Su parte real es exactamente ½ y la parte imaginaria está redondeada.</p>
@@ -210,14 +217,18 @@
           <blockquote>Todos los ceros no triviales de la función zeta tienen parte real exactamente igual a 1/2.</blockquote>
           <figcaption>Eso es lo que afirma la hipótesis de Riemann. Los puntos pueden estar a distintas alturas, pero todos quedarían sobre la misma línea vertical.</figcaption>
         </figure>
-        <p>Los ceros que acabas de ver se alinean sobre esa recta. Se han verificado miles de millones de casos. Esto es evidencia numérica. Una demostración tendría que cubrir todos los ceros, y un solo cero no trivial fuera de la recta bastaría para refutar la hipótesis.</p>
+        <p>Los cinco ceros del experimento están sobre la recta crítica, Re(<var>s</var>) = ½. Se han verificado miles de millones de casos, pero ninguna comprobación finita demuestra la afirmación para todos los ceros. Bastaría un solo cero no trivial fuera de la recta para refutarla.</p>
         <p><a href="#distribucion">¿Y qué tienen que ver estos puntos del plano complejo con los números primos?</a></p>
       </section>
 
       <section id="distribucion" aria-labelledby="titulo-distribucion">
         <h2 id="titulo-distribucion">El orden escondido detrás del desorden</h2>
         <p class="experiment-question">Si los primos aparecen de forma irregular, ¿podemos predecir cuántos encontraremos?</p>
-        <p>π(<var>x</var>) cuenta los primos menores o iguales que <var>x</var>. Por ejemplo, π(10) = 4 y π(100) = 25. La <strong>integral logarítmica</strong> li(<var>x</var>) estima esa cantidad. La definición estándar empieza en li(2) ≈ 1,045164 y añade el área bajo 1/ln(<var>t</var>) desde 2 hasta <var>x</var>. Aquí ln es el logaritmo natural. Para <var>x</var> &gt; 1, la misma función se escribe como Ei(ln <var>x</var>), donde Ei es la integral exponencial.</p>
+        <p>π(<var>x</var>) cuenta los primos menores o iguales que <var>x</var>. Por ejemplo, π(10) = 4 y π(100) = 25. La <strong>integral logarítmica</strong> li(<var>x</var>) estima esa cantidad. La definición estándar empieza en li(2) ≈ 1,045164 y añade el área bajo 1/ln(<var>t</var>) desde 2 hasta <var>x</var>. Aquí ln es el logaritmo natural.</p>
+        <details class="math-note">
+          <summary>La definición de la integral logarítmica</summary>
+          <p>Para <var>x</var> &gt; 1, li(<var>x</var>) = Ei(ln <var>x</var>), donde Ei es la integral exponencial. Para <var>x</var> ≥ 2 se obtiene el mismo valor al sumar li(2) y el área descrita arriba. El simulador usa esta definición estándar.</p>
+        </details>
         <div class="experiment" id="experimento-distribucion" hidden role="group" aria-labelledby="titulo-recuento">
           <h3 id="titulo-recuento">Cuenta y compara</h3>
           <p class="experiment-guide"><strong>Prueba este experimento.</strong> Empieza en 100 y compara el recuento y la estimación. Amplía el intervalo a 1.000, 10.000 y 100.000. ¿Siguen de cerca la misma tendencia?</p>
@@ -249,7 +260,8 @@
             <svg role="img" aria-label="Desviación del recuento respecto a la estimación, con una línea de referencia en cero"></svg>
             <figcaption>El eje horizontal coincide con el de arriba. La escala vertical muestra la diferencia ampliada. La línea horizontal discontinua marca el cero y la línea vertical señala el mismo valor de <var>x</var> en ambas gráficas.</figcaption>
           </figure>
-          <p class="experiment-insight" data-summary aria-live="polite"></p>
+          <p class="experiment-insight" data-summary></p>
+          <p class="visually-hidden" data-announcement role="status"></p>
         </div>
         <div id="ejemplo-distribucion">
           <p>Para comparar, π(1.000) = 168, π(10.000) = 1.229 y π(100.000) = 9.592. La desviación E(<var>x</var>) = π(<var>x</var>) − li(<var>x</var>) es positiva si el recuento supera la estimación, negativa si queda por debajo y cero si coincide. En 100 hay 25 primos y la estimación es aproximadamente 30,12614. La diferencia es de unos −5,12614.</p>
@@ -290,13 +302,25 @@
 
       <section id="importancia" aria-labelledby="titulo-importancia">
         <h2 id="titulo-importancia">¿Por qué importa demostrarla?</h2>
-        <p>Una demostración convertiría la evidencia sobre los ceros en una garantía para todos ellos. También proporcionaría el control sobre las desviaciones de los primos descrito arriba. Cuando un teorema depende de la hipótesis de Riemann como única condición pendiente, una demostración permitiría aplicar ese teorema sin dicha condición.</p>
-        <h3>Algoritmos y criptografía</h3>
-        <p>La <strong>hipótesis de Riemann generalizada</strong> extiende una afirmación análoga a otras funciones, como las funciones L de Dirichlet. Una demostración de la hipótesis original solo resolvería el caso de la zeta. En teoría computacional de números, PARI/GP distingue entre resultados de grupos de clases de números certificados y resultados de <code>bnfinit</code> cuya garantía puede depender de una versión generalizada de la hipótesis. Su función <code>bnfcertify</code> permite certificar esos resultados. SageMath también documenta opciones de prueba en sus cálculos de grupos de clases.</p>
-        <p>Para RSA, una cuestión práctica es si se puede factorizar con eficiencia el producto de dos primos grandes. Acotar cuántos primos hay hasta cierto número es un problema diferente. Una demostración de la hipótesis no aportaría automáticamente un algoritmo eficiente de factorización.</p>
-        <h3>Investigación e inteligencia artificial</h3>
-        <p>Las ideas necesarias para una demostración podrían aportar herramientas para otros problemas. Un sistema de IA puede buscar patrones, proponer ideas para una prueba o ayudar a traducir un argumento a un lenguaje formal. Un verificador formal comprueba que cada paso se deduce de las definiciones y premisas codificadas. Calcular ejemplos, descubrir un argumento y verificarlo son tareas distintas.</p>
-        <p>Un anuncio es el comienzo de la evaluación. Una comprobación formal aporta evidencia sobre el enunciado codificado. La revisión matemática examina que ese enunciado corresponde a la pregunta planteada, estudia los supuestos e interpreta el alcance del resultado. El reconocimiento científico llega tras esa evaluación.</p>
+        <div class="closing-topics">
+          <div>
+            <h3>Una estimación con garantías</h3>
+            <p>Una demostración confirmaría la cota que hemos visto. Sabríamos con qué precisión se puede estimar cuántos primos hay hasta un número grande, incluso mucho más allá de los valores que hemos explorado.</p>
+          </div>
+          <div>
+            <h3>De resultados condicionales a teoremas</h3>
+            <p>Algunos resultados quedarían demostrados si la hipótesis original es su única condición pendiente. La <strong>hipótesis de Riemann generalizada</strong> abarca otras funciones, como las funciones L de Dirichlet. Resolver el caso de la zeta dejaría abiertos esos otros casos. Por eso las condiciones más amplias que aparecen en herramientas como PARI/GP o SageMath se deben examinar por separado.</p>
+          </div>
+          <div>
+            <h3>Qué significa para RSA</h3>
+            <p>Contar primos y factorizar un entero son problemas distintos. RSA utiliza productos de primos grandes. Demostrar la hipótesis por sí sola no aporta un método eficiente para recuperar esos factores ni implica que se pueda romper RSA.</p>
+          </div>
+          <div>
+            <h3>Ideas, demostraciones e inteligencia artificial</h3>
+            <p>Una IA puede sugerir una idea. Construir una demostración exige convertir esa idea en un argumento completo. Formalizarlo requiere escribirlo en un lenguaje preciso para que un verificador pueda comprobar cada paso. La revisión matemática también examina si el enunciado formal corresponde al problema original y qué supuestos se han usado.</p>
+          </div>
+        </div>
+        <p class="takeaway closing-takeaway">Los números primos parecen aparecer sin un patrón sencillo. La función zeta revela una estructura común detrás de ese reparto. La hipótesis de Riemann relaciona la posición de sus ceros con la precisión con la que podemos describir la distribución de los primos.</p>
       </section>
 
       <aside class="sources" aria-labelledby="titulo-fuentes">

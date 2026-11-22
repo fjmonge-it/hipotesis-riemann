@@ -85,6 +85,9 @@ export function initZeroExplorer(root) {
       <text x="${right}" y="283" text-anchor="middle">1</text>
     </g><g data-points></g>`;
   const points = chart.querySelector('[data-points]');
+  count.value = count.querySelector('option[selected]').value;
+  showBand.checked = showBand.defaultChecked;
+  showLine.checked = showLine.defaultChecked;
 
   function update() {
     const active = Number(selected.value);
@@ -97,9 +100,13 @@ export function initZeroExplorer(root) {
         + (active === index ? '<circle class="selected-ring" cx="' + p.x + '" cy="' + p.y + '" r="8"/>' : '');
     }).join('');
     const zero = visible[active];
-    chart.setAttribute('aria-label', 'Plano de los primeros ' + visible.length + ' ceros mostrados, todos con parte real un medio.');
-    summary.textContent = 'Cero ' + (active + 1) + ': s ≈ ' + complexLabel(zero.real, zero.imaginary, 6)
+    const plotted = visible.length === 1 ? 'El primer cero no trivial' : 'Los primeros ' + visible.length + ' ceros no triviales';
+    const overlays = (showBand.checked ? ' Banda crítica visible.' : '')
+      + (showLine.checked ? ' Recta crítica visible en la parte real un medio.' : '');
+    chart.setAttribute('aria-label', plotted + ' con parte imaginaria positiva.' + overlays);
+    const coordinates = 'Cero ' + (active + 1) + ': s ≈ ' + complexLabel(zero.real, zero.imaginary, 6)
       + '. La parte real es exactamente ½. La parte imaginaria está redondeada.';
+    if (summary.textContent !== coordinates) summary.textContent = coordinates;
   }
 
   function updateOptions() {

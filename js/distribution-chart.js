@@ -66,7 +66,7 @@ export function drawDistributionChart(figure, model, errorChart) {
   svg.setAttribute('viewBox', '0 0 ' + width + ' 203');
   svg.innerHTML = `
     <g class="plane-labels">
-      <text x="49" y="14">${errorChart ? 'Desviación E(x)' : 'Cantidad acumulada'}</text>
+      <text x="49" y="16">${errorChart ? 'Desviación E(x)' : 'Cantidad acumulada'}</text>
       ${axes}${horizontal}
       <path class="axis" d="M49 22V${bottom}H${right}"/>
       <text x="${width / 2}" y="198" text-anchor="middle">Límite del recuento, x</text>
