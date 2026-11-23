@@ -60,15 +60,6 @@ function describe(pair) {
     + ' − ' + numberLabel(pair.start) + ' = ' + pair.gap + '. ' + inside;
 }
 
-function onBarClick(figure, getDomain, choose) {
-  figure.querySelector('svg').addEventListener('click', event => {
-    const svg = event.currentTarget;
-    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(svg.getScreenCTM().inverse());
-    const [min, max] = getDomain();
-    choose(min + (point.x - 61) / (svg.viewBox.baseVal.width - 91) * (max - min));
-  });
-}
-
 export const gapLimits = Object.freeze([100, 1000, 10000, 100000, 1000000]);
 
 export function gapOverview(limits = gapLimits) {
@@ -89,8 +80,8 @@ export function initPrimeGaps(root) {
     root.querySelector('[data-maximum]').textContent = selected.max.gap;
     root.querySelector('[data-maximum-pair]').textContent = 'Entre ' + name(selected.max) + '.';
     for (const [figure, key, title, maxY] of [
-      [meanChart, entry => entry.mean, 'Distancia media', 15],
-      [maxChart, entry => entry.max.gap, 'Mayor distancia', 120],
+      [meanChart, entry => entry.mean, 'Distancia media', 16],
+      [maxChart, entry => entry.max.gap, 'Mayor distancia', 130],
     ]) {
       const values = entries.map(key);
       plot(figure, {
@@ -99,7 +90,7 @@ export function initPrimeGaps(root) {
         xLabel: 'Límite estudiado', yLabel: title, marker: [index, values[index]],
         label: title + ': ' + values.map((value, i) => ticks[i][1] + ', ' + decimal.format(value)).join('; '),
         pointLabels: values.map((value, i) => [i, value, decimal.format(value)]),
-        wideTicks: true,
+        wideTicks: true, ringMarker: true,
       });
     }
   }
@@ -111,23 +102,30 @@ export function initPrimeGaps(root) {
   observer.observe(maxChart);
 }
 
+export function nearbyPairs(pairs, index) {
+  return pairs.slice(Math.max(0, index - 5), index + 6);
+}
+
 export function initPrimeSequence(root) {
   const start = root.querySelector('[data-start]');
   const count = root.querySelector('[data-count]');
   const selector = root.querySelector('[data-pair-select]');
   const more = root.querySelector('[data-more]');
-  const figure = root.querySelector('figure');
+  const nearby = root.querySelector('[data-nearby]');
   const sequence = root.querySelector('[data-sequence]');
   const detail = root.querySelector('[data-pair]');
   let primes;
   let pairs;
-  let range;
   function draw() {
     const index = Number(selector.value);
     const pair = pairs[index];
-    const from = Math.max(0, Math.min(index - 24, pairs.length - 50));
-    const shown = pairs.slice(from, from + 50);
-    range = [from + 1, from + shown.length];
+    const shown = nearbyPairs(pairs, index);
+    const maximum = Math.max(...shown.map(item => item.gap));
+    nearby.innerHTML = '<ol class="nearby-gaps" aria-label="Parejas próximas y sus distancias">' + shown.map(item => (
+      '<li' + (item === pair ? ' aria-current="true"' : '') + '><span>' + numberLabel(item.start) + ' → ' + numberLabel(item.end)
+      + '</span><strong>' + item.gap + '</strong><span class="nearby-bar" aria-hidden="true"><span style="width:'
+      + (100 * item.gap / maximum) + '%"></span></span></li>'
+    )).join('') + '</ol>';
     detail.textContent = describe(pair);
     const first = Math.max(0, Math.min(index - 2, primes.length - 6));
     sequence.replaceChildren(...primes.slice(first, first + 6).map((prime, i, values) => {
@@ -137,15 +135,6 @@ export function initPrimeSequence(root) {
       node.classList.toggle('chosen-prime', emphasis);
       return node;
     }));
-    plot(figure, {
-      series: [
-        { points: shown.map((p, i) => [from + i + 1, p.gap]), style: 'line-primes', bars: true },
-        { points: [[index + 1, pair.gap]], style: 'chosen-bar', bars: true },
-      ],
-      minX: range[0], maxX: range[1], maxY: Math.max(...shown.map(p => p.gap)),
-      xLabel: 'Pareja de primos consecutivos', yLabel: 'Distancia',
-      marker: [index + 1, pair.gap], label: 'Distancias en la secuencia. ' + detail.textContent,
-    });
   }
   function render(selected) {
     pairs = primes.slice(1).map((end, i) => ({ start: primes[i], end, gap: end - primes[i] }));
@@ -171,11 +160,6 @@ export function initPrimeSequence(root) {
     render(previous - 1);
   });
   selector.addEventListener('change', draw);
-  onBarClick(figure, () => range, target => {
-    selector.value = Math.max(range[0], Math.min(range[1], Math.round(target))) - 1;
-    draw();
-  });
   root.hidden = false;
   reset();
-  new ResizeObserver(draw).observe(figure);
 }

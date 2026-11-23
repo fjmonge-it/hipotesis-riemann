@@ -2,7 +2,7 @@ const number = new Intl.NumberFormat('es-ES', { maximumSignificantDigits: 6, use
 const integer = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
 export const numberLabel = value => (Number.isInteger(value) ? integer : number).format(value).replace('-', '−');
 
-export function plot(figure, { series, xLabel, yLabel, marker, label, minY = 0, maxY, minX, maxX, horizontalTicks, formatY = numberLabel, average, maximum, pointLabels = [], wideTicks = false, referenceX }) {
+export function plot(figure, { series, xLabel, yLabel, marker, label, minY = 0, maxY, minX, maxX, horizontalTicks, formatY = numberLabel, average, maximum, pointLabels = [], wideTicks = false, referenceX, ringMarker = false }) {
   const svg = figure.querySelector('svg');
   const width = Math.max(245, Math.floor(figure.clientWidth));
   const left = wideTicks ? 28 : 61;
@@ -30,7 +30,8 @@ export function plot(figure, { series, xLabel, yLabel, marker, label, minY = 0, 
       return '<path class="' + style + '" d="' + points.map(([a, b], i) => (i === 0 ? 'M' : 'L') + x(a) + ' ' + y(b)).join('') + '"/>';
     }).join('')}
     ${pointLabels.map(([a, b, text]) => '<text class="plane-labels" x="' + x(a)
-      + '" y="' + (y(b) - 10) + '" text-anchor="middle">' + text + '</text>').join('')}
+      + '" y="' + (Math.min(bottom - 17, y(b) - 12)) + '" text-anchor="middle">' + text + '</text>').join('')}
     ${maximum ? '<path class="peak-symbol" d="M' + x(maximum[0]) + ' ' + (y(maximum[1]) - 7) + 'l5 5 -5 5 -5 -5z"/>' : ''}
+    ${marker && ringMarker ? '<circle class="selected-ring" r="8" cx="' + x(marker[0]) + '" cy="' + y(marker[1]) + '"/>' : ''}
     ${marker ? '<circle class="example-point" r="5" cx="' + x(marker[0]) + '" cy="' + y(marker[1]) + '"/>' : ''}`;
 }

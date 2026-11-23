@@ -329,3 +329,10 @@ summary + p { margin-top: .55rem; }
   .error-history, #error-doce-trece table { font-size: .88rem; }
   .error-history :is(th, td), #error-doce-trece :is(th, td) { padding: .35rem .25rem; }
 }
+
+.nearby-gaps { list-style: none; margin: 1rem 0; padding: 0; }
+.nearby-gaps li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .25rem .6rem; padding: .42rem; }
+.nearby-gaps li[aria-current] { background: var(--mint); font-weight: 700; }
+.nearby-bar { grid-column: 1 / -1; height: .4rem; background: var(--paper); }
+.nearby-bar > span { display: block; height: 100%; background: var(--accent); }
+.nearby-gaps li[aria-current] .nearby-bar > span { background: var(--rust); }

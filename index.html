@@ -78,12 +78,12 @@
               <div><dt>Mayor distancia encontrada</dt><dd><strong data-maximum></strong><p data-maximum-pair></p></dd></div>
             </dl>
             <div class="distance-figures">
-              <figure data-mean-chart><h4>Cómo cambia la media</h4><svg role="img"></svg><figcaption>El círculo marca el intervalo elegido.</figcaption></figure>
-              <figure data-maximum-chart><h4>Cómo cambia la mayor distancia</h4><svg role="img"></svg><figcaption>Las dos gráficas tienen escalas verticales distintas.</figcaption></figure>
+              <figure data-mean-chart><h4>Cómo cambia la media</h4><svg role="img"></svg></figure>
+              <figure data-maximum-chart><h4>Cómo cambia la mayor distancia</h4><svg role="img"></svg></figure>
             </div>
           </div>
         </div>
-        <p>Entre 492.113 y 492.227 hay una distancia de 114. En medio quedan 113 enteros consecutivos compuestos. Aun así, después de una separación grande pueden aparecer primos muy próximos. La media tiende a crecer al estudiar intervalos mayores, aunque las distancias individuales sean irregulares.</p>
+        <p>En intervalos cada vez mayores aumenta la distancia media y encontramos separaciones máximas más grandes. Las distancias de las parejas individuales pueden volver a ser pequeñas después de una grande. Vamos a comprobarlo con primos muy grandes.</p>
         <div id="presentacion-explorador">
           <h3>Explora cómo se separan los números primos</h3>
           <p>¿Qué ocurre cuando buscamos primos cerca de un millón o de veinticinco millones? Elige un punto de partida y veremos los primos consecutivos que vienen después. Fíjate en si, tras una separación grande, aparecen de nuevo primos muy próximos.</p>
@@ -97,7 +97,8 @@
             <p class="prime-sequence" data-sequence></p>
             <label>¿Qué pareja quieres examinar?<select data-pair-select></select></label>
             <p data-pair role="status"></p>
-            <figure class="experiment-chart"><svg role="img"></svg><figcaption>La primera barra mide la primera pareja, la segunda mide la siguiente y así sucesivamente. La barra marrón y el punto señalan la pareja elegida. Si hay más de 50 parejas, la gráfica muestra las que rodean a la elegida.</figcaption></figure>
+            <div data-nearby></div>
+            <p>Las barras tienen una escala común y muestran las parejas próximas a la elegida. El resumen abarca todas las distancias de la exploración.</p>
             <p data-stats></p>
           </div>
         </div>
