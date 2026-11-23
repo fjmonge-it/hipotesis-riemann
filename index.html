@@ -232,16 +232,16 @@
         </figure>
         <p>Se habían comprobado muchísimos ceros antes del anuncio de noviembre de 2026. Toda lista comprobada sigue siendo finita. Una demostración debe justificar la afirmación para todos los ceros, sin excepción.</p>
         <div class="experiment" id="experimento-ceros" hidden role="group" aria-labelledby="titulo-explorador-ceros">
-          <h3 id="titulo-explorador-ceros">Comprueba cómo se alinean los ceros conocidos</h3>
-          <p>Amplía el número de ceros. La escala vertical cambia para que quepan todos. Selecciona un punto o elige su número para leer las coordenadas.</p>
+          <h3 id="titulo-explorador-ceros">Explora la alineación de los ceros conocidos</h3>
+          <p>Vamos a examinar los primeros 50 ceros en grupos de diez para distinguirlos mejor. Selecciona un grupo y elige un punto o su número. Sus alturas son distintas, pero todos permanecen sobre la recta crítica.</p>
           <div class="experiment-controls">
-            <label for="cantidad-ceros">¿Cuántos ceros quieres ver?
-              <select id="cantidad-ceros"><option selected>1</option><option>3</option><option>5</option><option>10</option><option>20</option><option>50</option></select>
+            <label for="cantidad-ceros">¿Qué grupo de ceros quieres ver?
+              <select id="cantidad-ceros"><option value="0" selected>Ceros 1 al 10</option><option value="10">Ceros 11 al 20</option><option value="20">Ceros 21 al 30</option><option value="30">Ceros 31 al 40</option><option value="40">Ceros 41 al 50</option></select>
             </label>
             <label for="cero-elegido">¿Qué cero quieres examinar?<select id="cero-elegido"></select></label>
           </div>
           <p class="prime-selection" role="status" data-summary></p>
-          <figure class="plane-figure"><svg role="img"></svg><figcaption>La banda verde va de 0 a 1 en el eje real. La línea discontinua marca su centro y el anillo señala el cero seleccionado.</figcaption></figure>
+          <figure class="plane-figure"><svg role="img"></svg><figcaption>La banda verde va de 0 a 1 en el eje real. La línea discontinua marca su centro y el anillo señala el cero elegido. El eje vertical muestra solo el tramo de alturas del grupo.</figcaption></figure>
           <p data-zero-conclusion></p>
         </div>
         <p id="ejemplo-ceros">El primer cero con parte imaginaria positiva está aproximadamente en 0,5 + 14,134725i. Su parte real es exactamente ½.</p>

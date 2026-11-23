@@ -65,6 +65,16 @@ export function zeroScale(highest) {
   return { step, max: (Math.floor(highest / step) + 1) * step };
 }
 
+export function zeroGroup(start) {
+  const points = nontrivialZeros.slice(start, start + 10);
+  const first = points[0].imaginary;
+  const last = points.at(-1).imaginary;
+  const step = last - first > 25 ? 10 : 5;
+  const min = Math.floor(first / step) * step;
+  const max = Math.ceil(last / step) * step;
+  return { points, min, max, step };
+}
+
 export function initZeroExplorer(root) {
   const count = root.querySelector('#cantidad-ceros');
   const selected = root.querySelector('#cero-elegido');
@@ -72,19 +82,20 @@ export function initZeroExplorer(root) {
   const summary = root.querySelector('[data-summary]');
   let visible;
   let scale;
+  let start;
   const frame = { left: 48, top: 24, width: 268, height: 370 };
-  const position = (a, b) => project(a, b, { xMin: -.15, xMax: 1.15, yMin: 0, yMax: scale.max }, frame);
+  const position = (a, b) => project(a, b, { xMin: -.15, xMax: 1.15, yMin: scale.min, yMax: scale.max }, frame);
   chart.setAttribute('viewBox', '0 0 350 446');
   function draw() {
     const active = Number(selected.value);
-    summary.textContent = zeroReading(visible[active], active);
+    summary.textContent = zeroReading(visible[active], start + active);
     const left = position(0, 0).x;
     const right = position(1, 0).x;
     const middle = position(criticalStrip.line, 0).x;
-    const bottom = position(0, 0).y;
-    const ticks = Array.from({ length: scale.max / scale.step }, (_, i) => (i + 1) * scale.step);
+    const bottom = position(0, scale.min).y;
+    const ticks = Array.from({ length: (scale.max - scale.min) / scale.step + 1 }, (_, i) => scale.min + i * scale.step);
     const selection = position(visible[active].real, visible[active].imaginary);
-    chart.setAttribute('aria-label', (visible.length === 1 ? 'Primer cero sobre la recta crítica. ' : 'Primeros ' + visible.length + ' ceros sobre la recta crítica. ') + summary.textContent);
+    chart.setAttribute('aria-label', 'Ceros ' + (start + 1) + ' al ' + (start + 10) + ' sobre la recta crítica. ' + summary.textContent);
     chart.innerHTML = `
       <rect class="strip-fill" x="${left}" y="${frame.top}" width="${right - left}" height="${frame.height}"/>
       <g class="plane-labels">
@@ -100,20 +111,17 @@ export function initZeroExplorer(root) {
       </g>
       ${visible.map((zero, index) => {
         const p = position(zero.real, zero.imaginary);
-        return '<ellipse data-zero="' + index + '" fill="var(--accent)" rx="' + (visible.length > 20 ? 4 : 3.6)
-          + '" ry="' + (visible.length > 20 ? .85 : 3.6) + '" cx="' + p.x + '" cy="' + p.y + '"/>';
+        return '<circle data-zero="' + (start + index + 1) + '" fill="var(--accent)" r="4" cx="' + p.x + '" cy="' + p.y + '"/>';
       }).join('')}
       <circle class="selected-ring" r="6" cx="${selection.x}" cy="${selection.y}"/>`;
   }
   function update() {
-    visible = nontrivialZeros.slice(0, Number(count.value));
-    scale = zeroScale(visible.at(-1).imaginary);
-    root.querySelector('[data-zero-conclusion]').textContent = visible.length === 1
-      ? 'Hemos representado el primer cero no trivial con parte imaginaria positiva. Está en la recta crítica, donde la parte real es ½. Comprobar casos finitos deja abierta la afirmación sobre todos los ceros.'
-      : 'Hemos representado los primeros ' + visible.length + ' ceros no triviales con parte imaginaria positiva. Están a alturas distintas, pero todos tienen parte real ½. Comprobar estos casos finitos no demuestra la propiedad para todos los ceros.';
-    const keep = Math.min(Number(selected.value), visible.length - 1);
-    selected.replaceChildren(...visible.map((_, i) => new Option('Cero ' + (i + 1), i)));
-    selected.value = keep;
+    start = Number(count.value);
+    scale = zeroGroup(start);
+    visible = scale.points;
+    root.querySelector('[data-zero-conclusion]').textContent = 'Los ceros ' + (start + 1) + ' al ' + (start + 10)
+      + ' aparecen a distintas alturas y tienen parte real ½. Comprobar los 50 casos sigue siendo una verificación finita. La hipótesis afirma esa propiedad para todos los ceros no triviales.';
+    selected.replaceChildren(...visible.map((_, i) => new Option('Cero ' + (start + i + 1), i)));
     draw();
   }
   count.addEventListener('change', update);
@@ -164,6 +172,7 @@ export function initZeroMap(root) {
       }).join('')}
       <path class="axis" d="M48 ${bottom}H318M${left} 20V${bottom}"/>
       <text x="${left}" y="190" text-anchor="middle">0</text>
+      <text x="${zoom(criticalStrip.line, 0).x}" y="190" text-anchor="middle">½</text>
       <text x="${right}" y="190" text-anchor="middle">1</text>
     </g>
     ${nontrivialZeros.slice(0, 5).map(zero => {
