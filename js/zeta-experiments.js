@@ -40,9 +40,47 @@ export function initZetaExperiment(root, compare = false) {
   let announcementText;
   let announcementTimer;
 
+  let inspected;
+  function showPoint() {
+    const { sums, products, s } = chartData;
+    const point = products.findLast(entry => entry.n <= inspected);
+    const added = point?.n === inspected
+      ? ' El producto incorpora el factor del primo ' + inspected + '.'
+      : ' El producto conserva su valor porque este entero no es primo.';
+    root.querySelector('[data-euler-point]').textContent = 'Hasta ' + inspected + ': la suma añade '
+      + formatValue(inspected ** -s) + ' y vale ' + formatValue(sums[inspected - 1])
+      + '. El producto vale ' + formatValue(point?.value ?? 1) + '.' + added;
+    const svg = chart.querySelector('svg');
+    svg.setAttribute('aria-valuenow', inspected);
+    svg.setAttribute('aria-valuetext', root.querySelector('[data-euler-point]').textContent);
+  }
   function drawChart() {
     chartWidth = chart.clientWidth;
     renderZetaChart(chart, chartData);
+    if (!compare) return;
+    const svg = chart.querySelector('svg');
+    svg.setAttribute('tabindex', '0');
+    svg.setAttribute('role', 'slider');
+    svg.setAttribute('aria-label', 'Inspeccionar la comparación. Usa las flechas para cambiar el último número incluido.');
+    svg.setAttribute('aria-valuemin', '1');
+    svg.setAttribute('aria-valuemax', chartData.sums.length);
+    function select(value) {
+      inspected = Math.min(chartData.sums.length, Math.max(1, value));
+      showPoint();
+    }
+    svg.addEventListener('keydown', event => {
+      const targets = { ArrowLeft: inspected - 1, ArrowDown: inspected - 1, ArrowRight: inspected + 1,
+        ArrowUp: inspected + 1, Home: 1, End: chartData.sums.length };
+      if (targets[event.key] === undefined) return;
+      event.preventDefault();
+      select(targets[event.key]);
+    });
+    svg.addEventListener('click', event => {
+      const x = new DOMPoint(event.clientX, event.clientY).matrixTransform(svg.getScreenCTM().inverse()).x;
+      const ratio = (x - 76) / (svg.viewBox.baseVal.width - 110);
+      select(Math.round(chartData.sums.length ** Math.max(0, Math.min(1, ratio))));
+    });
+    showPoint();
   }
 
   function update() {
@@ -96,12 +134,18 @@ export function initZetaExperiment(root, compare = false) {
       const preview = primes.length <= 5 ? list.format(primes.map(String)) : primes.slice(0, 3).join(', ') + ', …, ' + primes.slice(-2).join(', ');
       root.querySelector('[data-prime-preview]').textContent = 'Primos incluidos: ' + preview
         + '. El último es ' + primes.at(-1) + ', el mayor primo menor o igual que ' + n + '.';
-      root.querySelector('[data-prime-factors]').textContent = primes.map(p => p + ': 1/(1 − ' + p + '^(' + numberLabel(-s) + '))').join(' · ');
+      root.querySelector('[data-prime-factors]').innerHTML = primes.map(p => {
+        const power = p ** s;
+        const factor = Number.isSafeInteger(power) ? numberLabel(power) + ' / ' + numberLabel(power - 1)
+          : '≈ ' + formatValue(1 / (1 - p ** -s));
+        return '<tr><th scope="row">' + numberLabel(p) + '</th><td>' + factor + '</td></tr>';
+      }).join('');
     }
     const caption = divergent ? 'La gráfica se detiene en N porque dejamos de sumar. Si seguimos, la suma crece sin límite.'
       : compare
       ? 'La suma sube con cada entero. El producto forma escalones: solo sube cuando N alcanza un primo.'
       : 'Cada nuevo sumando hace subir la curva. La línea discontinua indica el límite.';
+    inspected = n;
     chartData = { s, sums, products, reference, compare, caption };
     drawChart();
 

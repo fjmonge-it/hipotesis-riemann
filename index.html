@@ -132,23 +132,22 @@
 
       <section id="euler" aria-labelledby="titulo-euler">
         <h2 id="titulo-euler">El descubrimiento de Euler</h2>
-        <p class="experiment-question">¿Pueden todos los números naturales y solo los números primos llevarnos al mismo resultado?</p>
-        <p>Con <var>s</var> = 2, el primer camino suma 1 + 1/2² + 1/3² + 1/4² + … El segundo multiplica [1/(1−1/2²)] × [1/(1−1/3²)] × [1/(1−1/5²)] × … El primero recorre todos los enteros positivos. El segundo recorre solo los primos.</p>
+        <p>La suma de la zeta recorre todos los números naturales. ¿Qué tiene que ver eso con los primos? Euler descubrió que podía obtener el mismo resultado multiplicando factores construidos únicamente con primos. La igualdad se cumple para las expresiones infinitas en su región de convergencia.</p>
+        <div class="closing-topics euler-intro">
+          <div><h3>Camino A · Sumar</h3><p>Con el exponente 2, sumamos 1 + <math><mfrac><mn>1</mn><mn>4</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>9</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>16</mn></mfrac></math> + … Cada término corresponde a un natural.</p></div>
+          <div><h3>Camino B · Multiplicar</h3><p>Multiplicamos <math><mfrac><mn>4</mn><mn>3</mn></mfrac></math> × <math><mfrac><mn>9</mn><mn>8</mn></mfrac></math> × <math><mfrac><mn>25</mn><mn>24</mn></mfrac></math> × <math><mfrac><mn>49</mn><mn>48</mn></mfrac></math> × … Los factores corresponden a 2, 3, 5 y 7. Para el 2 calculamos 1/(1 − 1/2²) = 4/3.</p></div>
+        </div>
         <div class="experiment" id="experimento-euler" hidden role="group" aria-labelledby="experimento-euler-titulo">
           <h3 id="experimento-euler-titulo">Compara los dos caminos</h3>
-          <div class="experiment-guide">
-            <strong>Prueba este experimento</strong>
-            <ol>
-              <li>Con <var>s</var> = 2 y <var>N</var> = 10, compara los diez sumandos con los cuatro factores de 2, 3, 5 y 7.</li>
-              <li>Sube <var>N</var> a 100 y luego a 1.000. ¿Qué les ocurre a las dos distancias al límite?</li>
-            </ol>
-          </div>
+          <p>Elige el exponente y el último número que quieres incluir. Lo llamamos <var>N</var>. Con <var>N</var> = 10, sumamos diez términos y multiplicamos cuatro factores, porque entre el 1 y el 10 solo hay cuatro números primos: 2, 3, 5 y 7.</p>
+          <p>Ambos cálculos parciales suelen dar valores diferentes. Observa qué sucede al incluir más números. La línea verde suma un término por entero y la marrón cambia solo al incorporar un primo. La línea de referencia marca su límite común.</p>
           <div data-controls></div>
           <p class="v2-expression" data-expanded></p>
           <dl class="experiment-results" data-results></dl>
           <figure class="experiment-chart" data-chart></figure>
           <p data-prime-preview></p>
-          <details class="v2-details"><summary>Ver todos los primos utilizados y sus factores</summary><p class="v2-expression" data-prime-factors></p></details>
+          <p data-euler-point role="status"></p>
+          <details class="v2-details"><summary>¿Qué números primos estamos utilizando?</summary><table><thead><tr><th scope="col">Primo</th><th scope="col">Factor</th></tr></thead><tbody data-prime-factors></tbody></table></details>
           <p class="experiment-insight" data-insight></p>
         </div>
         <p id="ejemplo-euler">Con <var>N</var> = 10 hay diez sumandos, pero solo cuatro factores: 2, 3, 5 y 7 aportan un factor cada uno. Con <var>s</var> = 2, la suma vale aproximadamente 1,549768 y el producto 1,595052. Su límite común es aproximadamente 1,644934.</p>
@@ -162,6 +161,7 @@
         <h3>¿Por qué importa el descubrimiento de Euler?</h3>
         <p>Todo entero mayor que 1 se descompone de manera única en primos. Euler aprovechó esta propiedad para pasar de la suma al producto. Así descubrimos algo que necesitaremos después: la función zeta contiene información sobre los primos.</p>
         <p class="takeaway">La suma utiliza todos los números naturales. El producto utiliza solo los primos. Ambos conducen al mismo valor en el límite.</p>
+        <p>Euler encontró el vínculo con los primos. <a href="#ceros">Ahora buscaremos las entradas que dan cero.</a></p>
       </section>
 
       <section id="ceros" aria-labelledby="titulo-ceros">
