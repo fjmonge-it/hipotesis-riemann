@@ -19,7 +19,8 @@ function defaultOption(id) {
 }
 
 test('la hipótesis se explica antes de mostrar desde el principio la recta', () => {
-  assert.equal(defaultOption('cantidad-ceros'), '1');
+  assert.equal(defaultOption('cantidad-ceros'), '0');
+  assert.match(article, /Ceros 41 al 50/);
   assert.ok(article.indexOf('id="figura-recta-critica"') < article.indexOf('id="experimento-ceros"'));
   assert.doesNotMatch(article, /id="mostrar-recta"/);
 });

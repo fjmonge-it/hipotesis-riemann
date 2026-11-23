@@ -31,7 +31,7 @@ export function renderZetaChart(figure, { sums, products, reference, compare, ca
   const coord = value => value.toFixed(2);
   const ticks = [1];
   const candidates = logarithmic ? [2, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000, 50000]
-    : roundedTicks(limit).slice(1);
+    : roundedTicks(limit).slice(1).filter(Number.isInteger);
   for (const n of candidates) {
     if (n < limit && x(n) - x(ticks.at(-1)) >= 36 && right - x(n) >= 44) ticks.push(n);
   }

@@ -23,13 +23,16 @@ proyecciones y ceros, recuentos y estimaciones, y estados iniciales.
 - `js/prime-gaps.js` muestra secuencias consecutivas y dos indicadores
   comparados en cinco intervalos. La media y el máximo se calculan sobre
   todas las parejas, y se conserva la pareja que produce el mayor salto.
+  El explorador presenta hasta cinco vecinas a cada lado de la pareja elegida.
 - `js/zeta.js` contiene los cálculos. La referencia para s > 1 usa
   128 términos y una corrección de Euler–Maclaurin hasta B₆. En 1,2 ≤ s ≤ 5
   el resto analítico es menor que 6 × 10⁻¹⁶ antes del redondeo. Para s ≤ 1
   se calcula solo la suma finita. Para más de 1.000 términos, el gráfico
-  dibuja muestras logarítmicas de las sumas calculadas.
+  dibuja muestras logarítmicas de las sumas calculadas. Los gráficos usan
+  un eje horizontal lineal por debajo de 1.000 y vertical con marcas
+  redondas para series divergentes.
 - `js/complex-experiments.js` controla el plano, el mapa y los grupos de
-  hasta cincuenta ceros. Los valores se obtuvieron con `mpmath.zetazero`
+  diez ceros entre los cincuenta tabulados. Los valores se obtuvieron con `mpmath.zetazero`
   a 35 cifras y se verificaron evaluando ζ en los ceros sin redondear.
   El navegador usa la tabla redondeada a seis decimales.
 - `js/distribution.js` conserva la integral logarítmica estándar,
@@ -38,8 +41,8 @@ proyecciones y ceros, recuentos y estimaciones, y estados iniciales.
   A partir de 100.000, el gráfico de recuento une muestras. Las lecturas
   numéricas siempre usan el recuento exacto y los errores se calculan antes
   de redondear.
-- La gráfica de importancia relativa compara (x/2)^(−1/2) y
-  (x/2)^(−1/4). Ambas están normalizadas al 100 % en x = 2.
+- La importancia de la recta crítica se explica comparando dos casos en
+  texto. La cota permanece disponible como ampliación matemática.
 
 ## Fuentes contemporáneas
 

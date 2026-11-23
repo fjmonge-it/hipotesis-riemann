@@ -60,11 +60,6 @@ function zeroReading(zero, index) {
     + ' · Parte imaginaria: ≈ ' + zero.imaginary.toFixed(6).replace('.', ',') + '.';
 }
 
-export function zeroScale(highest) {
-  const step = [5, 10, 20, 30, 50].find(value => 5 * value > highest);
-  return { step, max: (Math.floor(highest / step) + 1) * step };
-}
-
 export function zeroGroup(start) {
   const points = nontrivialZeros.slice(start, start + 10);
   const first = points[0].imaginary;

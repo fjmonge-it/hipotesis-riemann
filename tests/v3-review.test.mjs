@@ -1,7 +1,8 @@
+import { roundedTicks, termPosition } from '../js/zeta-chart.js';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { comparisonReading, estimateCurve, estimateError, normalizedEnvelope } from '../js/distribution.js';
+import { comparisonReading, estimateCurve, estimateError } from '../js/distribution.js';
 import { zetaTerms, numericFraction, eulerFactor } from '../js/math-format.js';
 import { formatInteger } from '../js/distribution-chart.js';
 import { gapOverview } from '../js/prime-gaps.js';
@@ -50,7 +51,28 @@ test('los errores se calculan antes de redondear y pueden aumentar entre 12 y 13
   assert.equal(curve.samples.at(-1).count, d.count);
 });
 
-test('la comparación conceptual conserva el 4,47 % y el 21,15 % a mil', () => {
-  const start = Math.log(2);
-  assert.deepEqual([.5, .75].map(beta => (100 * normalizedEnvelope(Math.log(1000), beta, start)).toFixed(2)), ['4.47', '21.15']);
+test('la comparación de la recta crítica usa dos situaciones sin la gráfica porcentual', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  assert.match(html, /Parte real: ½/);
+  assert.match(html, /Parte real hipotética: ¾/);
+  assert.doesNotMatch(html, /data-concept-x|id="oscilaciones"|data-prime-factors/);
+  assert.match(html, /<details class="v2-details">\s*<summary>Ver la cota en notación matemática/);
+});
+
+test('los cálculos pequeños usan escala lineal y los grandes, logarítmica', () => {
+  assert.equal(termPosition(2, 10), 1 / 9);
+  assert.equal(termPosition(51, 101), .5);
+  assert.ok(Math.abs(termPosition(10, 1000) - 1 / 3) < 1e-14);
+  assert.deepEqual(roundedTicks(198.54), [0, 50, 100, 150, 200]);
+  for (const max of [1.1, 7.4, 385, 3.4e14]) {
+    const ticks = roundedTicks(max);
+    assert.ok(ticks[0] === 0 && ticks.at(-1) >= max && ticks.length <= 5);
+  }
+});
+
+test('el ejemplo de 100 a 1.000 reproduce el aumento relativo de la primera fórmula', () => {
+  const primes = primesUpTo(1000);
+  const readings = [100, 1000].map(x => comparisonReading(x, primes));
+  assert.deepEqual(readings.map(r => (100 * estimateError(r.count, r.simple).relative).toFixed(2)),
+    ['13.14', '13.83']);
 });
