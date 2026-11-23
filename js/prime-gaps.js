@@ -26,140 +26,150 @@ export function peakBuckets(gaps, limit, buckets = 72) {
   return peaks.filter(Boolean);
 }
 
+export function consecutivePrimes(start, count) {
+  const primes = [];
+  let value = start;
+  for (let i = 0; i < count; i += 1) {
+    value = nextPrime(value);
+    primes.push(value);
+  }
+  return primes;
+}
+
+export function summarizeGaps(pairs) {
+  return pairs.reduce((stats, pair) => ({
+    min: Math.min(stats.min, pair.gap),
+    max: pair.gap > stats.max.gap ? pair : stats.max,
+    mean: stats.mean + pair.gap / pairs.length,
+  }), { min: Infinity, max: pairs[0], mean: 0 });
+}
+
+const decimal = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 2 });
+const name = pair => numberLabel(pair.start) + ' y ' + numberLabel(pair.end);
+
+function describe(pair) {
+  const between = pair.gap - 1;
+  const inside = between === 0 ? 'Entre ellos no queda ningún entero.'
+    : between === 1 ? 'Entre ellos solo está el compuesto ' + numberLabel(pair.start + 1) + '.'
+      : 'Entre ellos hay ' + numberLabel(between) + ' enteros compuestos.';
+  return 'Primos consecutivos: ' + name(pair) + '. Distancia: ' + numberLabel(pair.end)
+    + ' − ' + numberLabel(pair.start) + ' = ' + pair.gap + '. ' + inside;
+}
+
+function onBarClick(figure, getDomain, choose) {
+  figure.querySelector('svg').addEventListener('click', event => {
+    const svg = event.currentTarget;
+    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(svg.getScreenCTM().inverse());
+    const [min, max] = getDomain();
+    choose(min + (point.x - 61) / (svg.viewBox.baseVal.width - 91) * (max - min));
+  });
+}
+
 export function initPrimeGaps(root) {
-  const limit = root.querySelector('select');
-  const selector = root.querySelector('input');
+  const limit = root.querySelector('[data-limit]');
+  const selector = root.querySelector('[data-pair-select]');
   const status = root.querySelector('[role=status]');
+  const text = root.querySelector('[data-stats]');
   const figure = root.querySelector('figure');
-  let pairs;
-  let maximum;
-  let mean;
+  let stats;
   let peaks;
-  function update() {
-    const pair = peaks[selector.valueAsNumber];
-    selector.setAttribute('aria-valuetext', pair.start + ' a ' + pair.end);
-    status.textContent = 'De ' + numberLabel(pair.start) + ' a ' + numberLabel(pair.end) + ': ' + pair.gap +
-      ' pasos. Media en este intervalo: ' + numberLabel(mean) + '. Récord: ' + maximum.gap +
-      ' pasos, de ' + numberLabel(maximum.start) + ' a ' + numberLabel(maximum.end) + '.';
+  function draw() {
+    const pair = peaks[Number(selector.value)];
+    const description = describe(pair);
+    if (status.textContent !== description) status.textContent = description;
     plot(figure, {
       series: [{ points: peaks.map(p => [p.end, p.gap]), style: 'line-primes', bars: true }],
-      minX: 2, maxX: Number(limit.value), maxY: maximum.gap,
-      xLabel: 'Segundo primo', yLabel: 'Distancia', marker: [pair.end, pair.gap],
-      label: 'Distancias entre primos. ' + status.textContent,
+      minX: 2, maxX: Number(limit.value), maxY: stats.max.gap * 1.12,
+      xLabel: 'Segundo primo de cada pareja', yLabel: 'Distancia', marker: [pair.end, pair.gap],
+      maximum: [stats.max.end, stats.max.gap], average: stats.mean,
+      label: 'Distancias entre primos. ' + description + ' ' + text.textContent,
     });
   }
   function changeLimit() {
-    pairs = gapsUpTo(Number(limit.value));
-    peaks = pairs.length <= 72 ? pairs : peakBuckets(pairs, Number(limit.value));
-    maximum = peaks.reduce((best, pair) => pair.gap > best.gap ? pair : best);
-    mean = (pairs.at(-1).end - 2) / pairs.length;
-    selector.max = peaks.length - 1;
-    selector.value = peaks.indexOf(maximum);
-    update();
+    const pairs = gapsUpTo(Number(limit.value));
+    const grouped = pairs.length > 72;
+    peaks = grouped ? peakBuckets(pairs, Number(limit.value)) : pairs;
+    stats = summarizeGaps(pairs);
+    selector.replaceChildren(...peaks.map((pair, index) => new Option(name(pair), index)));
+    selector.value = peaks.indexOf(stats.max);
+    text.textContent = (grouped ? 'Vista agrupada: cada barra es el máximo de un tramo. ' : 'Vista completa: una barra por pareja. ')
+      + 'Distancia media: ' + decimal.format(stats.mean) + '. Mayor distancia encontrada: ' + stats.max.gap
+      + ', entre ' + name(stats.max) + '.';
+    draw();
   }
   limit.addEventListener('change', changeLimit);
-  selector.addEventListener('input', update);
-  figure.querySelector('svg').addEventListener('click', event => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const ratio = (event.clientX - rect.left - 61) / (rect.width - 91);
-    const target = 2 + ratio * (Number(limit.value) - 2);
-    selector.value = peaks.reduce((best, pair, index) => Math.abs(pair.end - target) < Math.abs(peaks[best].end - target) ? index : best, 0);
-    update();
+  selector.addEventListener('change', draw);
+  onBarClick(figure, () => [2, Number(limit.value)], target => {
+    selector.value = peaks.reduce((best, pair, i) => Math.abs(pair.end - target) < Math.abs(peaks[best].end - target) ? i : best, 0);
+    draw();
   });
   root.hidden = false;
   changeLimit();
-  new ResizeObserver(update).observe(figure);
+  new ResizeObserver(draw).observe(figure);
 }
 
 export function initPrimeGame(root) {
-  const form = root.querySelector('form');
-  const start = form.elements.inicio;
-  const preset = form.elements.preset;
-  const mode = form.elements.modo;
-  const guess = form.elements.prediccion;
-  const status = root.querySelector('[role=status]');
-  const current = root.querySelector('[data-current]');
-  const history = root.querySelector('[data-history]');
+  const start = root.querySelector('[data-start]');
+  const count = root.querySelector('[data-count]');
+  const selector = root.querySelector('[data-pair-select]');
+  const more = root.querySelector('[data-more]');
   const figure = root.querySelector('figure');
-  const batches = root.querySelectorAll('[data-batch]');
-  let prime;
-  let firstPrime;
+  const sequence = root.querySelector('[data-sequence]');
+  const detail = root.querySelector('[data-pair]');
+  let primes;
   let pairs;
-  function readPair() {
-    const p = pairs[Number(history.value)];
-    root.querySelector('[data-pair]').textContent = p ? numberLabel(p.start) + ' → ' + numberLabel(p.end) + ': ' + p.gap + ' pasos.' : '';
-    if (!p) return;
-    const offset = Math.max(0, Number(history.value) - 99);
-    const window = pairs.slice(offset, offset + 100);
+  let range;
+  function draw() {
+    const index = Number(selector.value);
+    const pair = pairs[index];
+    const from = Math.max(0, Math.min(index - 24, pairs.length - 50));
+    const shown = pairs.slice(from, from + 50);
+    range = [from + 1, from + shown.length];
+    detail.textContent = describe(pair);
+    const first = Math.max(0, Math.min(index - 2, primes.length - 6));
+    sequence.replaceChildren(...primes.slice(first, first + 6).map((prime, i, values) => {
+      const node = document.createElement('span');
+      const emphasis = prime === pair.start || prime === pair.end;
+      node.textContent = numberLabel(prime) + (i < values.length - 1 ? ' → ' : '');
+      node.classList.toggle('chosen-prime', emphasis);
+      return node;
+    }));
     plot(figure, {
-      series: [{ points: window.map((pair, i) => [offset + i + 1, pair.gap]), style: 'line-primes', bars: true }],
-      minX: offset + 1, maxX: offset + window.length, maxY: Math.max(...window.map(pair => pair.gap)),
-      xLabel: 'Número de salto', yLabel: 'Distancia', marker: [Number(history.value) + 1, p.gap],
-      label: 'Últimos saltos de la secuencia. ' + root.querySelector('[data-pair]').textContent,
+      series: [{ points: shown.map((p, i) => [from + i + 1, p.gap]), style: 'line-primes', bars: true }],
+      minX: range[0], maxX: range[1], maxY: Math.max(...shown.map(p => p.gap)),
+      xLabel: 'Posición de la pareja en la secuencia', yLabel: 'Distancia',
+      marker: [index + 1, pair.gap], label: 'Distancias en la secuencia. ' + detail.textContent,
     });
   }
-  function syncMode() {
-    const challenge = mode.value === 'reto';
-    guess.closest('label').hidden = !challenge;
-    for (const button of batches) button.disabled = challenge;
+  function render(selected) {
+    pairs = primes.slice(1).map((end, i) => ({ start: primes[i], end, gap: end - primes[i] }));
+    const stats = summarizeGaps(pairs);
+    root.querySelector('[data-current]').textContent = 'Hemos encontrado ' + primes.length + ' primos consecutivos mayores que '
+      + numberLabel(Number(start.value)) + ', desde ' + numberLabel(primes[0]) + ' hasta '
+      + numberLabel(primes.at(-1)) + '. Entre ellos hay ' + pairs.length + ' distancias.';
+    root.querySelector('[data-stats]').textContent = 'Distancia mínima: ' + stats.min + '. Máxima: ' + stats.max.gap
+      + '. Media: ' + decimal.format(stats.mean) + '. La secuencia destaca la pareja seleccionada.';
+    selector.replaceChildren(...pairs.map((pair, i) => new Option(name(pair), i)));
+    selector.value = selected;
+    more.disabled = primes.length >= 500;
+    draw();
   }
   function reset() {
-    if (!start.reportValidity()) return false;
-    prime = firstPrime = nextPrime(start.valueAsNumber);
-    pairs = [];
-    history.replaceChildren();
-    figure.hidden = true;
-    history.disabled = true;
-    root.querySelector('[data-pair]').textContent = '';
-    guess.value = '';
-    current.textContent = 'Primer primo posterior al inicio: ' + numberLabel(prime) + '.';
-    status.textContent = '';
-    return true;
+    primes = consecutivePrimes(Number(start.value), Number(count.value));
+    render(0);
   }
-  function discover(count) {
-    if (pairs.length + count > 2000) {
-      status.textContent = 'Has llegado al límite de 2.000 saltos por partida. Reinicia para seguir explorando.';
-      return;
-    }
-    const challenge = mode.value === 'reto';
-    if (challenge && (guess.value === '' || !guess.reportValidity())) {
-      guess.focus();
-      status.textContent = 'Escribe una distancia entera antes de descubrir el siguiente primo.';
-      return;
-    }
-    const predicted = guess.valueAsNumber;
-    for (let step = 0; step < count; step += 1) {
-      const end = nextPrime(prime);
-      const pair = { start: prime, end, gap: end - prime };
-      history.add(new Option('Salto ' + (pairs.length + 1), pairs.length));
-      pairs.push(pair);
-      prime = end;
-    }
-    const pair = pairs.at(-1);
-    current.textContent = 'Comenzamos en ' + numberLabel(firstPrime) + '. Tras ' + numberLabel(pairs.length)
-      + (pairs.length === 1 ? ' salto hemos llegado a ' : ' saltos hemos llegado a ') + numberLabel(prime) + '.';
-    status.textContent = challenge ? 'Tu predicción: ' + predicted +
-      (predicted === pair.gap ? '. ¡Acertaste!' : '. Consulta el salto seleccionado para ver la distancia real.') : '';
-    history.disabled = false;
-    history.value = pairs.length - 1;
-    figure.hidden = false;
-    guess.value = '';
-    readPair();
-  }
-  form.addEventListener('submit', event => {
-    event.preventDefault();
-    reset();
+  for (const control of [start, count]) control.addEventListener('change', reset);
+  more.addEventListener('click', () => {
+    const previous = primes.length;
+    primes.push(...consecutivePrimes(primes.at(-1), 10));
+    render(previous - 1);
   });
-  preset.addEventListener('change', () => {
-    start.value = preset.value;
-    reset();
+  selector.addEventListener('change', draw);
+  onBarClick(figure, () => range, target => {
+    selector.value = Math.max(range[0], Math.min(range[1], Math.round(target))) - 1;
+    draw();
   });
-  mode.addEventListener('change', syncMode);
-  history.addEventListener('change', readPair);
-  root.querySelector('[data-next]').addEventListener('click', () => discover(1));
-  for (const button of batches) button.addEventListener('click', () => discover(Number(button.dataset.batch)));
   root.hidden = false;
   reset();
-  syncMode();
-  new ResizeObserver(readPair).observe(figure);
+  new ResizeObserver(draw).observe(figure);
 }

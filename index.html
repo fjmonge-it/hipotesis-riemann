@@ -56,84 +56,44 @@
     <main id="contenido" tabindex="-1">
       <section id="primos" aria-labelledby="titulo-primos">
         <h2 id="titulo-primos">El misterio de los números primos</h2>
-        <p class="experiment-question">¿Puedes descubrir dónde se esconden los números primos?</p>
-        <p>Un <strong>primo</strong> es un entero mayor que 1 cuyos únicos divisores positivos son 1 y él mismo. El 7 es primo. El 8 es compuesto porque también se puede dividir exactamente entre 2 y 4.</p>
-        <p>En la recta, de 3 a 5 hay 2 pasos, de 7 a 11 hay 4 y de 23 a 29 hay 6. Restamos el primo menor del mayor. Entre los dos queda un entero menos que pasos y todos esos enteros son compuestos.</p>
+        <p>Un primo es un número natural mayor que 1 cuyos únicos divisores positivos son 1 y él mismo. El 1 queda fuera de esta definición. Los primeros primos son 2, 3, 5, 7, 11, 13, 17, 19 y 23.</p>
+        <p class="experiment-question">¿A qué distancia aparece cada primo del anterior?</p>
+        <p>Para medir la distancia restamos el primo menor del mayor. De 7 a 11 hay una distancia de 4. Entre ambos quedan tres enteros compuestos: 8, 9 y 10.</p>
         <figure class="diagram" id="figura-primos">
-          <svg viewBox="0 0 560 120" role="img" aria-labelledby="primos-fig-title">
-            <title id="primos-fig-title">En la recta del 1 al 24 se destacan 2, 3, 5, 7, 11, 13, 17, 19 y 23.</title>
-            <path class="axis" d="M32 64H528"/>
-            <path class="grid" d="M32 58V70M118 58V70M226 58V70M334 58V70M442 58V70M528 58V70"/>
-            <g class="plot-text" text-anchor="middle">
-              <text x="32" y="91">1</text><text x="118" y="91">5</text><text x="226" y="91">10</text>
-              <text x="334" y="91">15</text><text x="442" y="91">20</text><text x="528" y="91">24</text>
-            </g>
-            <g class="prime-dots">
-              <circle cx="54" cy="64" r="5"/><circle cx="75" cy="64" r="5"/><circle cx="118" cy="64" r="5"/>
-              <circle cx="161" cy="64" r="5"/><circle cx="248" cy="64" r="5"/><circle cx="291" cy="64" r="5"/>
-              <circle cx="377" cy="64" r="5"/><circle cx="420" cy="64" r="5"/><circle cx="506" cy="64" r="5"/>
-            </g>
+          <svg viewBox="0 0 338 96" role="img" aria-label="Recta a escala del 1 al 24. Primos 2, 3, 5, 7, 11, 13, 17, 19 y 23. Distancias sucesivas 1, 2, 2, 4, 2, 4, 2 y 4.">
+            <path class="axis" d="M19 62H318"/>
+            <g class="plane-labels" text-anchor="middle"><path class="axis" d="M19 62v5"/><path class="axis" d="M32 62v5"/><path class="axis" d="M45 62v5"/><path class="axis" d="M58 62v5"/><path class="axis" d="M71 62v5"/><path class="axis" d="M84 62v5"/><path class="axis" d="M97 62v5"/><path class="axis" d="M110 62v5"/><path class="axis" d="M123 62v5"/><path class="axis" d="M136 62v5"/><path class="axis" d="M149 62v5"/><path class="axis" d="M162 62v5"/><path class="axis" d="M175 62v5"/><path class="axis" d="M188 62v5"/><path class="axis" d="M201 62v5"/><path class="axis" d="M214 62v5"/><path class="axis" d="M227 62v5"/><path class="axis" d="M240 62v5"/><path class="axis" d="M253 62v5"/><path class="axis" d="M266 62v5"/><path class="axis" d="M279 62v5"/><path class="axis" d="M292 62v5"/><path class="axis" d="M305 62v5"/><path class="axis" d="M318 62v5"/><path class="axis" d="M32 47V36H45V47"/><text x="38.5" y="29">1</text><path class="axis" d="M45 47V36H71V47"/><text x="58" y="29">2</text><path class="axis" d="M71 47V36H97V47"/><text x="84" y="29">2</text><path class="axis" d="M97 47V36H149V47"/><text x="123" y="29">4</text><path class="axis" d="M149 47V36H175V47"/><text x="162" y="29">2</text><path class="axis" d="M175 47V36H227V47"/><text x="201" y="29">4</text><path class="axis" d="M227 47V36H253V47"/><text x="240" y="29">2</text><path class="axis" d="M253 47V36H305V47"/><text x="279" y="29">4</text><circle class="example-point" cx="32" cy="62" r="4"/><text x="32" y="83">2</text><circle class="example-point" cx="45" cy="62" r="4"/><text x="45" y="83">3</text><circle class="example-point" cx="71" cy="62" r="4"/><text x="71" y="83">5</text><circle class="example-point" cx="97" cy="62" r="4"/><text x="97" y="83">7</text><circle class="example-point" cx="149" cy="62" r="4"/><text x="149" y="83">11</text><circle class="example-point" cx="175" cy="62" r="4"/><text x="175" y="83">13</text><circle class="example-point" cx="227" cy="62" r="4"/><text x="227" y="83">17</text><circle class="example-point" cx="253" cy="62" r="4"/><text x="253" y="83">19</text><circle class="example-point" cx="305" cy="62" r="4"/><text x="305" y="83">23</text><text x="19" y="83">1</text><text x="318" y="83">24</text></g>
           </svg>
-          <figcaption>Del 11 al 13 hay dos pasos. Del 13 al 17 hay cuatro. Los saltos entre primos cambian incluso en un tramo corto.</figcaption>
+          <figcaption>Recta a escala. Los puntos señalan los primos. Las marcas restantes corresponden a la unidad y a los compuestos. Cada arco indica la distancia entre los dos primos que conecta.</figcaption>
         </figure>
+        <h3>Distancias entre primos consecutivos</h3>
+        <p>Vamos a estudiar muchas parejas para ver si las distancias siguen algún patrón. La distancia media es la suma de todas las distancias dividida entre la cantidad de parejas. La mayor distancia es la separación más grande encontrada en el intervalo.</p>
         <div class="experiment" id="distancias-primos" hidden>
-          <h3>Distancias entre primos consecutivos</h3>
-          <p>Amplía el intervalo. Compara el récord con la media y selecciona otro salto para ver lo irregulares que son.</p>
           <div class="experiment-controls">
-            <label>Explorar hasta <select><option value="100">100</option><option value="1000">1.000</option><option value="10000">10.000</option><option value="100000">100.000</option><option value="1000000">1.000.000</option></select></label>
-            <label class="exponent-control">Seleccionar salto <input type="range" min="0" value="0"></label>
+            <label>¿Hasta qué número quieres estudiar los primos?<select data-limit><option value="100">100</option><option value="1000">1.000</option><option value="10000">10.000</option><option value="100000">100.000</option><option value="1000000">1.000.000</option></select></label>
+            <label>¿Qué pareja quieres examinar?<select data-pair-select></select></label>
           </div>
+          <p data-stats></p>
           <p class="prime-selection" role="status"></p>
-          <figure class="experiment-chart"><svg role="img"></svg><figcaption>Pulsa una barra o usa el selector. Cuando hay muchos saltos, cada barra muestra el máximo de un tramo y conserva la pareja que lo produjo.</figcaption></figure>
+          <figure class="experiment-chart"><svg role="img"></svg><figcaption>Pulsa una barra o elige una pareja en el selector. La línea discontinua marca la distancia media. La barra de mayor distancia tiene un rombo encima.</figcaption></figure>
         </div>
-        <p>Cerca de un número grande <var>x</var>, la separación media es aproximadamente ln(<var>x</var>), el logaritmo natural. Crece despacio. Entre 492.113 y 492.227 hay 114 pasos, el máximo entre los pares que terminan antes de un millón. Los saltos individuales pueden volver a ser pequeños después de un récord.</p>
+        <p>Entre 492.113 y 492.227 hay una distancia de 114. En medio quedan 113 enteros consecutivos compuestos. Aun así, después de una separación grande pueden aparecer primos muy próximos. La media tiende a crecer al estudiar intervalos mayores, aunque las distancias individuales sean irregulares.</p>
+        <h3>Explora cómo se separan los números primos</h3>
+        <p>Elige un número grande. Buscaremos el primer primo estrictamente mayor que ese número y mostraremos los que vienen después. Podrás examinar sus distancias o seguir avanzando.</p>
         <div class="experiment" id="juego-primos" hidden>
-          <h3>¿Dónde está el siguiente primo?</h3>
-          <p>Elige un punto de partida. En modo reto, predice el siguiente salto. En exploración puedes avanzar de uno en uno, de cinco en cinco o de veinte en veinte.</p>
-          <form>
-            <div class="experiment-controls">
-              <label>Punto de partida <select name="preset"><option value="150000">150.000</option><option value="1000000">1.000.000</option><option value="5000000">5.000.000</option><option value="10000000">10.000.000</option><option value="20000000">20.000.000</option><option value="25000000">25.000.000</option></select></label>
-              <label>O escribe otro <input name="inicio" type="number" min="1" max="100000000" value="150000" required></label>
-              <button type="submit">Reiniciar desde ese número</button>
-            </div>
-            <p class="prime-selection" data-current></p>
-            <div class="experiment-controls">
-              <label>Modo <select name="modo"><option value="reto">Reto</option><option value="explorar">Exploración</option></select></label>
-              <label>Predicción del salto <input name="prediccion" type="number" min="1" max="100000000"></label>
-              <button type="button" data-next>Descubrir</button>
-              <button type="button" data-batch="5">Descubrir 5</button>
-              <button type="button" data-batch="20">Descubrir 20</button>
-            </div>
-          </form>
-          <p role="status"></p>
-          <label>Consultar un salto anterior <select data-history disabled></select></label>
-          <p data-pair role="status"></p>
-          <figure class="experiment-chart" hidden><svg role="img"></svg><figcaption>La gráfica muestra hasta 100 saltos por vista. El selector permite consultar toda la partida.</figcaption></figure>
-        </div>
-        <details class="v2-details" hidden><summary>Consultar la cuadrícula de primos</summary>
-        <div class="experiment" id="explorador-primos" hidden role="group" aria-labelledby="explorador-titulo">
-          <h3 id="explorador-titulo">Explora la cuadrícula</h3>
-          <p class="experiment-guide"><strong>Prueba este experimento.</strong> Desactiva el resaltado y pulsa <strong>21</strong>. Después pulsa <strong>23</strong> y compara sus divisores. Activa el resaltado y abre los saltos para ver si la distancia entre primos cambia.</p>
           <div class="experiment-controls">
-            <label for="intervalo-primos">Intervalo
-              <select id="intervalo-primos"><option value="30">Del 1 al 30</option><option value="100" selected>Del 1 al 100</option><option value="200">Del 1 al 200</option></select>
-            </label>
-            <label class="check-control"><input type="checkbox" id="mostrar-primos" checked> Resaltar primos</label>
+            <label>¿A partir de qué número quieres buscar primos?<select data-start><option value="150000">150.000</option><option value="1000000">1.000.000</option><option value="5000000">5.000.000</option><option value="10000000">10.000.000</option><option value="20000000">20.000.000</option><option value="25000000">25.000.000</option></select></label>
+            <label>¿Cuántos primos consecutivos quieres mostrar?<select data-count><option>5</option><option selected>10</option><option>20</option><option>50</option></select></label>
+            <button type="button" data-more>Mostrar los siguientes 10 primos</button>
           </div>
-          <p class="experiment-hint" id="guia-primos">Con el teclado, muévete con las flechas y selecciona con Intro o Espacio. El punto marca los primos resaltados y el borde discontinuo señala la unidad.</p>
-          <p class="prime-selection" id="numero-elegido" role="status"></p>
-          <div class="prime-grid" role="group" aria-label="Números naturales" aria-describedby="guia-primos"></div>
-          <details class="prime-gaps">
-            <summary>Ver saltos entre primos consecutivos</summary>
-            <p>El salto es la diferencia entre los valores de dos primos consecutivos. Por ejemplo, de 13 a 17 hay 17 − 13 = 4 pasos. Las parejas de abajo están cerca del número elegido.</p>
-            <ul class="gap-list" aria-label="Distancias entre primos"></ul>
-          </details>
+          <p class="prime-selection" data-current role="status"></p>
+          <p data-stats></p>
+          <p class="prime-sequence" data-sequence></p>
+          <label>¿Qué pareja quieres examinar?<select data-pair-select></select></label>
+          <p data-pair role="status"></p>
+          <figure class="experiment-chart"><svg role="img"></svg><figcaption>Cada barra es la distancia entre una pareja consecutiva. Si hay más de 50 parejas, se muestra una ventana alrededor de la seleccionada.</figcaption></figure>
         </div>
-        </details>
-        <p id="ejemplo-primos">El 21 se descompone en 3 × 7, mientras que el 23 solo tiene los divisores 1 y 23.</p>
-        <p>Todo entero mayor que 1 tiene una factorización en primos única salvo el orden. Por ejemplo, tanto 6 × 10 como 4 × 15 dan 60 = 2² × 3 × 5.</p>
-        <p>A pequeña escala los saltos son irregulares. A gran escala aparece una regularidad estadística. ¿Cómo puede existir una ley tan precisa detrás de ese reparto? La función zeta nos da una forma de investigar el misterio.</p>
-        <p class="takeaway">Podemos identificar exactamente qué números son primos, pero las distancias entre ellos no siguen una secuencia sencilla.</p>
+        <p>¿Existe una herramienta capaz de explicar la regularidad que aparece al mirar muchos primos? <a href="#zeta">Vamos a conocer la función zeta.</a></p>
       </section>
 
       <section id="zeta" aria-labelledby="titulo-zeta">

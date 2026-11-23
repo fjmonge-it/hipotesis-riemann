@@ -2,7 +2,6 @@ import { initPrimeGaps, initPrimeGame } from './prime-gaps.js';
 import { initPrimeCount, initOscillations } from './prime-context.js';
 import { initComplexPlane, initZeroExplorer, initZeroMap } from './complex-experiments.js';
 import { initDistributionExperiment } from './distribution-experiment.js';
-import { initPrimeExplorer } from './prime-explorer.js';
 import { initZetaExperiment } from './zeta-experiments.js';
 
 // Enhance the article index when JavaScript is available.
@@ -21,7 +20,6 @@ function updateCurrentSection() {
 updateCurrentSection();
 window.addEventListener('hashchange', updateCurrentSection);
 
-initPrimeExplorer(document.querySelector('#explorador-primos'));
 initZetaExperiment(document.querySelector('#experimento-zeta'));
 initZetaExperiment(document.querySelector('#experimento-euler'), true);
 

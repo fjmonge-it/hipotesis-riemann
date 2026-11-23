@@ -281,3 +281,7 @@ summary + p { margin-top: .55rem; }
 .euler-factors { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .8rem; }
 .euler-factors > span { white-space: nowrap; }
 .euler-factors math { font-size: 1.6em; vertical-align: middle; }
+
+.peak-symbol { fill: var(--rust); }
+.prime-sequence { display: flex; flex-wrap: wrap; gap: .25rem .5rem; font-variant-numeric: tabular-nums; }
+.chosen-prime { color: var(--accent); font-weight: 700; }
