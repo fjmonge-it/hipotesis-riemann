@@ -336,3 +336,9 @@ summary + p { margin-top: .55rem; }
 .nearby-bar { grid-column: 1 / -1; height: .4rem; background: var(--paper); }
 .nearby-bar > span { display: block; height: 100%; background: var(--accent); }
 .nearby-gaps li[aria-current] .nearby-bar > span { background: var(--rust); }
+#experimento-euler .experiment-results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#experimento-euler .result-limit { text-align: center; background: var(--mint); padding: 1rem; grid-column: 1 / -1; }
+#experimento-euler .result-limit strong { font-size: clamp(1.8rem, 7vw, 2.5rem); }
+@media (max-width: 430px) {
+  #experimento-euler .experiment-results { grid-template-columns: 1fr; }
+}

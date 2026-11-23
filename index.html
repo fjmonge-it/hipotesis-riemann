@@ -114,8 +114,9 @@
           <p>Colocamos esos resultados en los denominadores de fracciones con numerador 1 y las sumamos. Para <var>s</var> = 2 queda <math><mfrac><mn>1</mn><mn>1</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>4</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>9</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>16</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>25</mn></mfrac></math> + …</p>
           <p>Con <var>s</var> = 3 usamos los cubos. La suma empieza por 1 + <math><mfrac><mn>1</mn><mn>8</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>27</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>64</mn></mfrac></math> + …</p>
           <figure class="formula">
+            <p><strong>Así definimos inicialmente la función zeta de Riemann mediante una suma infinita.</strong> La expresión recoge los ejemplos que acabamos de construir.</p>
             <div class="equation">ζ(<var>s</var>) = 1 + <math><mfrac><mn>1</mn><msup><mn>2</mn><mi>s</mi></msup></mfrac></math> + <math><mfrac><mn>1</mn><msup><mn>3</mn><mi>s</mi></msup></mfrac></math> + <math><mfrac><mn>1</mn><msup><mn>4</mn><mi>s</mi></msup></mfrac></math> + …</div>
-            <figcaption>ζ se lee «zeta». Los puntos suspensivos indican que la suma continúa indefinidamente. En el simulador veremos en qué condiciones esas sumas se acercan a un valor finito.</figcaption>
+            <figcaption>ζ se lee «zeta» y la letra s representa el exponente elegido. Los puntos suspensivos indican que la suma continúa indefinidamente. En el siguiente experimento veremos cuándo se acerca a un valor finito.</figcaption>
           </figure>
         </div>
         <div class="experiment" id="experimento-zeta" hidden role="group" aria-labelledby="experimento-zeta-titulo">
@@ -132,13 +133,14 @@
         <p>Con exponentes reales, la serie converge si s es mayor que 1. El exponente puede ser decimal: con 1,2 la suma se acerca a un valor finito más despacio que con 2. Si s es 1 o menor, las sumas parciales crecen sin límite. Cuando pasemos al plano complejo recuperaremos la condición general.</p>
         <div id="continuacion-zeta">
           <h3>Si ya tenemos una fórmula exacta para la zeta, ¿por qué necesitamos ampliarla?</h3>
-          <p>La fórmula de la suma es exacta allí donde converge. Fuera de esa región, añadir más términos puede hacer que la suma crezca indefinidamente. Si queremos saber qué hace la zeta en esas otras entradas, necesitamos otra forma de obtener su valor.</p>
-          <p>La <strong>continuación analítica</strong> prolonga la función y conserva exactamente los valores que ya conocíamos. Al exigir que mantenga las propiedades analíticas de la función, la extensión queda determinada de forma única. Con ella podemos estudiar todo el plano complejo salvo <var>s</var> = 1, donde la zeta no tiene valor finito.</p>
+          <p>Con exponentes reales mayores que 1, la suma infinita se acerca a un valor finito. ¿Qué pasa al elegir otros valores? La serie puede crecer indefinidamente. Entonces deja de servir para obtener un valor finito de la zeta.</p>
+          <p>Los matemáticos encontraron una manera rigurosa de seguir estudiando la función fuera de esa región. La <strong>continuación analítica</strong> conserva exactamente los valores donde la suma converge. Las propiedades matemáticas de la función determinan una única prolongación.</p>
+          <p>Así podemos estudiar la zeta en el plano complejo, que veremos enseguida. La excepción es <var>s</var> = 1, donde la función no tiene valor finito.</p>
           <div class="closing-topics">
             <div><h4>Suma original con <var>s</var> = −2</h4><p>1 + 4 + 9 + 16 + … crece sin límite.</p></div>
             <div><h4>Función zeta extendida</h4><p>ζ(−2) = 0.</p></div>
           </div>
-          <p>Un cero es una entrada cuyo resultado es 0. Aquí −2 es un cero de la zeta extendida y la suma ordinaria de cuadrados sigue creciendo sin límite. La continuación analítica nos permite estudiar ese resultado sin cambiar lo que hace la suma original.</p>
+          <p>La suma ordinaria de cuadrados sigue creciendo sin límite. El cero es el valor de la función extendida en −2. Pronto veremos cómo se sitúan estos ceros en el plano complejo.</p>
         </div>
         <p>Ya sabemos cómo se construye esta suma. <a href="#euler">Veamos qué relación encontró Euler con los primos.</a></p>
       </section>
@@ -147,8 +149,8 @@
         <h2 id="titulo-euler">El descubrimiento de Euler</h2>
         <p>Euler descubrió que la zeta, construida con una suma que recorre todos los naturales, se puede expresar multiplicando factores asociados exclusivamente a los primos. Esa multiplicación se llama <strong>producto de Euler</strong>. Las dos expresiones infinitas dan el mismo valor donde convergen.</p>
         <div id="construccion-euler">
-          <p>Para construir un factor, elige un primo <var>p</var> y el exponente <var>s</var>. Calcula el inverso de <var>p</var> elevado a <var>s</var>, réstalo de 1 y toma el inverso del resultado: <math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><msup><mi>p</mi><mi>s</mi></msup></mfrac></mrow></mfrac></math>.</p>
-          <p>Con <var>s</var> = 2, para el primo 2 sale <math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><msup><mn>2</mn><mn>2</mn></msup></mfrac></mrow></mfrac></math> = <math><mfrac><mn>4</mn><mn>3</mn></mfrac></math>. Para el primo 3 sale <math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><msup><mn>3</mn><mn>2</mn></msup></mfrac></mrow></mfrac></math> = <math><mfrac><mn>9</mn><mn>8</mn></mfrac></math>. Hacemos lo mismo para cada primo y multiplicamos sus factores.</p>
+          <p>Empezamos por 2 y seguimos con 3, 5, 7, 11, 13 y los demás primos en orden. A cada uno le corresponde un factor calculado con la misma expresión. La letra <var>p</var> representa el primo que toca y <var>s</var> es el exponente: <math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><msup><mi>p</mi><mi>s</mi></msup></mfrac></mrow></mfrac></math>.</p>
+          <p>Con <var>s</var> = 2, para el primo 2 sale <math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><msup><mn>2</mn><mn>2</mn></msup></mfrac></mrow></mfrac></math> = <math><mfrac><mn>4</mn><mn>3</mn></mfrac></math>. Para el primo 3 sale <math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mfrac><mn>1</mn><msup><mn>3</mn><mn>2</mn></msup></mfrac></mrow></mfrac></math> = <math><mfrac><mn>9</mn><mn>8</mn></mfrac></math>. Para 5 obtenemos <math><mfrac><mn>25</mn><mn>24</mn></mfrac></math> y para 7, <math><mfrac><mn>49</mn><mn>48</mn></mfrac></math>. El producto infinito usa todos los primos. Si lo calculamos hasta N, usamos solo los primos menores o iguales que N.</p>
           <div class="closing-topics euler-intro">
             <div><h3>Camino A · Sumar</h3><p>1 + <math><mfrac><mn>1</mn><mn>4</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>9</mn></mfrac></math> + <math><mfrac><mn>1</mn><mn>16</mn></mfrac></math> + …</p></div>
             <div><h3>Camino B · Multiplicar</h3><p><math><mfrac><mn>4</mn><mn>3</mn></mfrac></math> × <math><mfrac><mn>9</mn><mn>8</mn></mfrac></math> × <math><mfrac><mn>25</mn><mn>24</mn></mfrac></math> × <math><mfrac><mn>49</mn><mn>48</mn></mfrac></math> × …</p></div>
@@ -164,7 +166,7 @@
           <figure class="experiment-chart" data-chart></figure>
           <p data-prime-preview></p>
           <p data-euler-point role="status"></p>
-          <details class="v2-details"><summary>¿Qué números primos estamos utilizando?</summary><table><thead><tr><th scope="col">Primo</th><th scope="col">Factor</th></tr></thead><tbody data-prime-factors></tbody></table></details>
+          
           <p class="experiment-insight" data-insight></p>
         </div>
         <p id="ejemplo-euler">Con <var>N</var> = 10 hay diez sumandos, pero solo cuatro factores: 2, 3, 5 y 7 aportan un factor cada uno. Con <var>s</var> = 2, la suma vale aproximadamente 1,549768 y el producto 1,595052. Su límite común es aproximadamente 1,644934.</p>

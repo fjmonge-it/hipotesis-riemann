@@ -5,7 +5,6 @@ import { formatCount, formatGap, formatValue, renderZetaChart } from './zeta-cha
 
 const limits = [10, 25, 50, 100, 500, 1000];
 const quick = [2, 3, 4];
-const list = new Intl.ListFormat('es-ES');
 
 export function initZetaExperiment(root, compare = false) {
   const id = root.id;
@@ -42,26 +41,23 @@ export function initZetaExperiment(root, compare = false) {
   let announcementTimer;
 
   let inspected;
+  let axes;
   function showPoint() {
-    const { sums, products, s } = chartData;
-    const point = products.findLast(entry => entry.n <= inspected);
-    const added = point?.n === inspected
-      ? ' El producto incorpora el factor del primo ' + inspected + '.'
-      : ' El producto conserva su valor porque este entero no es primo.';
-    root.querySelector('[data-euler-point]').textContent = 'Hasta ' + inspected + ': la suma añade '
-      + formatValue(inspected ** -s) + ' y vale ' + formatValue(sums[inspected - 1])
-      + '. El producto vale ' + formatValue(point?.value ?? 1) + '.' + added;
+    const prime = chartData.products.some(entry => entry.n === inspected);
+    const action = prime ? ' Ambos caminos cambian: la suma añade su fracción y el producto incorpora un factor nuevo.'
+      : inspected === 1 ? ' La suma empieza con 1. El producto aún no incluye ningún factor.'
+      : ' La suma añade una fracción. El producto conserva su valor porque ' + inspected + ' es compuesto.';
+    const reading = root.querySelector('[data-euler-point]');
+    reading.textContent = 'Al incluir el ' + formatCount(inspected) + '.' + action;
     const svg = chart.querySelector('svg');
-    const width = svg.viewBox.baseVal.width;
-    const x = 76 + (width - 110) * Math.log(inspected) / Math.log(sums.length);
-    const bottom = width < 360 ? 158 : 176;
-    svg.querySelector('[data-zeta-cursor]').setAttribute('d', 'M' + x + ' 28V' + bottom);
+    const x = axes.x(inspected);
+    svg.querySelector('[data-zeta-cursor]').setAttribute('d', 'M' + x + ' ' + axes.top + 'V' + axes.bottom);
     svg.setAttribute('aria-valuenow', inspected);
     svg.setAttribute('aria-valuetext', root.querySelector('[data-euler-point]').textContent);
   }
   function drawChart() {
     chartWidth = chart.clientWidth;
-    renderZetaChart(chart, chartData);
+    axes = renderZetaChart(chart, chartData);
     if (!compare) return;
     const svg = chart.querySelector('svg');
     svg.setAttribute('tabindex', '0');
@@ -82,8 +78,7 @@ export function initZetaExperiment(root, compare = false) {
     });
     svg.addEventListener('click', event => {
       const x = new DOMPoint(event.clientX, event.clientY).matrixTransform(svg.getScreenCTM().inverse()).x;
-      const ratio = (x - 76) / (svg.viewBox.baseVal.width - 110);
-      select(Math.round(chartData.sums.length ** Math.max(0, Math.min(1, ratio))));
+      select(axes.termAt(x));
     });
     showPoint();
   }
@@ -131,21 +126,13 @@ export function initZetaExperiment(root, compare = false) {
         <span>${formatCount(factorCount)} factores primos</span>
         <span>Faltan ≈ ${formatGap(reference - product)} para el límite</span>
       </dd></div>` : ''}
-      <div class="result-limit"><dt>Límite de la serie${compare ? ' y del producto' : ''}</dt><dd>${divergent
+      <div class="result-limit"><dt>${compare ? 'Límite común de la suma y del producto' : 'Límite de la serie'}</dt><dd>${divergent
         ? '<strong>No existe un límite finito</strong><span>La serie original diverge.</span>'
-        : '<strong>≈ ' + formatValue(reference) + '</strong><span>Aproximación numérica de alta precisión</span>'}</dd></div>`;
+        : '<strong>≈ ' + formatValue(reference) + '</strong><span>' + (compare ? 'Ambos procedimientos se aproximan al mismo valor.' : 'Aproximación numérica de alta precisión') + '</span>'}</dd></div>`;
 
     if (compare) {
-      const primes = products.map(point => point.n);
-      const preview = primes.length <= 5 ? list.format(primes.map(String)) : primes.slice(0, 3).join(', ') + ', …, ' + primes.slice(-2).join(', ');
-      root.querySelector('[data-prime-preview]').textContent = 'Primos incluidos: ' + preview
-        + '. El último es ' + primes.at(-1) + ', el mayor primo menor o igual que ' + n + '.';
-      root.querySelector('[data-prime-factors]').innerHTML = primes.map(p => {
-        const power = p ** s;
-        const factor = Number.isInteger(s) && Number.isSafeInteger(power) ? numericFraction(numberLabel(power), numberLabel(power - 1))
-          : eulerFactor(p, a) + ' ≈ ' + formatValue(1 / (1 - p ** -s));
-        return '<tr><th scope="row">' + numberLabel(p) + '</th><td>' + factor + '</td></tr>';
-      }).join('');
+      root.querySelector('[data-prime-preview]').textContent = 'Hasta ' + formatCount(n) + ' utilizamos '
+        + formatCount(factorCount) + ' primos. El último es ' + formatCount(products.at(-1).n) + '.';
     }
     const caption = divergent ? 'La gráfica se detiene en N porque dejamos de sumar. Si seguimos, la suma crece sin límite.'
       : compare
@@ -156,12 +143,9 @@ export function initZetaExperiment(root, compare = false) {
     drawChart();
 
     let observation;
-    if (compare && n === 10) {
-      observation = 'El producto incorpora los factores de ' + list.format(products.map(point => String(point.n))) + '.';
-    } else if (compare && n === 100) {
-      observation = 'De los ' + formatCount(n) + ' enteros sumados, ' + formatCount(factorCount) + ' son primos y aportan un factor cada uno.';
-    } else if (compare) {
-      observation = 'En los tramos planos del producto, los nuevos enteros sí cuentan para la suma, pero ninguno es primo.';
+    if (compare) {
+      observation = 'La suma incluye ' + formatCount(n) + ' términos y el producto, '
+        + formatCount(factorCount) + ' factores.';
     } else if (n === 1000) {
       observation = 'Incluso con 1.000 sumandos, quedan infinitos términos positivos por añadir.';
     } else {
