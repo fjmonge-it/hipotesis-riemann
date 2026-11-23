@@ -1,4 +1,5 @@
-import { zetaEvolution, zetaReference } from './zeta.js';
+import { numberLabel, plot } from './v2-chart.js';
+import { realSeries, zetaEvolution, zetaReference } from './zeta.js';
 import { formatCount, formatGap, formatValue, renderZetaChart } from './zeta-chart.js';
 
 const limits = [10, 25, 50, 100, 500, 1000];
@@ -11,17 +12,24 @@ export function initZetaExperiment(root, compare = false) {
   const results = root.querySelector('[data-results]');
   const chart = root.querySelector('[data-chart]');
   const insight = root.querySelector('[data-insight]');
+  const expanded = root.querySelector('[data-expanded]');
+  const terms = root.querySelector('[data-terms]');
+  const functionPlot = root.querySelector('[data-zeta-values]');
+  const zetaCurve = compare ? null : Array.from({ length: 79 }, (_, i) => {
+    const value = 1.1 + i * .05;
+    return [value, zetaReference(value)];
+  });
   controls.innerHTML = `
     <div class="experiment-controls zeta-controls">
       <div class="exponent-control">
         <label for="${id}-s">Exponente <var>s</var> <span class="exponent-value" aria-hidden="true">2,0</span></label>
-        <input type="range" id="${id}-s" min="1.2" max="5" step="0.1" value="2">
+        <input type="range" id="${id}-s" min="${compare ? 1.2 : -2}" max="5" step="0.1" value="2">
         <div class="quick-values" role="group" aria-label="Exponentes rápidos">
-          ${quick.map(value => '<button type="button" data-exponent="' + value + '">s = ' + value + '</button>').join('')}
+          ${(compare ? quick : [...quick, 1, 0.5, 0, -2]).map(value => '<button type="button" data-exponent="' + value + '">s = ' + numberLabel(value) + '</button>').join('')}
         </div>
       </div>
       <label for="${id}-n">${compare ? 'Límite' : 'Número de términos'} <var>N</var>
-        <select id="${id}-n">${limits.map(n => '<option value="' + n + '"' + (n === 10 ? ' selected' : '') + '>' + formatCount(n) + '</option>').join('')}</select>
+        <select id="${id}-n">${(compare ? limits : [...limits, 10000, 100000]).map(n => '<option value="' + n + '"' + (n === 10 ? ' selected' : '') + '>' + formatCount(n) + '</option>').join('')}</select>
       </label>
     </div>`;
   const exponent = controls.querySelector('input');
@@ -41,6 +49,20 @@ export function initZetaExperiment(root, compare = false) {
   function drawChart() {
     chartWidth = chart.clientWidth;
     renderZetaChart(chart, chartData);
+    if (compare) return;
+    const { s, reference } = chartData;
+    const contributions = Array.from({ length: 8 }, (_, i) => [i + 1, (i + 1) ** -s]);
+    plot(terms, {
+      series: [{ points: contributions, style: 'line-primes', bars: true }],
+      minX: 1, maxX: 8, maxY: Math.max(...contributions.map(point => point[1])),
+      xLabel: 'Número del término', yLabel: 'Contribución', label: 'Primeros ocho términos para s = ' + numberLabel(s),
+    });
+    plot(functionPlot, {
+      series: [{ points: zetaCurve, style: 'line-primes' }],
+      minX: 1.1, maxX: 5, maxY: zetaCurve[0][1],
+      marker: reference === null ? undefined : [s, reference],
+      xLabel: 'Exponente s', yLabel: 'ζ(s)', label: 'Valores de zeta para s real mayor que uno',
+    });
   }
 
   function update() {
@@ -53,28 +75,52 @@ export function initZetaExperiment(root, compare = false) {
       button.setAttribute('aria-pressed', String(Number(button.dataset.exponent) === s));
     }
 
-    const { sums, products, factorCount } = zetaEvolution(s, n, compare);
-    const reference = zetaReference(s);
+    const { sums, products = [], factorCount, reference = zetaReference(s) } =
+      compare ? zetaEvolution(s, n, true) : realSeries(s, n);
+    const divergent = reference === null;
+    const a = numberLabel(s);
+    if (compare) {
+      const factors = [2, 3, 5].map(p => `<math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mn>1</mn><mo>/</mo><msup><mn>${p}</mn><mn>${a}</mn></msup></mrow></mfrac></math>`);
+      expanded.innerHTML = `
+        <strong>Camino A · Primeros términos</strong>
+        <span class="euler-expanded">1 + ${[2, 3, 4].map(k => `1/${k}<sup>${a}</sup>`).join(' + ')} + …</span>
+        <strong>Camino B · Primeros factores</strong>
+        <span class="euler-factors">${factors.map((factor, i) => '<span>' + (i ? '× ' : '') + factor + '</span>').join('')}<span>× …</span></span>`;
+    } else {
+      expanded.innerHTML = '<strong>Primeros términos</strong> · 1 + '
+        + [2, 3, 4].map(k => '1/' + k + '<sup>' + a + '</sup>').join(' + ') + ' + …'
+        + '<br>En números: 1 + ' + [2, 3, 4].map(k => numberLabel(k ** -s)).join(' + ') + ' + …';
+    }
     const sum = sums.at(-1);
-    const sumGap = formatGap(reference - sum);
+    const sumGap = divergent ? '' : formatGap(reference - sum);
     const product = products.at(-1)?.value;
     results.innerHTML = `
       <div class="result-sum"><dt>${compare ? 'Camino A · Suma de la zeta' : 'Suma parcial'}</dt><dd>
         <strong>${formatValue(sum)}</strong>
         <span>${formatCount(n)} sumandos</span>
-        <span>Faltan ≈ ${sumGap} para el límite</span>
+        ${divergent ? '' : '<span>Faltan ≈ ' + sumGap + ' para el límite</span>'}
       </dd></div>
       ${compare ? `<div class="result-product"><dt>Camino B · Producto de Euler</dt><dd>
         <strong>${formatValue(product)}</strong>
         <span>${formatCount(factorCount)} factores primos</span>
         <span>Faltan ≈ ${formatGap(reference - product)} para el límite</span>
       </dd></div>` : ''}
-      <div class="result-limit"><dt>Límite ${compare ? 'común ' : ''}ζ(s)</dt><dd><strong>≈ ${formatValue(reference)}</strong><span>Aproximación numérica de alta precisión</span></dd></div>`;
+      <div class="result-limit"><dt>Límite de la serie${compare ? ' y del producto' : ''}</dt><dd>${divergent
+        ? '<strong>No existe un límite finito</strong><span>La serie original diverge.</span>'
+        : '<strong>≈ ' + formatValue(reference) + '</strong><span>Aproximación numérica de alta precisión</span>'}</dd></div>`;
 
-    const caption = compare
+    if (compare) {
+      const primes = products.map(point => point.n);
+      const preview = primes.length <= 5 ? list.format(primes.map(String)) : primes.slice(0, 3).join(', ') + ', …, ' + primes.slice(-2).join(', ');
+      root.querySelector('[data-prime-preview]').textContent = 'Primos incluidos: ' + preview
+        + '. El último es ' + primes.at(-1) + ', el mayor primo menor o igual que ' + n + '.';
+      root.querySelector('[data-prime-factors]').textContent = primes.map(p => p + ': 1/(1 − ' + p + '^(' + numberLabel(-s) + '))').join(' · ');
+    }
+    const caption = divergent ? 'La gráfica se detiene en N porque dejamos de sumar. Si seguimos, la suma crece sin límite.'
+      : compare
       ? 'La suma sube con cada entero. El producto forma escalones: solo sube cuando N alcanza un primo.'
       : 'Cada nuevo sumando hace subir la curva. La línea discontinua indica el límite.';
-    chartData = { sums, products, reference, compare, caption };
+    chartData = { s, sums, products, reference, compare, caption };
     drawChart();
 
     let observation;
@@ -92,12 +138,15 @@ export function initZetaExperiment(root, compare = false) {
 
     let pace = 'Un exponente mayor hace que los nuevos términos disminuyan más deprisa.';
     if (compare) pace = 'Cada operación añade elementos distintos. Sus resultados parciales pueden diferir aunque compartan el límite.';
-    if (s <= 1.4) pace = 'Cerca de 1, los términos decrecen despacio. Incluso con un límite de 1.000, aún queda una distancia apreciable.';
+    if (s > 1 && s <= 1.4) pace = 'Cerca de 1, los términos decrecen despacio. Incluso con un límite de 1.000, aún queda una distancia apreciable.';
     if (s >= 4) pace = 'Con un exponente alto, los inversos de las potencias se hacen pequeños muy deprisa. Por eso las aproximaciones mejoran con pocos pasos.';
-    insight.textContent = observation + ' ' + pace;
+    insight.textContent = divergent
+      ? (s === 1 ? 'En s = 1, cada término es pequeño, pero la suma armónica crece sin límite.'
+        : 'Para s menor que 1, los términos son al menos tan grandes como los de la serie armónica, que diverge.')
+      : observation + ' ' + pace;
     announcementText = 'Suma parcial: ' + formatValue(sum) + '. '
       + (compare ? 'Producto parcial: ' + formatValue(product) + '. ' : '')
-      + 'Límite aproximado: ' + formatValue(reference) + '.';
+      + (divergent ? 'No existe límite finito.' : 'Límite aproximado: ' + formatValue(reference) + '.');
   }
 
   function announce() {

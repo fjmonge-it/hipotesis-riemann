@@ -114,6 +114,6 @@ export function initPrimeExplorer(root) {
   fillGrid();
   showHighlights();
   root.hidden = false;
-  document.querySelector('#figura-primos').hidden = true;
+  root.closest('details').hidden = false;
   document.querySelector('#ejemplo-primos').hidden = true;
 }

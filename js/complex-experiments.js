@@ -58,7 +58,6 @@ export function initComplexPlane(root) {
 export function initZeroExplorer(root) {
   const count = root.querySelector('#cantidad-ceros');
   const selected = root.querySelector('#cero-elegido');
-  const showBand = root.querySelector('#mostrar-banda');
   const showLine = root.querySelector('#mostrar-recta');
   const chart = root.querySelector('svg');
   const summary = root.querySelector('[data-summary]');
@@ -87,15 +86,13 @@ export function initZeroExplorer(root) {
     </g><g data-points></g>`;
   const points = chart.querySelector('[data-points]');
   count.value = count.querySelector('option[selected]').value;
-  showBand.checked = showBand.defaultChecked;
-  showLine.checked = showLine.defaultChecked;
+  let revealed = false;
 
   function update() {
     const active = Number(selected.value);
     const visible = nontrivialZeros.slice(0, Number(count.value));
-    chart.querySelector('[data-band]').classList.toggle('plot-hidden', !showBand.checked);
     for (const marker of chart.querySelectorAll('[data-line], [data-line-tick]')) {
-      marker.classList.toggle('plot-hidden', !showLine.checked);
+      marker.classList.toggle('plot-hidden', !revealed);
     }
     points.innerHTML = visible.map(({ real, imaginary }, index) => {
       const p = position(real, imaginary);
@@ -104,14 +101,13 @@ export function initZeroExplorer(root) {
     }).join('');
     const zero = visible[active];
     const plotted = visible.length === 1 ? 'El primer cero no trivial' : 'Los primeros ' + visible.length + ' ceros no triviales';
-    const overlays = (showBand.checked ? ' Banda crítica visible.' : '')
-      + (showLine.checked ? ' Recta crítica visible en la parte real un medio.' : '');
+    const overlays = ' Banda crítica visible.' + (revealed ? ' Recta crítica visible en la parte real un medio.' : '');
     chart.setAttribute('aria-label', plotted + ' con parte imaginaria positiva.' + overlays);
     const height = zero.imaginary.toFixed(6).replace('.', ',');
     const coordinates = 'Cero ' + (active + 1) + ' · Parte real: ' + display(zero.real)
       + ' · Parte imaginaria: ≈ ' + height + '.';
-    discovery.hidden = !showLine.checked;
-    if (showLine.checked) {
+    discovery.hidden = !revealed;
+    if (revealed) {
       const conclusion = visible.length === 1
         ? 'El cero mostrado está sobre la recta crítica: su parte real es exactamente ½.'
         : 'Todos los ceros mostrados están sobre la recta crítica: su parte real es exactamente ½.';
@@ -130,8 +126,77 @@ export function initZeroExplorer(root) {
   }
 
   count.addEventListener('change', updateOptions);
-  for (const input of [selected, showBand, showLine]) input.addEventListener('change', update);
+  selected.addEventListener('change', update);
+  showLine.addEventListener('click', () => {
+    revealed = !revealed;
+    showLine.setAttribute('aria-expanded', String(revealed));
+    showLine.textContent = revealed ? 'Ocultar la recta crítica' : 'Revelar la recta crítica';
+    update();
+  });
   updateOptions();
   root.hidden = false;
   root.parentElement.querySelector('#ejemplo-ceros').hidden = true;
+}
+
+export function initZeroMap(root) {
+  const control = root.querySelector('select');
+  const svg = root.querySelector('[data-overview]');
+  const detail = root.querySelector('[data-strip-detail]');
+  const detailSvg = detail.querySelector('svg');
+  const summary = root.querySelector('[role=status]');
+  const mapBounds = { xMin: -9, xMax: 4, yMin: -4, yMax: 32 };
+  const mapFrame = { left: 20, top: 18, width: 304, height: 166 };
+  const point = (a, b) => project(a, b, mapBounds, mapFrame);
+  const axis = point(0, 0);
+  const convergence = point(1, 0).x;
+  const detailFrame = { left: 48, top: 20, width: 270, height: 151 };
+  const detailBounds = { xMin: -.1, xMax: 1.1, yMin: 0, yMax: 16 };
+  const zoom = (real, imaginary) => project(real, imaginary, detailBounds, detailFrame);
+  const left = zoom(criticalStrip.left, 0).x;
+  const right = zoom(criticalStrip.right, 0).x;
+  const bottom = zoom(0, 0).y;
+  const first = nontrivialZeros[0];
+  const dot = zoom(first.real, first.imaginary);
+  detailSvg.innerHTML = `
+    <rect class="strip-fill" x="${left}" y="20" width="${right - left}" height="${detailFrame.height}"/>
+    <g class="plane-labels">
+      <text x="48" y="16">Im(s)</text>
+      <text x="318" y="208" text-anchor="end">Re(s)</text>
+      ${[5, 10, 15].map(n => {
+        const { y } = zoom(0, n);
+        return '<path class="grid" d="M' + left + ' ' + y + 'H' + right + '"/><text x="46" y="' + (y + 4) + '" text-anchor="end">' + n + '</text>';
+      }).join('')}
+      <path class="axis" d="M48 ${bottom}H318M${left} 20V${bottom}"/>
+      <text x="${left}" y="190" text-anchor="middle">0</text>
+      <text x="${right}" y="190" text-anchor="middle">1</text>
+    </g>
+    <circle class="example-point" r="5" cx="${dot.x}" cy="${dot.y}"/>`;
+
+  function update() {
+    const trivial = control.value === 'triviales';
+    detail.hidden = trivial;
+    const points = trivial ? [-8, -6, -4, -2].map(real => ({ real, imaginary: 0 })) : nontrivialZeros.slice(0, 1);
+    summary.textContent = trivial ? 'Ceros triviales sobre el eje real: −8, −6, −4 y −2.'
+      : 'El primer cero no trivial con parte imaginaria positiva está dentro de la banda crítica. La ampliación muestra el mismo punto.';
+    svg.setAttribute('aria-label', summary.textContent + ' La serie converge a la derecha de la parte real 1.');
+    svg.innerHTML = `
+      <defs><pattern id="zona-convergencia" width="7" height="7" patternUnits="userSpaceOnUse">
+        <path d="M0 7L7 0" stroke="#536962"/>
+      </pattern></defs>
+      <rect fill="#b7d8bc" x="${axis.x}" y="18" width="${convergence - axis.x}" height="166"/>
+      <rect fill="url(#zona-convergencia)" x="${convergence}" y="18" width="${324 - convergence}" height="166"/>
+      <path class="axis" d="M20 ${axis.y}H324M${axis.x} 18V184"/>
+      <g class="plane-labels">
+        <text x="${axis.x - 6}" y="15" text-anchor="end">Im(s)</text><text x="324" y="219" text-anchor="end">Re(s)</text>
+        ${[-8, -6, -4, -2, 0, 1, 3].map(a => '<text x="' + point(a, 0).x + '" y="201" text-anchor="middle">' + display(a) + '</text>').join('')}
+        ${[10, 20, 30].map(b => '<text x="' + (axis.x - 5) + '" y="' + (point(0, b).y + 4) + '" text-anchor="end">' + b + '</text>').join('')}
+      </g>
+      ${points.map(({ real, imaginary }) => {
+        const p = point(real, imaginary);
+        return '<circle class="example-point" r="5" cx="' + p.x + '" cy="' + p.y + '"/>';
+      }).join('')}`;
+  }
+  control.addEventListener('change', update);
+  update();
+  root.hidden = false;
 }

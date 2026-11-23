@@ -7,34 +7,37 @@ export const formatGap = value => value < 1e-8 ? scientific.format(value) : form
 
 export function renderZetaChart(figure, { sums, products, reference, compare, caption }) {
   const limit = sums.length;
-  const left = 66;
+  const left = 76;
   const width = Math.max(240, Math.floor(figure.clientWidth) || 480);
-  const right = width - 24;
+  const right = width - 34;
   const top = 28;
   const bottom = width < 360 ? 158 : 176;
   const x = n => left + Math.log(n) / Math.log(limit) * (right - left);
-  const y = value => bottom - (value - 1) / (reference - 1) * (bottom - top);
+  const max = reference ?? sums.at(-1) * 1.1;
+  const y = value => bottom - (value - 1) / (max - 1) * (bottom - top);
   const coord = value => value.toFixed(2);
   const ticks = [1];
-  for (const n of [2, 5, 10, 25, 50, 100, 250, 500]) {
+  for (const n of [2, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000, 50000]) {
     if (n < limit && x(n) - x(ticks.at(-1)) >= 36 && right - x(n) >= 44) ticks.push(n);
   }
   ticks.push(limit);
-  const horizontal = [1, 1 + (reference - 1) / 2, reference];
-  const yLabels = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 4 });
+  const horizontal = [1, 1 + (max - 1) / 2, max];
+  const yLabels = new Intl.NumberFormat('es-ES', max > 100000 ? { notation: 'scientific', maximumSignificantDigits: 3 } : { maximumFractionDigits: 4 });
   const grid = horizontal.map((value, i) => {
     const row = coord(y(value));
-    const lineClass = i === 2 ? 'line-limit' : 'grid';
+    const lineClass = i === 2 && reference !== null ? 'line-limit' : 'grid';
     return '<path class="' + lineClass + '" d="M' + left + ' ' + row + 'H' + right + '"/>'
-      + '<text text-anchor="end" x="57" y="' + (Number(row) + 5) + '">' + yLabels.format(value) + '</text>';
+      + '<text text-anchor="end" x="68" y="' + (Number(row) + 5) + '">' + yLabels.format(value) + '</text>';
   }).join('');
   const marks = ticks.map(n => {
     const column = coord(x(n));
     return '<path class="axis" d="M' + column + ' ' + bottom + 'v5"/>'
       + '<text text-anchor="middle" x="' + column + '" y="' + (bottom + 22) + '">' + formatCount(n) + '</text>';
   }).join('');
-  const sumPath = sums.map((value, index) => (
-    (index === 0 ? 'M' : 'H') + coord(x(index + 1)) + (index === 0 ? ' ' : 'V') + coord(y(value))
+  const indices = limit <= 1000 ? sums.map((_, i) => i) :
+    [...new Set(Array.from({ length: 321 }, (_, i) => Math.round(limit ** (i / 320)) - 1))];
+  const sumPath = indices.map((index, i) => (
+    (i === 0 ? 'M' : 'H') + coord(x(index + 1)) + (i === 0 ? ' ' : 'V') + coord(y(sums[index]))
   )).join('');
   const productPath = 'M' + left + ' ' + bottom + products.map(({ n, value }) => (
     'H' + coord(x(n)) + 'V' + coord(y(value))
@@ -44,7 +47,7 @@ export function renderZetaChart(figure, { sums, products, reference, compare, ca
     <ul class="legend" aria-label="Leyenda">
       <li>Suma parcial</li>
       ${compare ? '<li class="legend-li">Producto parcial</li>' : ''}
-      <li class="legend-limit">Límite ζ(s)</li>
+      ${reference !== null ? '<li class="legend-limit">Límite ζ(s)</li>' : ''}
     </ul>
     <svg viewBox="0 0 ${width} ${bottom + 56}" role="img" aria-label="${label}">
       <g class="plot-text">

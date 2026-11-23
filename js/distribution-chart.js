@@ -1,3 +1,4 @@
+import { simpleEstimate } from './distribution.js';
 import { project } from './coordinates.js';
 
 const integer = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
@@ -13,13 +14,16 @@ export function drawDistributionChart(figure, model, errorChart) {
   const bounds = { xMin: 2, xMax: limit, yMin: 0, yMax: 1 };
   let yTicks;
   if (errorChart) {
-    for (const { error, jump, x } of samples) {
-      bounds.yMin = Math.min(bounds.yMin, error - (x === 2 ? 0 : jump));
-      bounds.yMax = Math.max(bounds.yMax, error);
+    for (const { count, error, jump, x } of samples) {
+      const simpleError = count - simpleEstimate(x);
+      const fall = x === 2 ? 0 : jump;
+      bounds.yMin = Math.min(bounds.yMin, error - fall, simpleError - fall);
+      bounds.yMax = Math.max(bounds.yMax, error, simpleError);
     }
     bounds.yMin = Math.floor(bounds.yMin);
     bounds.yMax = Math.ceil(bounds.yMax);
-    yTicks = [bounds.yMin, Math.round(bounds.yMin / 2), 0];
+    yTicks = [bounds.yMin, 0];
+    if (-bounds.yMin * frame.height / (bounds.yMax - bounds.yMin) >= 48) yTicks.push(Math.round(bounds.yMin / 2));
     if (bounds.yMax * frame.height / (bounds.yMax - bounds.yMin) >= 22) yTicks.push(bounds.yMax);
     yTicks = [...new Set(yTicks)];
   } else {
@@ -46,14 +50,19 @@ export function drawDistributionChart(figure, model, errorChart) {
   const staircase = [];
   const estimatePath = [];
   const errorPath = [];
+  const simplePath = [];
   for (const [index, sample] of samples.entries()) {
     const x = coordinate(position(sample.x, 0).x);
     const ordinate = value => coordinate(position(sample.x, value).y);
     const start = index === 0 ? 'M' : 'L';
+    const simple = simpleEstimate(sample.x);
     if (errorChart) {
+      simplePath.push(start + x + ' ' + ordinate(previous - simple));
+      if (sample.count !== previous) simplePath.push('V' + ordinate(sample.count - simple));
       errorPath.push(start + x + ' ' + ordinate(previous - sample.estimate));
       if (sample.count !== previous) errorPath.push('V' + ordinate(sample.error));
     } else {
+      simplePath.push(start + x + ' ' + ordinate(simple));
       estimatePath.push(start + x + ' ' + ordinate(sample.estimate));
       if (index === 0) staircase.push('M' + x + ' ' + ordinate(sample.count));
       else if (sample.jump || sample.x === limit) {
@@ -66,20 +75,24 @@ export function drawDistributionChart(figure, model, errorChart) {
   svg.setAttribute('viewBox', '0 0 ' + width + ' 203');
   svg.innerHTML = `
     <g class="plane-labels">
-      <text x="49" y="16">${errorChart ? 'Desviación E(x)' : 'Cantidad acumulada'}</text>
+      <text x="49" y="16">${errorChart ? 'Error de la estimación' : 'Cantidad acumulada'}</text>
       ${axes}${horizontal}
       <path class="axis" d="M49 22V${bottom}H${right}"/>
-      <text x="${width / 2}" y="198" text-anchor="middle">Límite del recuento, x</text>
+      <text x="${width / 2}" y="198" text-anchor="middle">Números examinados</text>
     </g>
-    ${errorChart ? '<path class="line-error" d="' + errorPath.join('') + '"/>'
-      : '<path class="line-li" d="' + estimatePath.join('') + '"/><path class="line-primes" d="' + staircase.join('') + '"/>'}
+    ${errorChart ? '<path class="line-error" data-li d="' + errorPath.join('') + '"/>'
+      : '<path class="line-li" data-li d="' + estimatePath.join('') + '"/><path class="line-primes" d="' + staircase.join('') + '"/>'}
+    <path class="line-simple" data-simple d="${simplePath.join('')}"/>
     <path class="coordinate-guide" data-cursor/>
-    <circle class="example-point" r="4" data-reading-point/>
-    ${errorChart ? '' : '<circle class="estimate-point" r="4" data-estimate-point/>'}`;
+    ${errorChart ? '' : '<circle class="example-point" r="4" data-reading-point/>'}
+    <circle class="estimate-point" r="4" data-estimate-point/>
+    <circle fill="#594787" r="4" data-simple/>`;
 
   const cursor = svg.querySelector('[data-cursor]');
   const countPoint = svg.querySelector('[data-reading-point]');
   const estimatePoint = svg.querySelector('[data-estimate-point]');
+  estimatePoint.dataset.li = '';
+  const simplePoint = svg.querySelector('circle[data-simple]');
   function move(point, x, y) {
     const p = position(x, y);
     point.setAttribute('cx', p.x);
@@ -88,7 +101,8 @@ export function drawDistributionChart(figure, model, errorChart) {
   return reading => {
     const { x } = position(reading.x, 0);
     cursor.setAttribute('d', 'M' + x + ' 22V' + bottom);
-    move(countPoint, reading.x, errorChart ? reading.error : reading.count);
-    if (estimatePoint) move(estimatePoint, reading.x, reading.estimate);
+    if (countPoint) move(countPoint, reading.x, reading.count);
+    move(estimatePoint, reading.x, errorChart ? reading.error : reading.estimate);
+    move(simplePoint, reading.x, errorChart ? reading.simpleError : reading.simple);
   };
 }
