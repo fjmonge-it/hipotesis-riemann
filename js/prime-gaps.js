@@ -69,47 +69,46 @@ function onBarClick(figure, getDomain, choose) {
   });
 }
 
+export const gapLimits = Object.freeze([100, 1000, 10000, 100000, 1000000]);
+
+export function gapOverview(limits = gapLimits) {
+  return limits.map(limit => ({ limit, ...summarizeGaps(gapsUpTo(limit)) }));
+}
+
 export function initPrimeGaps(root) {
-  const limit = root.querySelector('[data-limit]');
-  const selector = root.querySelector('[data-pair-select]');
-  const status = root.querySelector('[role=status]');
-  const text = root.querySelector('[data-stats]');
-  const figure = root.querySelector('figure');
-  let stats;
-  let peaks;
+  const control = root.querySelector('[data-limit]');
+  const entries = gapOverview();
+  const meanChart = root.querySelector('[data-mean-chart]');
+  const maxChart = root.querySelector('[data-maximum-chart]');
+  const ticks = ['100', '1 mil', '10 mil', '100 mil', '1 millón'].map((label, i) => [i, label]);
+
   function draw() {
-    const pair = peaks[Number(selector.value)];
-    const description = describe(pair);
-    if (status.textContent !== description) status.textContent = description;
-    plot(figure, {
-      series: [{ points: peaks.map(p => [p.end, p.gap]), style: 'line-primes', bars: true }],
-      minX: 2, maxX: Number(limit.value), maxY: stats.max.gap * 1.12,
-      xLabel: 'Segundo primo de cada pareja', yLabel: 'Distancia', marker: [pair.end, pair.gap],
-      maximum: [stats.max.end, stats.max.gap], average: stats.mean,
-      label: 'Distancias entre primos. ' + description + ' ' + text.textContent,
-    });
+    const index = control.selectedIndex;
+    const selected = entries[index];
+    root.querySelector('[data-mean]').textContent = '≈ ' + decimal.format(selected.mean);
+    root.querySelector('[data-maximum]').textContent = selected.max.gap;
+    root.querySelector('[data-maximum-pair]').textContent = 'Entre ' + name(selected.max) + '.';
+    for (const [figure, key, title, maxY] of [
+      [meanChart, entry => entry.mean, 'Distancia media', 15],
+      [maxChart, entry => entry.max.gap, 'Mayor distancia', 120],
+    ]) {
+      const values = entries.map(key);
+      plot(figure, {
+        series: [{ points: values.map((value, i) => [i, value]), style: 'line-primes' }],
+        minX: 0, maxX: 4, maxY, horizontalTicks: ticks,
+        xLabel: 'Límite estudiado', yLabel: title, marker: [index, values[index]],
+        label: title + ': ' + values.map((value, i) => ticks[i][1] + ', ' + decimal.format(value)).join('; '),
+        pointLabels: values.map((value, i) => [i, value, decimal.format(value)]),
+        wideTicks: true,
+      });
+    }
   }
-  function changeLimit() {
-    const pairs = gapsUpTo(Number(limit.value));
-    const grouped = pairs.length > 72;
-    peaks = grouped ? peakBuckets(pairs, Number(limit.value)) : pairs;
-    stats = summarizeGaps(pairs);
-    selector.replaceChildren(...peaks.map((pair, index) => new Option(name(pair), index)));
-    selector.value = peaks.indexOf(stats.max);
-    text.textContent = (grouped ? 'Vista agrupada: cada barra es el máximo de un tramo. ' : 'Vista completa: una barra por pareja. ')
-      + 'Distancia media: ' + decimal.format(stats.mean) + '. Mayor distancia encontrada: ' + stats.max.gap
-      + ', entre ' + name(stats.max) + '.';
-    draw();
-  }
-  limit.addEventListener('change', changeLimit);
-  selector.addEventListener('change', draw);
-  onBarClick(figure, () => [2, Number(limit.value)], target => {
-    selector.value = peaks.reduce((best, pair, i) => Math.abs(pair.end - target) < Math.abs(peaks[best].end - target) ? i : best, 0);
-    draw();
-  });
+  control.addEventListener('change', draw);
   root.hidden = false;
-  changeLimit();
-  new ResizeObserver(draw).observe(figure);
+  draw();
+  const observer = new ResizeObserver(draw);
+  observer.observe(meanChart);
+  observer.observe(maxChart);
 }
 
 export function initPrimeSequence(root) {
@@ -139,9 +138,12 @@ export function initPrimeSequence(root) {
       return node;
     }));
     plot(figure, {
-      series: [{ points: shown.map((p, i) => [from + i + 1, p.gap]), style: 'line-primes', bars: true }],
+      series: [
+        { points: shown.map((p, i) => [from + i + 1, p.gap]), style: 'line-primes', bars: true },
+        { points: [[index + 1, pair.gap]], style: 'chosen-bar', bars: true },
+      ],
       minX: range[0], maxX: range[1], maxY: Math.max(...shown.map(p => p.gap)),
-      xLabel: 'Posición de la pareja en la secuencia', yLabel: 'Distancia',
+      xLabel: 'Pareja de primos consecutivos', yLabel: 'Distancia',
       marker: [index + 1, pair.gap], label: 'Distancias en la secuencia. ' + detail.textContent,
     });
   }

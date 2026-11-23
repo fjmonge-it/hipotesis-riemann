@@ -292,3 +292,16 @@ summary + p { margin-top: .55rem; }
 .count-strip .not-counted { background: transparent; color: var(--muted); }
 .count-strip .count-selected { border: 2px solid var(--ink); padding-block: calc(.15rem - 1px); }
 #experimento-ceros .critical { stroke: var(--muted); }
+
+.gap-bracket { stroke: var(--rust); stroke-width: 1.6; }
+.gap-label { fill: var(--rust); }
+.chosen-bar { stroke: var(--rust); stroke-width: 4; }
+.distance-cards, .distance-figures { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.distance-cards > div { background: var(--mint); padding: .8rem; }
+.distance-cards dd { margin: 0; }
+.distance-cards strong { display: block; font: 1.9rem var(--serif); margin: .25rem 0; }
+.distance-figures figure { margin: 0; min-width: 0; }
+.distance-figures h4 { margin: .25rem 0; }
+@media (max-width: 760px) {
+  .distance-cards, .distance-figures { grid-template-columns: 1fr; }
+}

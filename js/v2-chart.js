@@ -2,11 +2,11 @@ const number = new Intl.NumberFormat('es-ES', { maximumSignificantDigits: 6, use
 const integer = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
 export const numberLabel = value => (Number.isInteger(value) ? integer : number).format(value).replace('-', '−');
 
-export function plot(figure, { series, xLabel, yLabel, marker, label, minY = 0, maxY, minX, maxX, horizontalTicks, formatY = numberLabel, average, maximum }) {
+export function plot(figure, { series, xLabel, yLabel, marker, label, minY = 0, maxY, minX, maxX, horizontalTicks, formatY = numberLabel, average, maximum, pointLabels = [], wideTicks = false }) {
   const svg = figure.querySelector('svg');
   const width = Math.max(245, Math.floor(figure.clientWidth));
-  const left = 61;
-  const right = width - 30;
+  const left = wideTicks ? 28 : 61;
+  const right = width - (wideTicks ? 32 : 30);
   const top = 25;
   const bottom = 153;
   const x = n => left + (right - left) * (n - minX) / (maxX - minX || 1);
@@ -28,6 +28,8 @@ export function plot(figure, { series, xLabel, yLabel, marker, label, minY = 0, 
       if (bars) return '<path class="' + style + '" d="' + points.map(([a, b]) => 'M' + x(a) + ' ' + y(0) + 'V' + y(b)).join('') + '"/>';
       return '<path class="' + style + '" d="' + points.map(([a, b], i) => (i === 0 ? 'M' : 'L') + x(a) + ' ' + y(b)).join('') + '"/>';
     }).join('')}
+    ${pointLabels.map(([a, b, text]) => '<text class="plane-labels" x="' + x(a)
+      + '" y="' + (y(b) - 10) + '" text-anchor="middle">' + text + '</text>').join('')}
     ${maximum ? '<path class="peak-symbol" d="M' + x(maximum[0]) + ' ' + (y(maximum[1]) - 7) + 'l5 5 -5 5 -5 -5z"/>' : ''}
     ${marker ? '<circle class="example-point" r="5" cx="' + x(marker[0]) + '" cy="' + y(marker[1]) + '"/>' : ''}`;
 }
