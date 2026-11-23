@@ -342,3 +342,9 @@ summary + p { margin-top: .55rem; }
 @media (max-width: 430px) {
   #experimento-euler .experiment-results { grid-template-columns: 1fr; }
 }
+
+.error-increase { box-shadow: inset 0 -2px var(--rust); }
+.error-increase span { color: var(--rust); font-weight: 700; }
+.critical-cases h4 { margin: 0 0 .55rem; font-size: 1.12rem; }
+.critical-cases .case-value { font: 1.55rem/1.2 var(--serif); color: var(--accent); }
+.critical-cases > :nth-child(2) .case-value { color: var(--rust); }

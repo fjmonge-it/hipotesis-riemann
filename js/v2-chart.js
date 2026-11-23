@@ -2,7 +2,7 @@ const number = new Intl.NumberFormat('es-ES', { maximumSignificantDigits: 6, use
 const integer = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
 export const numberLabel = value => (Number.isInteger(value) ? integer : number).format(value).replace('-', '−');
 
-export function plot(figure, { series, xLabel, yLabel, marker, label, minY = 0, maxY, minX, maxX, horizontalTicks, formatY = numberLabel, average, maximum, pointLabels = [], wideTicks = false, referenceX, ringMarker = false }) {
+export function plot(figure, { series, xLabel, yLabel, marker, label, minY = 0, maxY, minX, maxX, horizontalTicks, formatY = numberLabel, average, maximum, pointLabels = [], wideTicks = false, ringMarker = false }) {
   const svg = figure.querySelector('svg');
   const width = Math.max(245, Math.floor(figure.clientWidth));
   const left = wideTicks ? 28 : 61;
@@ -23,7 +23,6 @@ export function plot(figure, { series, xLabel, yLabel, marker, label, minY = 0, 
       <path class="axis" d="M${left} ${top}V${bottom}H${right}"/>
       <text x="${width / 2}" y="194" text-anchor="middle">${xLabel}</text>
     </g>
-    ${referenceX === undefined ? '' : '<path class="coordinate-guide" d="M' + x(referenceX) + ' ' + top + 'V' + bottom + '"/>'}
     ${average !== undefined ? '<path class="zero-axis" d="M' + left + ' ' + y(average) + 'H' + right + '"/>' : ''}
     ${series.map(({ points, style, bars }) => {
       if (bars) return '<path class="' + style + '" d="' + points.map(([a, b]) => 'M' + x(a) + ' ' + y(0) + 'V' + y(b)).join('') + '"/>';

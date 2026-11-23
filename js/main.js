@@ -1,5 +1,5 @@
 import { initPrimeGaps, initPrimeSequence } from './prime-gaps.js';
-import { initPrimeCount, initOscillations } from './prime-context.js';
+import { initPrimeCount } from './prime-context.js';
 import { initComplexPlane, initZeroExplorer, initZeroMap } from './complex-experiments.js';
 import { initDistributionExperiment } from './distribution-experiment.js';
 import { initZetaExperiment } from './zeta-experiments.js';
@@ -31,4 +31,3 @@ initPrimeGaps(document.querySelector('#distancias-primos'));
 initPrimeSequence(document.querySelector('#explorador-secuencia'));
 initZeroMap(document.querySelector('#mapa-ceros'));
 initPrimeCount(document.querySelector('#primer-recuento'));
-initOscillations(document.querySelector('#oscilaciones'));

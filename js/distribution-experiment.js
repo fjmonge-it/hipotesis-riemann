@@ -48,7 +48,7 @@ export function initDistributionExperiment(root) {
     }).join('');
     table.innerHTML = rows.map(row => `<tr${row.x === x ? ' aria-current="true"' : ''}>
       <th scope="row">${formatInteger(row.x)}${row.x === x ? '<span class="visually-hidden"> (seleccionado)</span>' : ''}</th>
-      <td>≈ ${percent.format(estimateError(row.count, row.simple).relative)}</td>
+      <td${row.x <= 1000 ? ' class="error-increase"' : ''}>≈ ${percent.format(estimateError(row.count, row.simple).relative)}${row.x === 1000 ? ' <span aria-label="sube respecto al valor anterior">↑</span>' : ''}</td>
       <td>≈ ${percent.format(estimateError(row.count, row.estimate).relative)}</td></tr>`).join('');
     curve = estimateCurve(x, primes);
     figure.querySelector('figcaption').textContent = curve.sampled

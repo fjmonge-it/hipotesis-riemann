@@ -292,7 +292,7 @@
           <div id="evolucion-errores">
             <h4>Cómo cambia el error relativo</h4>
             <table class="error-history"><thead><tr><th scope="col">Número estudiado</th><th scope="col">Error de x/ln(x)</th><th scope="col">Error de li(x)</th></tr></thead><tbody data-error-history></tbody></table>
-            <p>Las dos aproximaciones tienen errores relativos que tienden a cero a gran escala. La fila marcada corresponde al número elegido. La tendencia admite aumentos puntuales, incluso entre dos números consecutivos.</p>
+            <p class="takeaway">De 100 a 1.000, el error relativo de x/ln(x) aumenta del 13,14 % al 13,83 %. Las dos estimaciones tienden a mejorar en proporción a gran escala. Entre valores concretos, el error puede aumentar o disminuir. La fila con fondo verde corresponde al número elegido.</p>
           </div>
         </div>
         <div id="ejemplo-distribucion">
@@ -307,73 +307,83 @@
           <p class="takeaway">Una estimación puede ser muy buena a gran escala sin mejorar en todos los números que examinamos.</p>
           <p>El error absoluto dice cuántos primos separan el recuento y la estimación. El relativo expresa la diferencia como porcentaje. Una <strong>cota matemática</strong> es un techo garantizado para el tamaño del error bajo ciertas condiciones. Ese techo puede subir al estudiar números mayores, incluso si el error representa una fracción cada vez menor del recuento.</p>
         </div>
+        <div id="fluctuaciones-y-cotas">
+          <h3>Las fluctuaciones del error y su límite matemático</h3>
+          <p>Hemos visto que las fórmulas estiman bastante bien cuántos primos hay, aunque la diferencia con el recuento exacto unas veces aumenta y otras disminuye. A esas variaciones las llamamos <strong>fluctuaciones del error</strong>. Pueden ocurrir sin que la estimación pase de quedarse corta a pasarse.</p>
+          <p>Al estudiar números muy grandes, las estimaciones tienden a mejorar en proporción. Los ejemplos de 12 y 13 y de 100 a 1.000 muestran que esa mejora admite retrocesos. Surge entonces otra pregunta: si el error fluctúa de manera irregular, ¿podemos garantizar hasta dónde llega?</p>
+          <p>Una <strong>cota matemática</strong> establece un límite superior cuando se cumplen las condiciones del resultado. Es como un techo: por debajo, el error puede subir y bajar. El propio techo puede subir al estudiar números mayores. Conocerlo nos dice cuánto puede crecer la diferencia, incluso para números que aún no hemos examinado.</p>
+        </div>
         <h3>Lo que los ceros cuentan sobre las fluctuaciones</h3>
-        <p>Las diferencias pueden aumentar o disminuir. ¿Podemos garantizar cuánto podrían crecer incluso para números que todavía no hemos examinado? Aquí vuelven a aparecer los ceros de la zeta.</p>
-        <p>Recordemos a Euler: la zeta guarda información sobre los primos. En las fórmulas que describen su reparto, cada cero aporta una contribución que puede actuar en uno u otro sentido. La parte imaginaria influye en lo rápido que oscila. La parte real, la coordenada horizontal, influye en su tamaño. Las contribuciones pueden reforzarse o compensarse entre sí.</p>
-        <p>La hipótesis afirma que todos los ceros no triviales tienen parte real ½. Si esa posición controla cuánto pesa cada contribución, saber dónde están todos pasa a ser decisivo.</p>
+        <p>Euler enlazó la zeta con los primos. Más tarde se encontraron fórmulas que relacionan el reparto de los primos con los ceros de esa función. Las contribuciones de distintos ceros pueden reforzarse o compensarse. La parte imaginaria influye en el ritmo con el que oscilan. La parte real, la coordenada horizontal, influye en su magnitud.</p>
         <div id="comparacion-recta">
-          <h3>¿Por qué es tan importante que todos los ceros estén sobre la recta crítica?</h3>
-          <p>La hipótesis afirma que todos los ceros no triviales tienen parte real ½ y esa coordenada influye en el tamaño de cada contribución. Compara un cero de la recta crítica con un caso hipotético de parte real ¾. Vamos a ver cuánto peso conserva cada contribución respecto al tamaño del número estudiado.</p>
-          <div class="experiment" id="oscilaciones" hidden>
-            <figure class="experiment-chart" data-envelope>
-              <ul class="legend" aria-label="Casos comparados">
-                <li>Sobre la recta crítica (½)</li>
-                <li class="legend-li">Fuera de la recta (¾, hipotético)</li>
-              </ul>
-              <svg role="img"></svg>
-              <figcaption>Tomamos como 100 % la amplitud relativa inicial de cada caso en 2 para comparar a qué ritmo pierden peso. Ese 100 % es la referencia de la comparación y se refiere a la contribución individual, no al error del recuento. En el eje horizontal, multiplicar por diez ocupa siempre el mismo espacio.</figcaption>
-            </figure>
-            <label>¿En qué número quieres comparar las dos curvas?
-              <select data-concept-x><option value="2">2</option><option value="10">10</option><option value="100">100</option><option value="1000" selected>1.000</option></select>
-            </label>
-            <p data-concept-reading role="status"></p>
+          <h3>¿Por qué es tan importante la recta crítica?</h3>
+          <p>Si la parte real influye en el tamaño de esas contribuciones, la posición de los ceros importa para controlar las fluctuaciones. Comparemos dos situaciones.</p>
+          <div class="closing-topics critical-cases">
+            <div><h4>Todos los ceros no triviales sobre la recta crítica</h4>
+            <p class="case-value">Parte real: ½</p>
+            <p>Esta posición permite establecer una cota especialmente precisa para el error de la estimación del recuento de primos.</p></div>
+            <div><h4>Un cero no trivial más a la derecha</h4>
+            <p class="case-value">Parte real hipotética: ¾</p>
+            <p>Si existiera un cero allí, su contribución crecería en una escala que impediría mantener la misma garantía de precisión.</p></div>
           </div>
-          <p>Las dos contribuciones pierden peso relativo, pero la de la recta crítica lo pierde antes. Las curvas ilustran aportaciones individuales. No representan el error real, que depende de muchos ceros, ni prueban que el error absoluto vaya disminuyendo.</p>
+          <p>La comparación explica por qué importa la posición. La garantía global procede de resultados matemáticos sobre el conjunto de los ceros.</p>
         </div>
         <div id="conclusion-matematica">
           <h3>De la posición de los ceros a la precisión del recuento</h3>
-          <p>Si todos los ceros no triviales están sobre la recta crítica, podemos garantizar cuánto se separa como máximo el recuento de la estimación mediante li(x) para números suficientemente grandes. A ese máximo permitido se le llama <strong>cota superior</strong>. El error concreto puede ser menor.</p>
+          <p>Empezamos con el vínculo de Euler y llegamos a una consecuencia sobre los primos. Los ceros de la zeta intervienen en las fluctuaciones alrededor de nuestras estimaciones, y su coordenada horizontal influye en la magnitud de esas contribuciones.</p>
+          <p>Si todos los ceros no triviales tienen parte real ½, se obtiene una garantía muy precisa sobre cuánto puede separarse el recuento real de la estimación mediante la integral logarítmica. La garantía se aplica a números suficientemente grandes y acota el tamaño del error.</p>
+          <p>Para un número concreto, el error puede ser menor que la cota y puede subir o bajar al pasar a otro número. La cota también puede crecer. Lo que ofrece es una barrera demostrada que el error no puede superar cuando se cumplen las condiciones.</p>
           <details class="v2-details">
             <summary>Ver la cota en notación matemática</summary>
-            <p>|π(x) − li(x)| ≤ C · √x · ln(x). Restamos la estimación al recuento y tomamos su tamaño sin signo. Para números suficientemente grandes existe una constante positiva C que hace de la expresión de la derecha una cota. Es una cota para números suficientemente grandes si se cumple la hipótesis. Controla cuánto puede crecer el error sin obligarlo a disminuir continuamente.</p>
+            <p>|π(x) − li(x)| ≤ C · √x · ln(x). π(x) es el recuento real y li(x) la estimación. Las barras toman el tamaño de la diferencia sin su signo. Si la hipótesis se cumple, existe una constante positiva C para la que el lado derecho es un límite superior del error para todo x suficientemente grande. La desigualdad controla cuánto puede crecer el error, que puede variar de un número al siguiente.</p>
           </details>
-          <p class="takeaway">Euler enlazó la zeta con los primos. Sus ceros intervienen en las fluctuaciones, y su posición permite controlar con gran precisión la diferencia entre el recuento y su tendencia. Ese control no predice el siguiente primo ni su distancia al anterior.</p>
+          <p class="takeaway">La hipótesis permite controlar la diferencia entre la distribución real y la tendencia que estimamos. Encontrar el siguiente primo es otra pregunta.</p>
         </div>
         <p>Esta garantía depende de una afirmación sobre todos los ceros. <a href="#importancia">Veamos por qué importa una demostración universal.</a></p>
       </section>
 
       <section id="importancia" aria-labelledby="titulo-importancia">
         <h2 id="titulo-importancia">¿Por qué importa demostrarla?</h2>
-        <div class="closing-topics">
+        <div class="closing-topics" id="por-que-importa">
           <div>
             <h3>Una estimación con garantías</h3>
-            <p>Una demostración confirmaría la cota que hemos visto. Sabríamos con qué precisión se puede estimar cuántos primos hay hasta un número grande, incluso mucho más allá de los valores que hemos explorado.</p>
+            <p>Hemos encontrado fórmulas bastante precisas para estimar cuántos primos hay. Comprobarlas en muchos números aporta evidencia sobre esos casos. Una demostración permite ir más allá de ellos y obtener una garantía para todos los números suficientemente grandes.</p>
+            <p>La hipótesis permite acotar con especial precisión cuánto puede separarse el recuento de la integral logarítmica, incluso cuando estudiamos números demasiado grandes para contarlos uno a uno.</p>
           </div>
           <div>
             <h3>¿Qué cambia cuando se demuestra una hipótesis?</h3>
-            <p>Algunos resultados quedarían demostrados si la hipótesis original es su única condición pendiente. La <strong>hipótesis de Riemann generalizada</strong> abarca otras funciones, como las funciones L de Dirichlet. Resolver el caso de la zeta dejaría abiertos esos otros casos. Demostrar la afirmación original deja abiertas esas otras preguntas.</p>
+            <p>Un resultado es condicional cuando depende de una hipótesis. Si se demuestra esa hipótesis, las consecuencias que dependían solo de ella dejan de necesitar esa condición.</p>
+            <p>La hipótesis de Riemann generalizada abarca otras funciones, como las funciones L de Dirichlet. Una demostración para la zeta resuelve el caso original. Para aplicar un resultado hay que mirar qué hipótesis utiliza.</p>
           </div>
           <div>
-            <h3>Qué significa para RSA</h3>
-            <p>Contar primos y factorizar un entero son problemas distintos. RSA utiliza productos de primos grandes. Demostrar la hipótesis por sí sola no aporta un método eficiente para recuperar esos factores ni implica que se pueda romper RSA.</p>
+            <h3>¿Qué significa para RSA?</h3>
+            <p>RSA utiliza productos de dos primos grandes. Uno de los problemas de los que depende su seguridad es la dificultad de recuperar esos factores a partir del producto.</p>
+            <p>Estimar cuántos primos hay y encontrar los factores de un entero enorme son problemas distintos. Una demostración de la hipótesis, por sí sola, no aporta un método eficiente de factorización ni rompe RSA.</p>
           </div>
           <div>
             <h3>Ideas, demostraciones e inteligencia artificial</h3>
-            <p>Una IA puede sugerir una idea. Construir una demostración exige convertir esa idea en un argumento completo. Formalizarlo requiere escribirlo en un lenguaje preciso para que un verificador pueda comprobar cada paso. La revisión matemática también examina si el enunciado formal corresponde al problema original y qué supuestos se han usado.</p>
+            <p>Una IA puede ayudar a explorar ideas o proponer caminos. Para que una idea se convierta en una demostración, cada paso debe estar justificado.</p>
+            <p>Un asistente como Lean comprueba pasos expresados en un lenguaje formal. También hay que comprobar que el enunciado escrito en ese lenguaje corresponde al problema original. Entender por qué funciona la demostración y qué aporta requiere además estudio matemático.</p>
           </div>
         </div>
-        <h3>Un anuncio, una verificación y el reconocimiento</h3>
-        <p>Riemann planteó su hipótesis en 1859. Durante más de 160 años, comprobar ceros aportó evidencia sin resolver por sí solo la afirmación universal. Según el comunicado de Lean FRO y Mathlib Initiative del 21 de noviembre de 2026, Levent Alpöge publicó una demostración en Lean el día 20. Los firmantes verificaron tanto la correspondencia con el enunciado de Mathlib como la validez de la prueba con verificadores independientes.</p>
-        <p>El anuncio original se cita como referencia del trabajo de Alpöge con ayuda de Claude. En esta revisión pudimos consultar el comunicado en su repositorio oficial. Quedó pendiente contrastar directamente el PDF con esa atribución y comprobar el estado institucional en el Clay Mathematics Institute. Una verificación formal, su revisión por la comunidad y el reconocimiento institucional son pasos distintos.</p>
-        <p>Estado de la revisión editorial: <time datetime="2026-11-23">23 de noviembre de 2026</time>.</p>
+        <div id="anuncio-verificacion">
+        <h3>Un anuncio, una verificación y el reconocimiento matemático</h3>
+        <p>Riemann formuló la hipótesis en 1859. Durante más de 160 años, examinar ceros proporcionó evidencia. Una demostración universal debe abarcar también los ceros que nadie ha calculado.</p>
+        <p>Según el comunicado de Lean FRO y Mathlib Initiative, el 20 de noviembre de 2026 Levent Alpöge publicó una biblioteca de Lean con una demostración. En el comunicado del 21, los firmantes explican que comprobaron que el enunciado probado coincide con el de Mathlib y que varios verificadores independientes aceptaron la prueba exportada.</p>
+        <p>El anuncio de Alpöge es la referencia para el papel atribuido a Claude. En esta revisión no fue posible abrir el PDF para precisar esa aportación. La comprobación formal, el estudio de la prueba por la comunidad y el reconocimiento del Clay Mathematics Institute son etapas distintas. Tampoco pudimos comprobar directamente el estado institucional en Clay.</p>
+        <p>Fuentes consultadas el <time datetime="2026-11-23">23 de noviembre de 2026</time>.</p>
         <ul>
           <li><a href="https://alpo.ge/remark.pdf">Leer el anuncio original</a></li>
           <li><a href="https://leanprover-community.github.io/blog/posts/riemann-hypothesis/">Consultar la verificación de Lean y Mathlib</a> · <a href="https://github.com/leanprover-community/blog/blob/d01066fd27759b7abae93e1b137090f3b5996a0f/posts/riemann_hypothesis.md">Fuente del comunicado</a></li>
           <li><a href="https://www.claymath.org/millennium/riemann-hypothesis/">Consultar el estado en el Clay Mathematics Institute</a></li>
         </ul>
-        <h3>Del aparente desorden de los primos a la recta crítica</h3>
-        <p>Empezamos midiendo distancias irregulares entre primos. La zeta nos dio otra forma de mirar ese reparto. Euler la conectó con los primos y Riemann se fijó en dónde caían los ceros.</p>
-        <p class="takeaway closing-takeaway">La recta crítica importa porque la posición de todos los ceros no triviales permite controlar la diferencia entre cuántos primos hay y cuántos esperamos encontrar. Esa es la estructura que se esconde tras los saltos irregulares del comienzo.</p>
+        </div>
+        <div id="cierre-final">
+          <h3>Del aparente desorden de los primos a la recta crítica</h3>
+          <p>Comenzamos observando distancias irregulares entre primos. Al mirar más lejos descubrimos que podíamos estudiar tendencias en su recuento, aunque localizar el siguiente primo siguiera siendo otra cuestión.</p>
+          <p>La función zeta nos dio otra forma de mirar esa distribución. Euler explicó el vínculo con los primos. Estudiamos sus ceros y vimos por qué su posición, en particular la coordenada horizontal, importa para entender las fluctuaciones de nuestras estimaciones.</p>
+          <p class="takeaway closing-takeaway">La recta crítica importa por la garantía que permite obtener. Si todos los ceros no triviales están sobre ella, podemos controlar con gran precisión cuánto se separa el recuento real de su tendencia. Los saltos irregulares del principio dejan ver así una estructura matemática más profunda.</p>
+        </div>
       </section>
 
       <aside class="sources" aria-labelledby="titulo-fuentes">
