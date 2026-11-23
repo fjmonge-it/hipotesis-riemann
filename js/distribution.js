@@ -53,3 +53,18 @@ export function relativeOscillation(t, beta, gamma) {
   const phase = gamma * t - Math.atan2(gamma, beta);
   return relativeEnvelope(t, beta, gamma) * Math.cos(phase);
 }
+
+export const estimateLimits = Object.freeze([100, 1000, 10000, 100000, 1000000]);
+
+export function estimateError(count, estimate) {
+  const difference = count - estimate;
+  return { difference, absolute: Math.abs(difference), relative: Math.abs(difference) / count };
+}
+
+export function estimateCurve(limit, primes) {
+  if (limit <= 10000) return { ...distributionModel(limit), sampled: false };
+  const samples = Array.from({ length: 521 }, (_, i) => (
+    distributionReading(Math.round(2 + i / 520 * (limit - 2)), primes)
+  ));
+  return { samples, limit, sampled: true };
+}

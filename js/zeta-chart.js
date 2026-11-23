@@ -5,6 +5,16 @@ const scientific = new Intl.NumberFormat('es-ES', { notation: 'scientific', maxi
 export const formatValue = value => decimals.format(value);
 export const formatGap = value => value < 1e-8 ? scientific.format(value) : formatValue(value);
 
+export function roundedTicks(maximum) {
+  const unit = 10 ** Math.floor(Math.log10(maximum / 4));
+  const size = [1, 2, 2.5, 5, 10].find(factor => factor * unit >= maximum / 4) * unit;
+  return Array.from({ length: Math.ceil(maximum / size) + 1 }, (_, i) => i * size);
+}
+
+export function termPosition(n, limit) {
+  return limit >= 1000 ? Math.log(n) / Math.log(limit) : (n - 1) / (limit - 1);
+}
+
 export function renderZetaChart(figure, { sums, products, reference, compare, caption }) {
   const limit = sums.length;
   const left = 76;
@@ -12,20 +22,24 @@ export function renderZetaChart(figure, { sums, products, reference, compare, ca
   const right = width - 34;
   const top = 28;
   const bottom = width < 360 ? 158 : 176;
-  const x = n => left + Math.log(n) / Math.log(limit) * (right - left);
-  const max = reference ?? sums.at(-1) * 1.1;
-  const y = value => bottom - (value - 1) / (max - 1) * (bottom - top);
+  const logarithmic = limit >= 1000;
+  const x = n => left + termPosition(n, limit) * (right - left);
+  const horizontal = reference === null ? roundedTicks(sums.at(-1)) : [1, (1 + reference) / 2, reference];
+  const min = horizontal[0];
+  const max = horizontal.at(-1);
+  const y = value => bottom - (value - min) / (max - min) * (bottom - top);
   const coord = value => value.toFixed(2);
   const ticks = [1];
-  for (const n of [2, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000, 50000]) {
+  const candidates = logarithmic ? [2, 5, 10, 25, 50, 100, 250, 500, 1000, 5000, 10000, 50000]
+    : roundedTicks(limit).slice(1).filter(Number.isInteger);
+  for (const n of candidates) {
     if (n < limit && x(n) - x(ticks.at(-1)) >= 36 && right - x(n) >= 44) ticks.push(n);
   }
   ticks.push(limit);
-  const horizontal = [1, 1 + (max - 1) / 2, max];
   const yLabels = new Intl.NumberFormat('es-ES', max > 100000 ? { notation: 'scientific', maximumSignificantDigits: 3 } : { maximumFractionDigits: 4 });
   const grid = horizontal.map((value, i) => {
     const row = coord(y(value));
-    const lineClass = i === 2 && reference !== null ? 'line-limit' : 'grid';
+    const lineClass = i === horizontal.length - 1 && reference !== null ? 'line-limit' : 'grid';
     return '<path class="' + lineClass + '" d="M' + left + ' ' + row + 'H' + right + '"/>'
       + '<text text-anchor="end" x="68" y="' + (Number(row) + 5) + '">' + yLabels.format(value) + '</text>';
   }).join('');
@@ -47,18 +61,26 @@ export function renderZetaChart(figure, { sums, products, reference, compare, ca
     <ul class="legend" aria-label="Leyenda">
       <li>Suma parcial</li>
       ${compare ? '<li class="legend-li">Producto parcial</li>' : ''}
-      ${reference !== null ? '<li class="legend-limit">Límite ζ(s)</li>' : ''}
+      ${reference !== null ? '<li class="legend-limit">Valor límite</li>' : ''}
     </ul>
     <svg viewBox="0 0 ${width} ${bottom + 56}" role="img" aria-label="${label}">
       <g class="plot-text">
-        <text x="66" y="17">Valor</text>
+        <text x="66" y="17">${compare ? 'Resultado de cada camino' : 'Resultado de la suma'}</text>
         ${grid}${marks}
-        <text x="${width / 2}" y="${bottom + 48}" text-anchor="middle">Límite N · escala logarítmica</text>
+        <text x="${width / 2}" y="${bottom + 48}" text-anchor="middle">${compare ? 'Último número incluido' : 'Número de términos sumados'}</text>
       </g>
       <path class="axis" d="M${left} ${top}V${bottom}H${right}"/>
       <path class="line-primes" d="${sumPath}"/>
       ${compare ? '<path class="line-li" d="' + productPath + '"/>' : ''}
-      <circle class="prime-dots" cx="${right}" cy="${coord(y(sums.at(-1)))}" r="3.5"/>
+      ${compare ? '<path class="coordinate-guide" data-zeta-cursor/>' : ''}
+      <circle class="prime-dots" data-zeta-end cx="${right}" cy="${coord(y(sums.at(-1)))}" r="3.5"/>
     </svg>
-    <figcaption>${caption} El eje horizontal deja más espacio a los primeros pasos.</figcaption>`;
+    <figcaption>${compare ? "" : "La línea muestra el resultado acumulado. El eje horizontal indica cuántos términos sumamos y el vertical, el resultado obtenido. "}${caption}${logarithmic ? ' La escala horizontal es logarítmica para distinguir los primeros pasos.' : ''}</figcaption>`;
+  return {
+    x, top, bottom,
+    termAt: column => {
+      const fraction = Math.max(0, Math.min(1, (column - left) / (right - left)));
+      return Math.round(logarithmic ? limit ** fraction : 1 + fraction * (limit - 1));
+    },
+  };
 }

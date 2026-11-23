@@ -18,18 +18,16 @@ function defaultOption(id) {
   return match[1].match(/\bvalue="([^"]+)"/)?.[1] ?? match[2].trim();
 }
 
-test('los ceros se revelan a partir de uno, con banda y sin recta', () => {
-  assert.equal(defaultOption('cantidad-ceros'), '1');
-  assert.doesNotMatch(article, /id="mostrar-banda"/);
-  assert.match(startTag("button", "mostrar-recta"), /aria-expanded="false"/);
-  assert.match(article, /<p id="descubrimiento-ceros" data-discovery hidden>/);
+test('la hipótesis se explica antes de mostrar desde el principio la recta', () => {
+  assert.equal(defaultOption('cantidad-ceros'), '0');
+  assert.match(article, /Ceros 41 al 50/);
+  assert.ok(article.indexOf('id="figura-recta-critica"') < article.indexOf('id="experimento-ceros"'));
+  assert.doesNotMatch(article, /id="mostrar-recta"/);
 });
 
-test('el recuento comienza en 100, con el punto de lectura al final del intervalo', () => {
+test('el recuento comienza en 100 y ofrece un único selector hasta un millón', () => {
   assert.equal(defaultOption('limite-distribucion'), '100');
-  for (const id of ['x-distribucion', 'x-exacto']) {
-    const input = startTag('input', id);
-    assert.match(input, /\bmax="100"/);
-    assert.match(input, /\bvalue="100"/);
-  }
+  assert.doesNotMatch(article, /id="(?:x-distribucion|x-exacto)"/);
+  assert.match(article, /<option value="1000000">1.000.000<\/option>/);
+  assert.doesNotMatch(article, /id="grafico-desviacion"/);
 });

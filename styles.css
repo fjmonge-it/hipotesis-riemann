@@ -281,3 +281,70 @@ summary + p { margin-top: .55rem; }
 .euler-factors { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .8rem; }
 .euler-factors > span { white-space: nowrap; }
 .euler-factors math { font-size: 1.6em; vertical-align: middle; }
+
+.peak-symbol { fill: var(--rust); }
+.prime-sequence { display: flex; flex-wrap: wrap; gap: .25rem .5rem; font-variant-numeric: tabular-nums; }
+.chosen-prime { color: var(--accent); font-weight: 700; }
+.count-strip { display: flex; flex-wrap: wrap; gap: .25rem; }
+.count-strip span { text-align: center; min-width: 2.1em; padding: .15rem .2rem; border: 1px solid var(--rule); border-radius: .2em; }
+.count-strip .count-prime { color: var(--accent); font-weight: 700; background: var(--mint); }
+.count-strip .count-prime::after { content: '·'; padding-left: .12em; }
+.count-strip .not-counted { background: transparent; color: var(--muted); }
+.count-strip .count-selected { border: 2px solid var(--ink); padding-block: calc(.15rem - 1px); }
+#experimento-ceros .critical { stroke: var(--muted); }
+
+.gap-bracket { stroke: var(--rust); stroke-width: 1.6; }
+.gap-label { fill: var(--rust); }
+.chosen-bar { stroke: var(--rust); stroke-width: 4; }
+.distance-cards, .distance-figures { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.distance-cards > div { background: var(--mint); padding: .8rem; }
+.distance-cards dd { margin: 0; }
+.distance-cards strong { display: block; font: 1.9rem var(--serif); margin: .25rem 0; }
+.distance-figures figure { margin: 0; min-width: 0; }
+.distance-figures h4 { margin: .25rem 0; }
+@media (max-width: 760px) {
+  .distance-cards, .distance-figures { grid-template-columns: 1fr; }
+}
+
+.v2-expression math, .formula math, #construccion-euler math { font-size: 1.2em; vertical-align: middle; }
+.euler-factors math { font-size: 1.5em; }
+
+.count-results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.count-results > div { background: var(--paper); padding: .8rem; }
+.count-results .count-exact { grid-column: 1 / -1; background: var(--mint); text-align: center; padding: 1rem; }
+.count-results .count-exact strong { font-size: clamp(2.2rem, 8vw, 3.35rem); }
+.count-results dt span { display: block; }
+.count-results .result-simple { border-color: #245a82 !important; }
+.line-simple { stroke: #245a82; }
+.legend .legend-simple::before { border-top-color: #245a82; }
+.error-track { height: .8rem; background: #e5ebe6; border-radius: .3rem; }
+.error-fill { height: 100%; border-radius: inherit; background: #245a82; }
+.error-fill.li { background: var(--rust); }
+.error-item { margin: 1rem 0; }
+.error-item h5 { font-size: 1rem; margin: .3rem 0; }
+.error-item p { margin: .4rem 0; }
+.error-history tr[aria-current="true"] { background: var(--mint); font-weight: 700; }
+@media (max-width: 430px) {
+  .count-results { grid-template-columns: 1fr; }
+  .error-history, #error-doce-trece table { font-size: .88rem; }
+  .error-history :is(th, td), #error-doce-trece :is(th, td) { padding: .35rem .25rem; }
+}
+
+.nearby-gaps { list-style: none; margin: 1rem 0; padding: 0; }
+.nearby-gaps li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .25rem .6rem; padding: .42rem; }
+.nearby-gaps li[aria-current] { background: var(--mint); font-weight: 700; }
+.nearby-bar { grid-column: 1 / -1; height: .4rem; background: var(--paper); }
+.nearby-bar > span { display: block; height: 100%; background: var(--accent); }
+.nearby-gaps li[aria-current] .nearby-bar > span { background: var(--rust); }
+#experimento-euler .experiment-results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#experimento-euler .result-limit { text-align: center; background: var(--mint); padding: 1rem; grid-column: 1 / -1; }
+#experimento-euler .result-limit strong { font-size: clamp(1.8rem, 7vw, 2.5rem); }
+@media (max-width: 430px) {
+  #experimento-euler .experiment-results { grid-template-columns: 1fr; }
+}
+
+.error-increase { box-shadow: inset 0 -2px var(--rust); }
+.error-increase span { color: var(--rust); font-weight: 700; }
+.critical-cases h4 { margin: 0 0 .55rem; font-size: 1.12rem; }
+.critical-cases .case-value { font: 1.55rem/1.2 var(--serif); color: var(--accent); }
+.critical-cases > :nth-child(2) .case-value { color: var(--rust); }

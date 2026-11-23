@@ -1,10 +1,10 @@
-import { numberLabel, plot } from './v2-chart.js';
+import { eulerFactor, numericFraction, zetaTerm, zetaTerms } from './math-format.js';
+import { numberLabel } from './v2-chart.js';
 import { realSeries, zetaEvolution, zetaReference } from './zeta.js';
 import { formatCount, formatGap, formatValue, renderZetaChart } from './zeta-chart.js';
 
 const limits = [10, 25, 50, 100, 500, 1000];
 const quick = [2, 3, 4];
-const list = new Intl.ListFormat('es-ES');
 
 export function initZetaExperiment(root, compare = false) {
   const id = root.id;
@@ -13,12 +13,6 @@ export function initZetaExperiment(root, compare = false) {
   const chart = root.querySelector('[data-chart]');
   const insight = root.querySelector('[data-insight]');
   const expanded = root.querySelector('[data-expanded]');
-  const terms = root.querySelector('[data-terms]');
-  const functionPlot = root.querySelector('[data-zeta-values]');
-  const zetaCurve = compare ? null : Array.from({ length: 79 }, (_, i) => {
-    const value = 1.1 + i * .05;
-    return [value, zetaReference(value)];
-  });
   controls.innerHTML = `
     <div class="experiment-controls zeta-controls">
       <div class="exponent-control">
@@ -28,7 +22,7 @@ export function initZetaExperiment(root, compare = false) {
           ${(compare ? quick : [...quick, 1, 0.5, 0, -2]).map(value => '<button type="button" data-exponent="' + value + '">s = ' + numberLabel(value) + '</button>').join('')}
         </div>
       </div>
-      <label for="${id}-n">${compare ? 'Límite' : 'Número de términos'} <var>N</var>
+      <label for="${id}-n">${compare ? '¿Hasta qué número quieres calcular?' : '¿Cuántos términos quieres sumar?'} <var>N</var>
         <select id="${id}-n">${(compare ? limits : [...limits, 10000, 100000]).map(n => '<option value="' + n + '"' + (n === 10 ? ' selected' : '') + '>' + formatCount(n) + '</option>').join('')}</select>
       </label>
     </div>`;
@@ -46,23 +40,47 @@ export function initZetaExperiment(root, compare = false) {
   let announcementText;
   let announcementTimer;
 
+  let inspected;
+  let axes;
+  function showPoint() {
+    const prime = chartData.products.some(entry => entry.n === inspected);
+    const action = prime ? ' Ambos caminos cambian: la suma añade su fracción y el producto incorpora un factor nuevo.'
+      : inspected === 1 ? ' La suma empieza con 1. El producto aún no incluye ningún factor.'
+      : ' La suma añade una fracción. El producto conserva su valor porque ' + inspected + ' es compuesto.';
+    const reading = root.querySelector('[data-euler-point]');
+    reading.textContent = 'Al incluir el ' + formatCount(inspected) + '.' + action;
+    const svg = chart.querySelector('svg');
+    const x = axes.x(inspected);
+    svg.querySelector('[data-zeta-cursor]').setAttribute('d', 'M' + x + ' ' + axes.top + 'V' + axes.bottom);
+    svg.setAttribute('aria-valuenow', inspected);
+    svg.setAttribute('aria-valuetext', root.querySelector('[data-euler-point]').textContent);
+  }
   function drawChart() {
     chartWidth = chart.clientWidth;
-    renderZetaChart(chart, chartData);
-    if (compare) return;
-    const { s, reference } = chartData;
-    const contributions = Array.from({ length: 8 }, (_, i) => [i + 1, (i + 1) ** -s]);
-    plot(terms, {
-      series: [{ points: contributions, style: 'line-primes', bars: true }],
-      minX: 1, maxX: 8, maxY: Math.max(...contributions.map(point => point[1])),
-      xLabel: 'Número del término', yLabel: 'Contribución', label: 'Primeros ocho términos para s = ' + numberLabel(s),
+    axes = renderZetaChart(chart, chartData);
+    if (!compare) return;
+    const svg = chart.querySelector('svg');
+    svg.setAttribute('tabindex', '0');
+    svg.setAttribute('role', 'slider');
+    svg.setAttribute('aria-label', 'Inspeccionar la comparación. Usa las flechas para cambiar el último número incluido.');
+    svg.setAttribute('aria-valuemin', '1');
+    svg.setAttribute('aria-valuemax', chartData.sums.length);
+    function select(value) {
+      inspected = Math.min(chartData.sums.length, Math.max(1, value));
+      showPoint();
+    }
+    svg.addEventListener('keydown', event => {
+      const targets = { ArrowLeft: inspected - 1, ArrowDown: inspected - 1, ArrowRight: inspected + 1,
+        ArrowUp: inspected + 1, Home: 1, End: chartData.sums.length };
+      if (targets[event.key] === undefined) return;
+      event.preventDefault();
+      select(targets[event.key]);
     });
-    plot(functionPlot, {
-      series: [{ points: zetaCurve, style: 'line-primes' }],
-      minX: 1.1, maxX: 5, maxY: zetaCurve[0][1],
-      marker: reference === null ? undefined : [s, reference],
-      xLabel: 'Exponente s', yLabel: 'ζ(s)', label: 'Valores de zeta para s real mayor que uno',
+    svg.addEventListener('click', event => {
+      const x = new DOMPoint(event.clientX, event.clientY).matrixTransform(svg.getScreenCTM().inverse()).x;
+      select(axes.termAt(x));
     });
+    showPoint();
   }
 
   function update() {
@@ -79,17 +97,20 @@ export function initZetaExperiment(root, compare = false) {
       compare ? zetaEvolution(s, n, true) : realSeries(s, n);
     const divergent = reference === null;
     const a = numberLabel(s);
+    const powerTerms = '1 + ' + [2, 3, 4].map(k => zetaTerm(k, a)).join(' + ') + ' + …';
     if (compare) {
-      const factors = [2, 3, 5].map(p => `<math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mn>1</mn><mo>/</mo><msup><mn>${p}</mn><mn>${a}</mn></msup></mrow></mfrac></math>`);
+      const factors = [2, 3, 5].map(p => eulerFactor(p, a));
       expanded.innerHTML = `
         <strong>Camino A · Primeros términos</strong>
-        <span class="euler-expanded">1 + ${[2, 3, 4].map(k => `1/${k}<sup>${a}</sup>`).join(' + ')} + …</span>
+        <span class="euler-expanded">${powerTerms}</span>
         <strong>Camino B · Primeros factores</strong>
         <span class="euler-factors">${factors.map((factor, i) => '<span>' + (i ? '× ' : '') + factor + '</span>').join('')}<span>× …</span></span>`;
     } else {
-      expanded.innerHTML = '<strong>Primeros términos</strong> · 1 + '
-        + [2, 3, 4].map(k => '1/' + k + '<sup>' + a + '</sup>').join(' + ') + ' + …'
-        + '<br>En números: 1 + ' + [2, 3, 4].map(k => numberLabel(k ** -s)).join(' + ') + ' + …';
+      const terms = zetaTerms(s);
+      expanded.innerHTML = `
+        <p><strong>1. Con potencias</strong><br>${powerTerms}</p>
+        <p><strong>2. Denominadores calculados</strong><br>${Number.isInteger(s) ? '' : '≈ '}1 + ${terms.map(({ denominator }) => numericFraction(1, numberLabel(denominator))).join(' + ')} + …</p>
+        <p><strong>3. Primeros valores decimales</strong><br>${terms.every(({ term }) => Number.isInteger(term)) ? '' : '≈ '}1 + ${terms.map(({ term }) => numberLabel(term)).join(' + ')} + …</p>`;
     }
     const sum = sums.at(-1);
     const sumGap = divergent ? '' : formatGap(reference - sum);
@@ -105,31 +126,26 @@ export function initZetaExperiment(root, compare = false) {
         <span>${formatCount(factorCount)} factores primos</span>
         <span>Faltan ≈ ${formatGap(reference - product)} para el límite</span>
       </dd></div>` : ''}
-      <div class="result-limit"><dt>Límite de la serie${compare ? ' y del producto' : ''}</dt><dd>${divergent
+      <div class="result-limit"><dt>${compare ? 'Límite común de la suma y del producto' : 'Límite de la serie'}</dt><dd>${divergent
         ? '<strong>No existe un límite finito</strong><span>La serie original diverge.</span>'
-        : '<strong>≈ ' + formatValue(reference) + '</strong><span>Aproximación numérica de alta precisión</span>'}</dd></div>`;
+        : '<strong>≈ ' + formatValue(reference) + '</strong><span>' + (compare ? 'Ambos procedimientos se aproximan al mismo valor.' : 'Aproximación numérica de alta precisión') + '</span>'}</dd></div>`;
 
     if (compare) {
-      const primes = products.map(point => point.n);
-      const preview = primes.length <= 5 ? list.format(primes.map(String)) : primes.slice(0, 3).join(', ') + ', …, ' + primes.slice(-2).join(', ');
-      root.querySelector('[data-prime-preview]').textContent = 'Primos incluidos: ' + preview
-        + '. El último es ' + primes.at(-1) + ', el mayor primo menor o igual que ' + n + '.';
-      root.querySelector('[data-prime-factors]').textContent = primes.map(p => p + ': 1/(1 − ' + p + '^(' + numberLabel(-s) + '))').join(' · ');
+      root.querySelector('[data-prime-preview]').textContent = 'Hasta ' + formatCount(n) + ' utilizamos '
+        + formatCount(factorCount) + ' primos. El último es ' + formatCount(products.at(-1).n) + '.';
     }
     const caption = divergent ? 'La gráfica se detiene en N porque dejamos de sumar. Si seguimos, la suma crece sin límite.'
       : compare
       ? 'La suma sube con cada entero. El producto forma escalones: solo sube cuando N alcanza un primo.'
       : 'Cada nuevo sumando hace subir la curva. La línea discontinua indica el límite.';
+    inspected = n;
     chartData = { s, sums, products, reference, compare, caption };
     drawChart();
 
     let observation;
-    if (compare && n === 10) {
-      observation = 'El producto incorpora los factores de ' + list.format(products.map(point => String(point.n))) + '.';
-    } else if (compare && n === 100) {
-      observation = 'De los ' + formatCount(n) + ' enteros sumados, ' + formatCount(factorCount) + ' son primos y aportan un factor cada uno.';
-    } else if (compare) {
-      observation = 'En los tramos planos del producto, los nuevos enteros sí cuentan para la suma, pero ninguno es primo.';
+    if (compare) {
+      observation = 'La suma incluye ' + formatCount(n) + ' términos y el producto, '
+        + formatCount(factorCount) + ' factores.';
     } else if (n === 1000) {
       observation = 'Incluso con 1.000 sumandos, quedan infinitos términos positivos por añadir.';
     } else {
@@ -142,7 +158,9 @@ export function initZetaExperiment(root, compare = false) {
     if (s >= 4) pace = 'Con un exponente alto, los inversos de las potencias se hacen pequeños muy deprisa. Por eso las aproximaciones mejoran con pocos pasos.';
     insight.textContent = divergent
       ? (s === 1 ? 'En s = 1, cada término es pequeño, pero la suma armónica crece sin límite.'
-        : 'Para s menor que 1, los términos son al menos tan grandes como los de la serie armónica, que diverge.')
+        : s < 0 ? 'Los términos crecen. Añadir más hace que la suma aumente sin límite.'
+        : s === 0 ? 'Todos los términos valen 1. La suma aumenta en una unidad cada vez.'
+        : 'Las fracciones disminuyen, pero demasiado despacio para que la suma se acerque a un valor finito.')
       : observation + ' ' + pace;
     announcementText = 'Suma parcial: ' + formatValue(sum) + '. '
       + (compare ? 'Producto parcial: ' + formatValue(product) + '. ' : '')

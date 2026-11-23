@@ -41,14 +41,20 @@ export function eulerPartialProduct(s, limit) {
   return { value: Math.exp(logProduct), factorCount: primes.length };
 }
 
-// Positive ordinates rounded to six decimals, from LMFDB's zeta zero table.
+// First 50 positive ordinates, computed at 35 digits with mpmath.zetazero
+// and checked by evaluating zeta at the unrounded roots.
 export const nontrivialZeros = Object.freeze([
-  Object.freeze({ real: 0.5, imaginary: 14.134725 }),
-  Object.freeze({ real: 0.5, imaginary: 21.022040 }),
-  Object.freeze({ real: 0.5, imaginary: 25.010858 }),
-  Object.freeze({ real: 0.5, imaginary: 30.424876 }),
-  Object.freeze({ real: 0.5, imaginary: 32.935062 }),
-]);
+  14.134725, 21.022040, 25.010858, 30.424876, 32.935062,
+  37.586178, 40.918719, 43.327073, 48.005151, 49.773832,
+  52.970321, 56.446248, 59.347044, 60.831779, 65.112544,
+  67.079811, 69.546402, 72.067158, 75.704691, 77.144840,
+  79.337375, 82.910381, 84.735493, 87.425275, 88.809111,
+  92.491899, 94.651344, 95.870634, 98.831194, 101.317851,
+  103.725538, 105.446623, 107.168611, 111.029536, 111.874659,
+  114.320221, 116.226680, 118.790783, 121.370125, 122.946829,
+  124.256819, 127.516684, 129.578704, 131.087689, 133.497737,
+  134.756510, 138.116042, 139.736209, 141.123707, 143.111846,
+].map(imaginary => Object.freeze({ real: 0.5, imaginary })));
 
 // Euler–Maclaurin for the tail starting at n + 1, through the B6 term.
 export function zetaReference(s) {

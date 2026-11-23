@@ -26,7 +26,7 @@ export function initComplexPlane(root) {
       ${grid}
       <path class="axis" d="M39 ${origin.y}H301M${origin.x} 16V278"/>
       <text x="176" y="164">0</text>
-      <text x="303" y="151">Real</text><text x="170" y="14" text-anchor="middle">Imaginaria</text>
+      <text x="303" y="151">Real</text><text x="170" y="17" text-anchor="middle">Imaginaria</text>
     </g>
     <path class="coordinate-guide"/><circle class="example-point" r="6"/>`;
   const point = chart.querySelector('circle');
@@ -55,85 +55,79 @@ export function initComplexPlane(root) {
   root.parentElement.querySelector('#ejemplo-complejo').hidden = true;
 }
 
+function zeroReading(zero, index) {
+  return 'Cero ' + (index + 1) + ' · Parte real: ' + display(zero.real)
+    + ' · Parte imaginaria: ≈ ' + zero.imaginary.toFixed(6).replace('.', ',') + '.';
+}
+
+export function zeroGroup(start) {
+  const points = nontrivialZeros.slice(start, start + 10);
+  const first = points[0].imaginary;
+  const last = points.at(-1).imaginary;
+  const step = last - first > 25 ? 10 : 5;
+  const min = Math.floor(first / step) * step;
+  const max = Math.ceil(last / step) * step;
+  return { points, min, max, step };
+}
+
 export function initZeroExplorer(root) {
   const count = root.querySelector('#cantidad-ceros');
   const selected = root.querySelector('#cero-elegido');
-  const showLine = root.querySelector('#mostrar-recta');
   const chart = root.querySelector('svg');
   const summary = root.querySelector('[data-summary]');
-  const discovery = root.querySelector('[data-discovery]');
-  const zeroBounds = { xMin: -0.25, xMax: 1.25, yMin: 0, yMax: 36 };
-  const zeroFrame = { left: 43, top: 22, width: 266, height: 242 };
-  const position = (a, b) => project(a, b, zeroBounds, zeroFrame);
-  const left = position(criticalStrip.left, 0).x;
-  const right = position(criticalStrip.right, 0).x;
-  const middle = position(criticalStrip.line, 0).x;
-  const grid = [0, 10, 20, 30].map(n => {
-    const { y } = position(0, n);
-    return '<path class="grid" d="M43 ' + y + 'H309"/><text x="36" y="' + (y + 4)
-      + '" text-anchor="end">' + n + '</text>';
-  }).join('');
-  chart.innerHTML = `
-    <rect class="band" data-band x="${left}" y="22" width="${right - left}" height="242"/>
-    <g class="plane-labels">
-      ${grid}
-      <path class="axis" d="M43 264H309M${left} 22V264"/>
-      <path class="critical" data-line d="M${middle} 22V264"/>
-      <text x="43" y="15">Im(s)</text><text x="309" y="301" text-anchor="end">Re(s)</text>
-      <text x="${left}" y="283" text-anchor="middle">0</text>
-      <text x="${middle}" y="283" text-anchor="middle" data-line-tick>½</text>
-      <text x="${right}" y="283" text-anchor="middle">1</text>
-    </g><g data-points></g>`;
-  const points = chart.querySelector('[data-points]');
-  count.value = count.querySelector('option[selected]').value;
-  let revealed = false;
-
-  function update() {
+  let visible;
+  let scale;
+  let start;
+  const frame = { left: 48, top: 24, width: 268, height: 370 };
+  const position = (a, b) => project(a, b, { xMin: -.15, xMax: 1.15, yMin: scale.min, yMax: scale.max }, frame);
+  chart.setAttribute('viewBox', '0 0 350 446');
+  function draw() {
     const active = Number(selected.value);
-    const visible = nontrivialZeros.slice(0, Number(count.value));
-    for (const marker of chart.querySelectorAll('[data-line], [data-line-tick]')) {
-      marker.classList.toggle('plot-hidden', !revealed);
-    }
-    points.innerHTML = visible.map(({ real, imaginary }, index) => {
-      const p = position(real, imaginary);
-      return '<circle class="example-point" cx="' + p.x + '" cy="' + p.y + '" r="4"/>'
-        + (active === index ? '<circle class="selected-ring" cx="' + p.x + '" cy="' + p.y + '" r="8"/>' : '');
-    }).join('');
-    const zero = visible[active];
-    const plotted = visible.length === 1 ? 'El primer cero no trivial' : 'Los primeros ' + visible.length + ' ceros no triviales';
-    const overlays = ' Banda crítica visible.' + (revealed ? ' Recta crítica visible en la parte real un medio.' : '');
-    chart.setAttribute('aria-label', plotted + ' con parte imaginaria positiva.' + overlays);
-    const height = zero.imaginary.toFixed(6).replace('.', ',');
-    const coordinates = 'Cero ' + (active + 1) + ' · Parte real: ' + display(zero.real)
-      + ' · Parte imaginaria: ≈ ' + height + '.';
-    discovery.hidden = !revealed;
-    if (revealed) {
-      const conclusion = visible.length === 1
-        ? 'El cero mostrado está sobre la recta crítica: su parte real es exactamente ½.'
-        : 'Todos los ceros mostrados están sobre la recta crítica: su parte real es exactamente ½.';
-      if (discovery.textContent !== conclusion) discovery.textContent = conclusion;
-    }
-    if (summary.textContent !== coordinates) summary.textContent = coordinates;
+    summary.textContent = zeroReading(visible[active], start + active);
+    const left = position(0, 0).x;
+    const right = position(1, 0).x;
+    const middle = position(criticalStrip.line, 0).x;
+    const bottom = position(0, scale.min).y;
+    const ticks = Array.from({ length: (scale.max - scale.min) / scale.step + 1 }, (_, i) => scale.min + i * scale.step);
+    const selection = position(visible[active].real, visible[active].imaginary);
+    chart.setAttribute('aria-label', 'Ceros ' + (start + 1) + ' al ' + (start + 10) + ' sobre la recta crítica. ' + summary.textContent);
+    chart.innerHTML = `
+      <rect class="strip-fill" x="${left}" y="${frame.top}" width="${right - left}" height="${frame.height}"/>
+      <g class="plane-labels">
+        ${ticks.map(n => {
+          const { y } = position(0, n);
+          return '<path class="grid" d="M48 ' + y + 'H316"/><text x="42" y="' + (y+4) + '" text-anchor="end">' + n + '</text>';
+        }).join('')}
+        <text x="48" y="17">Im(s)</text>
+        <path class="axis" d="M48 ${bottom}H316M${left} 24V${bottom}"/>
+        <path class="critical" d="M${middle} 24V${bottom}"/>
+        <text x="${left}" y="416" text-anchor="middle">0</text><text x="${middle}" y="416" text-anchor="middle">½</text>
+        <text x="${right}" y="416" text-anchor="middle">1</text><text x="316" y="438" text-anchor="end">Re(s)</text>
+      </g>
+      ${visible.map((zero, index) => {
+        const p = position(zero.real, zero.imaginary);
+        return '<circle data-zero="' + (start + index + 1) + '" fill="var(--accent)" r="4" cx="' + p.x + '" cy="' + p.y + '"/>';
+      }).join('')}
+      <circle class="selected-ring" r="6" cx="${selection.x}" cy="${selection.y}"/>`;
   }
-
-  function updateOptions() {
-    const keep = Math.min(Number(selected.value), Number(count.value) - 1);
-    selected.replaceChildren(...nontrivialZeros.slice(0, Number(count.value)).map((_, index) => (
-      new Option('Cero ' + (index + 1), index)
-    )));
-    selected.value = keep;
-    update();
+  function update() {
+    start = Number(count.value);
+    scale = zeroGroup(start);
+    visible = scale.points;
+    root.querySelector('[data-zero-conclusion]').textContent = 'Los ceros ' + (start + 1) + ' al ' + (start + 10)
+      + ' aparecen a distintas alturas y tienen parte real ½. Comprobar los 50 casos sigue siendo una verificación finita. La hipótesis afirma esa propiedad para todos los ceros no triviales.';
+    selected.replaceChildren(...visible.map((_, i) => new Option('Cero ' + (start + i + 1), i)));
+    draw();
   }
-
-  count.addEventListener('change', updateOptions);
-  selected.addEventListener('change', update);
-  showLine.addEventListener('click', () => {
-    revealed = !revealed;
-    showLine.setAttribute('aria-expanded', String(revealed));
-    showLine.textContent = revealed ? 'Ocultar la recta crítica' : 'Revelar la recta crítica';
-    update();
+  count.addEventListener('change', update);
+  selected.addEventListener('change', draw);
+  chart.addEventListener('click', event => {
+    const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(chart.getScreenCTM().inverse());
+    selected.value = visible.reduce((best, zero, i) => Math.abs(position(zero.real, zero.imaginary).y - p.y)
+      < Math.abs(position(visible[best].real, visible[best].imaginary).y - p.y) ? i : best, 0);
+    draw();
   });
-  updateOptions();
+  update();
   root.hidden = false;
   root.parentElement.querySelector('#ejemplo-ceros').hidden = true;
 }
@@ -144,40 +138,53 @@ export function initZeroMap(root) {
   const detail = root.querySelector('[data-strip-detail]');
   const detailSvg = detail.querySelector('svg');
   const summary = root.querySelector('[role=status]');
-  const mapBounds = { xMin: -9, xMax: 4, yMin: -4, yMax: 32 };
+  const mapBounds = { xMin: -9, xMax: 4, yMin: -4, yMax: 36 };
   const mapFrame = { left: 20, top: 18, width: 304, height: 166 };
   const point = (a, b) => project(a, b, mapBounds, mapFrame);
   const axis = point(0, 0);
   const convergence = point(1, 0).x;
   const detailFrame = { left: 48, top: 20, width: 270, height: 151 };
-  const detailBounds = { xMin: -.1, xMax: 1.1, yMin: 0, yMax: 16 };
+  const detailBounds = { xMin: -.1, xMax: 1.1, yMin: 0, yMax: 36 };
   const zoom = (real, imaginary) => project(real, imaginary, detailBounds, detailFrame);
   const left = zoom(criticalStrip.left, 0).x;
   const right = zoom(criticalStrip.right, 0).x;
   const bottom = zoom(0, 0).y;
-  const first = nontrivialZeros[0];
-  const dot = zoom(first.real, first.imaginary);
+  const selector = detail.querySelector('[data-map-point]');
+  const reading = detail.querySelector('[data-map-reading]');
+  selector.replaceChildren(...nontrivialZeros.slice(0, 5).map((_, i) => new Option('Cero ' + (i + 1), i)));
+  function updateDetail() {
+    const index = Number(selector.value);
+    const dot = zoom(nontrivialZeros[index].real, nontrivialZeros[index].imaginary);
+    reading.textContent = zeroReading(nontrivialZeros[index], index);
   detailSvg.innerHTML = `
     <rect class="strip-fill" x="${left}" y="20" width="${right - left}" height="${detailFrame.height}"/>
     <g class="plane-labels">
       <text x="48" y="16">Im(s)</text>
       <text x="318" y="208" text-anchor="end">Re(s)</text>
-      ${[5, 10, 15].map(n => {
+      ${[10, 20, 30].map(n => {
         const { y } = zoom(0, n);
         return '<path class="grid" d="M' + left + ' ' + y + 'H' + right + '"/><text x="46" y="' + (y + 4) + '" text-anchor="end">' + n + '</text>';
       }).join('')}
       <path class="axis" d="M48 ${bottom}H318M${left} 20V${bottom}"/>
       <text x="${left}" y="190" text-anchor="middle">0</text>
+      <text x="${zoom(criticalStrip.line, 0).x}" y="190" text-anchor="middle">½</text>
       <text x="${right}" y="190" text-anchor="middle">1</text>
     </g>
-    <circle class="example-point" r="5" cx="${dot.x}" cy="${dot.y}"/>`;
+    ${nontrivialZeros.slice(0, 5).map(zero => {
+      const p = zoom(zero.real, zero.imaginary);
+      return '<circle class="example-point" r="4" cx="' + p.x + '" cy="' + p.y + '"/>';
+    }).join('')}
+    <circle class="selected-ring" r="7" cx="${dot.x}" cy="${dot.y}"/>`;
+  }
+  selector.addEventListener('change', updateDetail);
 
   function update() {
     const trivial = control.value === 'triviales';
     detail.hidden = trivial;
-    const points = trivial ? [-8, -6, -4, -2].map(real => ({ real, imaginary: 0 })) : nontrivialZeros.slice(0, 1);
+    if (!trivial) updateDetail();
+    const points = trivial ? [-8, -6, -4, -2].map(real => ({ real, imaginary: 0 })) : nontrivialZeros.slice(0, 5);
     summary.textContent = trivial ? 'Ceros triviales sobre el eje real: −8, −6, −4 y −2.'
-      : 'El primer cero no trivial con parte imaginaria positiva está dentro de la banda crítica. La ampliación muestra el mismo punto.';
+      : 'Los cinco primeros ceros con parte imaginaria positiva están dentro de la banda crítica. La ampliación permite examinarlos.';
     svg.setAttribute('aria-label', summary.textContent + ' La serie converge a la derecha de la parte real 1.');
     svg.innerHTML = `
       <defs><pattern id="zona-convergencia" width="7" height="7" patternUnits="userSpaceOnUse">
@@ -187,7 +194,7 @@ export function initZeroMap(root) {
       <rect fill="url(#zona-convergencia)" x="${convergence}" y="18" width="${324 - convergence}" height="166"/>
       <path class="axis" d="M20 ${axis.y}H324M${axis.x} 18V184"/>
       <g class="plane-labels">
-        <text x="${axis.x - 6}" y="15" text-anchor="end">Im(s)</text><text x="324" y="219" text-anchor="end">Re(s)</text>
+        <text x="${axis.x - 6}" y="17" text-anchor="end">Im(s)</text><text x="324" y="219" text-anchor="end">Re(s)</text>
         ${[-8, -6, -4, -2, 0, 1, 3].map(a => '<text x="' + point(a, 0).x + '" y="201" text-anchor="middle">' + display(a) + '</text>').join('')}
         ${[10, 20, 30].map(b => '<text x="' + (axis.x - 5) + '" y="' + (point(0, b).y + 4) + '" text-anchor="end">' + b + '</text>').join('')}
       </g>
