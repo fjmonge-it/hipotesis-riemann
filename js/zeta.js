@@ -89,3 +89,18 @@ export function zetaEvolution(s, limit, compareEuler = false) {
   }
   return { sums, products, factorCount };
 }
+
+// Finite sums exist even where the infinite series diverges.
+export function realSeries(s, limit) {
+  if (!Number.isFinite(s) || s < -2 || s > 5 || !Number.isInteger(limit) || limit < 1 || limit > 100000) {
+    throw new RangeError('Exponente o número de términos fuera del intervalo de exploración.');
+  }
+  if (s > 1) return { sums: zetaEvolution(s, limit).sums, reference: zetaReference(s) };
+  const sums = [];
+  let total = 0;
+  for (let n = 1; n <= limit; n += 1) {
+    total += n ** -s;
+    sums.push(total);
+  }
+  return { sums, reference: null };
+}

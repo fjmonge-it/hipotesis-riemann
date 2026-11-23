@@ -29,3 +29,19 @@ export function distributionModel(limit) {
   });
   return { limit, primes, samples };
 }
+
+export function simpleEstimate(x) {
+  return x / Math.log(x);
+}
+
+export function comparisonReading(x, primes) {
+  const reading = distributionReading(x, primes);
+  const simple = simpleEstimate(x);
+  return { ...reading, simple, simpleError: reading.count - simple };
+}
+
+// Relative real part of x^rho / rho, with x as the normalization.
+export function relativeOscillation(t, beta, gamma) {
+  const phase = gamma * t - Math.atan2(gamma, beta);
+  return Math.exp((beta - 1) * t) * Math.cos(phase) / Math.hypot(beta, gamma);
+}

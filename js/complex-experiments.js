@@ -58,7 +58,6 @@ export function initComplexPlane(root) {
 export function initZeroExplorer(root) {
   const count = root.querySelector('#cantidad-ceros');
   const selected = root.querySelector('#cero-elegido');
-  const showBand = root.querySelector('#mostrar-banda');
   const showLine = root.querySelector('#mostrar-recta');
   const chart = root.querySelector('svg');
   const summary = root.querySelector('[data-summary]');
@@ -87,15 +86,13 @@ export function initZeroExplorer(root) {
     </g><g data-points></g>`;
   const points = chart.querySelector('[data-points]');
   count.value = count.querySelector('option[selected]').value;
-  showBand.checked = showBand.defaultChecked;
-  showLine.checked = showLine.defaultChecked;
+  let revealed = false;
 
   function update() {
     const active = Number(selected.value);
     const visible = nontrivialZeros.slice(0, Number(count.value));
-    chart.querySelector('[data-band]').classList.toggle('plot-hidden', !showBand.checked);
     for (const marker of chart.querySelectorAll('[data-line], [data-line-tick]')) {
-      marker.classList.toggle('plot-hidden', !showLine.checked);
+      marker.classList.toggle('plot-hidden', !revealed);
     }
     points.innerHTML = visible.map(({ real, imaginary }, index) => {
       const p = position(real, imaginary);
@@ -104,14 +101,13 @@ export function initZeroExplorer(root) {
     }).join('');
     const zero = visible[active];
     const plotted = visible.length === 1 ? 'El primer cero no trivial' : 'Los primeros ' + visible.length + ' ceros no triviales';
-    const overlays = (showBand.checked ? ' Banda crítica visible.' : '')
-      + (showLine.checked ? ' Recta crítica visible en la parte real un medio.' : '');
+    const overlays = ' Banda crítica visible.' + (revealed ? ' Recta crítica visible en la parte real un medio.' : '');
     chart.setAttribute('aria-label', plotted + ' con parte imaginaria positiva.' + overlays);
     const height = zero.imaginary.toFixed(6).replace('.', ',');
     const coordinates = 'Cero ' + (active + 1) + ' · Parte real: ' + display(zero.real)
       + ' · Parte imaginaria: ≈ ' + height + '.';
-    discovery.hidden = !showLine.checked;
-    if (showLine.checked) {
+    discovery.hidden = !revealed;
+    if (revealed) {
       const conclusion = visible.length === 1
         ? 'El cero mostrado está sobre la recta crítica: su parte real es exactamente ½.'
         : 'Todos los ceros mostrados están sobre la recta crítica: su parte real es exactamente ½.';
@@ -130,8 +126,51 @@ export function initZeroExplorer(root) {
   }
 
   count.addEventListener('change', updateOptions);
-  for (const input of [selected, showBand, showLine]) input.addEventListener('change', update);
+  selected.addEventListener('change', update);
+  showLine.addEventListener('click', () => {
+    revealed = !revealed;
+    showLine.setAttribute('aria-expanded', String(revealed));
+    showLine.textContent = revealed ? 'Ocultar la recta crítica' : 'Revelar la recta crítica';
+    update();
+  });
   updateOptions();
   root.hidden = false;
   root.parentElement.querySelector('#ejemplo-ceros').hidden = true;
+}
+
+export function initZeroMap(root) {
+  const control = root.querySelector('select');
+  const svg = root.querySelector('svg');
+  const summary = root.querySelector('[role=status]');
+  const mapBounds = { xMin: -9, xMax: 4, yMin: -4, yMax: 32 };
+  const mapFrame = { left: 20, top: 18, width: 304, height: 166 };
+  const point = (a, b) => project(a, b, mapBounds, mapFrame);
+  const axis = point(0, 0);
+  const convergence = point(1, 0).x;
+  function update() {
+    const trivial = control.value === 'triviales';
+    const points = trivial ? [-8, -6, -4, -2].map(real => ({ real, imaginary: 0 })) : nontrivialZeros.slice(0, 3);
+    summary.textContent = trivial ? 'Ceros triviales sobre el eje real: −8, −6, −4 y −2.'
+      : 'Tres ceros no triviales conocidos dentro de la banda. En el próximo experimento podrás comparar sus posiciones horizontales.';
+    svg.setAttribute('aria-label', summary.textContent + ' La serie converge a la derecha de la parte real 1.');
+    svg.innerHTML = `
+      <defs><pattern id="zona-convergencia" width="7" height="7" patternUnits="userSpaceOnUse">
+        <path d="M0 7L7 0" stroke="#536962"/>
+      </pattern></defs>
+      <rect fill="#b7d8bc" x="${axis.x}" y="18" width="${convergence - axis.x}" height="166"/>
+      <rect fill="url(#zona-convergencia)" x="${convergence}" y="18" width="${324 - convergence}" height="166"/>
+      <path class="axis" d="M20 ${axis.y}H324M${axis.x} 18V184"/>
+      <g class="plane-labels">
+        <text x="${axis.x - 6}" y="15" text-anchor="end">Im(s)</text><text x="324" y="219" text-anchor="end">Re(s)</text>
+        ${[-8, -6, -4, -2, 0, 1, 3].map(a => '<text x="' + point(a, 0).x + '" y="201" text-anchor="middle">' + display(a) + '</text>').join('')}
+        ${[10, 20, 30].map(b => '<text x="' + (axis.x - 5) + '" y="' + (point(0, b).y + 4) + '" text-anchor="end">' + b + '</text>').join('')}
+      </g>
+      ${points.map(({ real, imaginary }) => {
+        const p = point(real, imaginary);
+        return '<circle class="example-point" r="5" cx="' + p.x + '" cy="' + p.y + '"/>';
+      }).join('')}`;
+  }
+  control.addEventListener('change', update);
+  update();
+  root.hidden = false;
 }

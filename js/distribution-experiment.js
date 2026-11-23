@@ -1,4 +1,4 @@
-import { distributionModel, distributionReading } from './distribution.js';
+import { distributionModel, comparisonReading } from './distribution.js';
 import { drawDistributionChart, formatInteger } from './distribution-chart.js';
 
 const decimal = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 5, useGrouping: 'always' });
@@ -10,10 +10,19 @@ export function initDistributionExperiment(root) {
   const exact = root.querySelector('#x-exacto');
   const results = root.querySelector('[data-results]');
   const summary = root.querySelector('[data-summary]');
+  const closerReading = root.querySelector('[data-closer]');
   const announcement = root.querySelector('[data-announcement]');
   let announcementTimer;
   const countChart = root.querySelector('#grafico-recuento');
   const errorChart = root.querySelector('#grafico-desviacion');
+  const estimateControls = [...root.querySelectorAll('[data-estimate-toggle]')];
+  function syncVisibility() {
+    for (const control of estimateControls) {
+      for (const trace of root.querySelectorAll('[data-' + control.dataset.estimateToggle + ']')) {
+        trace.classList.toggle('plot-hidden', !control.checked);
+      }
+    }
+  }
   const shortcuts = root.querySelectorAll('[data-reading]');
   let model;
   let moveCount;
@@ -27,21 +36,23 @@ export function initDistributionExperiment(root) {
     moveError = drawDistributionChart(errorChart, model, true);
     moveCount(reading);
     moveError(reading);
+    syncVisibility();
   }
 
   function update(x) {
-    reading = distributionReading(x, model.primes);
-    const { count, estimate, error } = reading;
+    reading = comparisonReading(x, model.primes);
+    const { count, estimate, error, simple, simpleError } = reading;
     slider.value = exact.value = x;
     slider.setAttribute('aria-valuetext', formatInteger(x));
     results.innerHTML = `
       <div><dt>Primos hasta ${formatInteger(x)}, π(x)</dt><dd><strong>${formatInteger(count)}</strong></dd></div>
-      <div class="result-product"><dt>Estimación li(x)</dt><dd><strong>≈ ${formatDecimal(estimate)}</strong></dd></div>
-      <div class="result-limit"><dt>Desviación E(x)</dt><dd><strong>≈ ${formatDecimal(error)}</strong></dd></div>`;
-    const relation = error < 0 ? 'El recuento queda por debajo de la estimación.'
-      : error > 0 ? 'El recuento supera la estimación.' : 'El recuento coincide con la estimación.';
-    summary.textContent = 'En x = ' + formatInteger(x) + ' hay ' + formatInteger(count)
-      + ' primos. ' + relation + ' Desviación aproximada: ' + formatDecimal(error) + '.';
+      <div class="result-simple"><dt>Estimación x/ln(x)</dt><dd><strong>≈ ${formatDecimal(simple)}</strong><span>E₁ ≈ ${formatDecimal(simpleError)}</span></dd></div>
+      <div class="result-product"><dt>Estimación li(x)</dt><dd><strong>≈ ${formatDecimal(estimate)}</strong><span>E₂ ≈ ${formatDecimal(error)}</span></dd></div>`;
+    const closer = Math.abs(error) < Math.abs(simpleError) ? 'li(x)' : Math.abs(error) > Math.abs(simpleError) ? 'x/ln(x)' : '';
+    closerReading.textContent = closer ? 'La estimación más cercana aquí es ' + closer + '.'
+      : 'Las dos estimaciones quedan a la misma distancia.';
+    summary.textContent = 'En x = ' + formatInteger(x) + ' hay ' + formatInteger(count) + ' primos. '
+      + 'Errores: E₁ ≈ ' + formatDecimal(simpleError) + ' y E₂ ≈ ' + formatDecimal(error) + '.';
     for (const button of shortcuts) {
       button.setAttribute('aria-pressed', String(model.limit === 100 && x === Number(button.dataset.reading)));
     }
@@ -67,6 +78,17 @@ export function initDistributionExperiment(root) {
   limit.value = limit.querySelector('option[selected]').value;
   root.hidden = false;
   changeLimit();
+  for (const control of estimateControls) control.addEventListener('change', syncVisibility);
+  for (const figure of [countChart, errorChart]) {
+    figure.querySelector('svg').addEventListener('click', event => {
+      const svg = event.currentTarget;
+      const rect = svg.getBoundingClientRect();
+      const width = svg.viewBox.baseVal.width;
+      const fraction = ((event.clientX - rect.left) / rect.width * width - 49) / (width - 74);
+      update(Math.round(2 + Math.min(1, Math.max(0, fraction)) * (model.limit - 2)));
+      announce();
+    });
+  }
   limit.addEventListener('change', () => {
     changeLimit();
     announce();
