@@ -40,8 +40,16 @@ export function comparisonReading(x, primes) {
   return { ...reading, simple, simpleError: reading.count - simple };
 }
 
+export function relativeEnvelope(t, beta, gamma) {
+  return Math.exp((beta - 1) * t) / Math.hypot(beta, gamma);
+}
+
+export function normalizedEnvelope(t, beta, start) {
+  return Math.exp((beta - 1) * (t - start));
+}
+
 // Relative real part of x^rho / rho, with x as the normalization.
 export function relativeOscillation(t, beta, gamma) {
   const phase = gamma * t - Math.atan2(gamma, beta);
-  return Math.exp((beta - 1) * t) * Math.cos(phase) / Math.hypot(beta, gamma);
+  return relativeEnvelope(t, beta, gamma) * Math.cos(phase);
 }

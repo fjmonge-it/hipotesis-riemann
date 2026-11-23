@@ -107,7 +107,7 @@
           </form>
           <p role="status"></p>
           <label>Consultar un salto anterior <select data-history disabled></select></label>
-          <p data-pair></p>
+          <p data-pair role="status"></p>
           <figure class="experiment-chart" hidden><svg role="img"></svg><figcaption>La gráfica muestra hasta 100 saltos por vista. El selector permite consultar toda la partida.</figcaption></figure>
         </div>
         <details class="v2-details" hidden><summary>Consultar la cuadrícula de primos</summary>
@@ -234,8 +234,13 @@
         <div class="experiment" id="mapa-ceros" hidden>
           <h3>Dos clases de ceros, dos regiones</h3>
           <label>Qué ceros mostrar <select><option value="triviales">Triviales</option><option value="no-triviales">No triviales conocidos</option></select></label>
-          <figure class="plane-figure"><svg role="img" viewBox="0 0 350 225"></svg><figcaption>Sombreado verde: banda crítica. Trama diagonal: región a la derecha de Re(s) = 1 donde converge la serie. Los ejes usan escalas distintas.</figcaption></figure>
+          <figure class="plane-figure"><svg data-overview role="img" viewBox="0 0 350 225"></svg><figcaption>Sombreado verde: banda crítica. Trama diagonal: región a la derecha de Re(s) = 1 donde converge la serie. Los ejes usan escalas distintas.</figcaption></figure>
           <p role="status"></p>
+          <figure class="plane-figure strip-detail" data-strip-detail hidden>
+            <h4>Ampliación de la banda crítica</h4>
+            <svg role="img" viewBox="0 0 350 214" aria-label="Ampliación entre las partes reales cero y uno. Un cero no trivial dentro de la banda, a la altura aproximada de 14,13."></svg>
+            <figcaption>La franja verde abarca las partes reales entre 0 y 1. El punto es el mismo del mapa general y está a una altura aproximada de 14,13. Cada eje tiene su propia escala.</figcaption>
+          </figure>
         </div>
       </section>
 
@@ -319,14 +324,14 @@
             <figcaption>Cada escalón corresponde a un primo. Las estimaciones se dibujan uniendo muestras de sus curvas. Puedes pulsar ambas gráficas o usar el deslizador para mover el cursor. A escalas grandes algunos escalones son demasiado pequeños para distinguirlos.</figcaption>
           </figure>
           <h3>¿Cuánto se equivoca la estimación?</h3>
-          <p>Restamos cada estimación al recuento: <strong>E₁ = π(x) − x/ln(x)</strong> y <strong>E₂ = π(x) − li(x)</strong>. Un error positivo indica que la estimación se quedó corta. Uno negativo, que se pasó.</p>
+          <p>El error es lo que queda al restar la estimación al recuento real. Si es positivo, la estimación se quedó corta. Si es negativo, se pasó.</p>
           <p class="experiment-guide"><strong>Prueba este experimento.</strong> Compara 12 y 13 en el intervalo hasta 100. ¿Qué cambia al incorporar un primo?</p>
           <div class="quick-values distribution-shortcuts" role="group" aria-label="Comparar dos recuentos consecutivos">
             <button type="button" data-reading="12"><var>x</var> = 12</button>
             <button type="button" data-reading="13"><var>x</var> = 13</button>
           </div>
           <figure class="experiment-chart" id="grafico-desviacion">
-            <ul class="legend" aria-label="Leyenda"><li class="legend-simple">Error E₁ de x/ln(x)</li><li class="legend-li">Error E₂ de li(x)</li></ul>
+            <ul class="legend" aria-label="Leyenda"><li class="legend-simple">Error de x/ln(x)</li><li class="legend-li">Error de li(x)</li></ul>
             <svg role="img" aria-label="Desviación del recuento respecto a la estimación, con una línea de referencia en cero"></svg>
             <figcaption>El eje horizontal coincide con el de arriba. La escala vertical muestra la diferencia ampliada. La línea horizontal discontinua marca el cero y la línea vertical señala el mismo valor de <var>x</var> en ambas gráficas.</figcaption>
           </figure>
@@ -361,18 +366,44 @@
         </figure>
         </div>
         <h3>¿Cómo influye un cero en las oscilaciones?</h3>
-        <p>Al aumentar <var>x</var>, el error sube y baja. La conexión con la zeta se ve en fórmulas para ψ(<var>x</var>), la función de Chebyshev que cuenta primos y sus potencias con pesos. Cada cero ρ = β + iγ aporta un término relacionado con <var>x</var><sup>ρ</sup>/ρ.</p>
-        <p>γ, la parte imaginaria, determina lo rápido que oscila respecto a ln(<var>x</var>). β, la parte real, controla el tamaño absoluto: la amplitud es proporcional a <var>x</var><sup>β</sup>. Para β = ½ crece como √<var>x</var>. El caso hipotético β = ¾ crecería como <var>x</var><sup>¾</sup>.</p>
+        <p>La estimación se queda a veces más cerca del recuento real y a veces más lejos. En las fórmulas relacionadas con ese recuento, cada cero de la zeta aporta una oscilación. Su posición horizontal influye en cuánto pesa esa contribución cuando estudiamos números cada vez mayores.</p>
+        <p>Vamos a comparar un caso sobre la recta crítica con otro imaginado fuera de ella. Así veremos por qué importa que la parte real de un cero sea ½.</p>
         <div class="experiment" id="oscilaciones" hidden>
           <h4>Compara dos contribuciones relativas</h4>
-          <label>Parte real β <select><option value="ambas">Comparar ½ y ¾</option><option value="0.5">½ · recta crítica</option><option value="0.75">¾ · caso hipotético</option></select></label>
-          <figure class="experiment-chart">
-            <ul class="legend" aria-label="Leyenda"><li>β = ½</li><li class="legend-li">β = ¾, hipotético</li></ul>
-            <svg role="img"></svg><figcaption>Parte real de x<sup>ρ</sup>/ρ dividida por x, con γ = 14,134725 fijo. La amplitud relativa disminuye aunque crezca la absoluta. El caso ¾ es un modelo ilustrativo y no representa un cero conocido.</figcaption>
+          <label>Situación que quieres explorar
+            <select>
+              <option value="ambas">Comparar ambos casos</option>
+              <option value="0.5">Sobre la recta crítica (β = ½)</option>
+              <option value="0.75">Fuera de la recta (β = ¾, caso hipotético)</option>
+            </select>
+          </label>
+          <ul class="legend oscillation-legend" aria-label="Casos mostrados en ambas gráficas">
+            <li data-beta="0.5">Sobre la recta crítica (β = ½)</li>
+            <li class="legend-li" data-beta="0.75">Fuera de la recta (β = ¾, hipotético)</li>
+          </ul>
+          <figure class="experiment-chart" data-wave>
+            <h4>Cómo cambia la oscilación al estudiar números mayores</h4>
+            <svg role="img"></svg>
+            <figcaption>Las ondas muestran cuánto pesa cada contribución en relación con el número estudiado. Las líneas tenues delimitan su amplitud. El eje horizontal usa una escala logarítmica: multiplicar por diez ocupa siempre el mismo espacio.</figcaption>
+          </figure>
+          <figure class="experiment-chart" data-envelope>
+            <h4>Cuánta amplitud queda</h4>
+            <ul class="legend" aria-label="Casos comparados">
+              <li data-beta="0.5">Sobre la recta crítica (β = ½)</li>
+              <li class="legend-li" data-beta="0.75">Fuera de la recta (β = ¾, hipotético)</li>
+            </ul>
+            <svg role="img"></svg>
+            <figcaption>Cada curva toma como 100 % su propia amplitud en 2. Así podemos comparar el ritmo al que se reduce la importancia relativa de cada contribución.</figcaption>
           </figure>
           <p role="status"></p>
         </div>
-        <p>El error real π(<var>x</var>) − li(<var>x</var>) no es ninguna de estas curvas. Contribuyen muchos ceros y sus efectos pueden compensarse.</p>
+        <p class="takeaway">La posición horizontal de un cero influye en cuánto pesa su contribución a las fluctuaciones. En la recta crítica esa importancia relativa disminuye más deprisa que en el caso hipotético. Por eso importa saber dónde están todos los ceros no triviales.</p>
+        <p>El caso con parte real ¾ es hipotético. Las curvas ilustran contribuciones individuales. El error real del recuento depende del efecto combinado de muchos ceros, cuyas aportaciones pueden compensarse.</p>
+        <details class="v2-details">
+          <summary>Ver qué fórmulas hay detrás de las gráficas</summary>
+          <p>Para un cero ρ = β + iγ, β es su parte real y γ su parte imaginaria. En la fórmula explícita para ψ(x), que cuenta primos y sus potencias con pesos, aparecen términos relacionados con x<sup>ρ</sup>/ρ. La primera gráfica toma la parte real de ese término y la divide por x, con γ = 14,134725 fijo en los dos casos.</p>
+          <p>La amplitud absoluta es x<sup>β</sup>/|ρ| y crece en los dos ejemplos. La amplitud relativa es x<sup>β−1</sup>/|ρ| y disminuye. Es proporcional a 1/√x para β = ½ y a 1/x<sup>¼</sup> para β = ¾. En la segunda gráfica se elimina la diferencia de partida dividiendo cada envolvente por su valor en x = 2.</p>
+        </details>
         <h3>De la recta crítica al error</h3>
         <p>En las fórmulas que cuentan primos aparecen contribuciones de los ceros de la zeta. Su parte real influye en cuánto puede crecer su contribución a las fluctuaciones. Por eso saber dónde se sitúan todos los ceros ayuda a acotar el error total.</p>
         <figure class="formula">

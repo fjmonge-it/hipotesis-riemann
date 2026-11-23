@@ -83,6 +83,7 @@ export function initPrimeGame(root) {
   const figure = root.querySelector('figure');
   const batches = root.querySelectorAll('[data-batch]');
   let prime;
+  let firstPrime;
   let pairs;
   function readPair() {
     const p = pairs[Number(history.value)];
@@ -104,7 +105,7 @@ export function initPrimeGame(root) {
   }
   function reset() {
     if (!start.reportValidity()) return false;
-    prime = nextPrime(start.valueAsNumber);
+    prime = firstPrime = nextPrime(start.valueAsNumber);
     pairs = [];
     history.replaceChildren();
     figure.hidden = true;
@@ -135,9 +136,10 @@ export function initPrimeGame(root) {
       prime = end;
     }
     const pair = pairs.at(-1);
-    current.textContent = 'Primo actual: ' + numberLabel(prime) + '.';
-    status.textContent = 'Último salto: ' + numberLabel(pair.start) + ' → ' + numberLabel(pair.end) + ' (' + pair.gap + ' pasos).' +
-      (challenge ? ' Tu predicción: ' + predicted + (predicted === pair.gap ? '. ¡Acertaste!' : '.') : '');
+    current.textContent = 'Comenzamos en ' + numberLabel(firstPrime) + '. Tras ' + numberLabel(pairs.length)
+      + (pairs.length === 1 ? ' salto hemos llegado a ' : ' saltos hemos llegado a ') + numberLabel(prime) + '.';
+    status.textContent = challenge ? 'Tu predicción: ' + predicted +
+      (predicted === pair.gap ? '. ¡Acertaste!' : '. Consulta el salto seleccionado para ver la distancia real.') : '';
     history.disabled = false;
     history.value = pairs.length - 1;
     figure.hidden = false;

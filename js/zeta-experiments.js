@@ -79,11 +79,18 @@ export function initZetaExperiment(root, compare = false) {
       compare ? zetaEvolution(s, n, true) : realSeries(s, n);
     const divergent = reference === null;
     const a = numberLabel(s);
-    expanded.innerHTML = '<strong>' + (compare ? 'Camino A. ' : '') + 'Primeros términos</strong> · 1 + '
-      + [2, 3, 4].map(k => '1/' + k + '<sup>' + a + '</sup>').join(' + ') + ' + …'
-      + (!compare ? '<br>En números: 1 + ' + [2, 3, 4].map(k => numberLabel(k ** -s)).join(' + ') + ' + …' :
-        '<br><strong>Camino B. Primeros factores</strong> · ' +
-        [2, 3, 5].map(p => '[1/(1 − 1/' + p + '<sup>' + a + '</sup>)]').join(' × ') + ' × …');
+    if (compare) {
+      const factors = [2, 3, 5].map(p => `<math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mn>1</mn><mo>/</mo><msup><mn>${p}</mn><mn>${a}</mn></msup></mrow></mfrac></math>`);
+      expanded.innerHTML = `
+        <strong>Camino A · Primeros términos</strong>
+        <span class="euler-expanded">1 + ${[2, 3, 4].map(k => `1/${k}<sup>${a}</sup>`).join(' + ')} + …</span>
+        <strong>Camino B · Primeros factores</strong>
+        <span class="euler-factors">${factors.map((factor, i) => '<span>' + (i ? '× ' : '') + factor + '</span>').join('')}<span>× …</span></span>`;
+    } else {
+      expanded.innerHTML = '<strong>Primeros términos</strong> · 1 + '
+        + [2, 3, 4].map(k => '1/' + k + '<sup>' + a + '</sup>').join(' + ') + ' + …'
+        + '<br>En números: 1 + ' + [2, 3, 4].map(k => numberLabel(k ** -s)).join(' + ') + ' + …';
+    }
     const sum = sums.at(-1);
     const sumGap = divergent ? '' : formatGap(reference - sum);
     const product = products.at(-1)?.value;

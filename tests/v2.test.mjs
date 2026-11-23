@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { nextPrime, gapsUpTo, peakBuckets } from '../js/prime-gaps.js';
-import { comparisonReading, distributionModel, relativeOscillation } from '../js/distribution.js';
+import { comparisonReading, distributionModel, normalizedEnvelope, relativeEnvelope, relativeOscillation } from '../js/distribution.js';
 import { realSeries, zetaEvolution } from '../js/zeta.js';
 import { numberLabel } from '../js/v2-chart.js';
 
@@ -62,4 +62,20 @@ test('los errores conservan signo y escala y la oscilación coincide con su fór
       (beta * Math.cos(gamma * t) + gamma * Math.sin(gamma * t)) / (beta ** 2 + gamma ** 2);
     assert.ok(Math.abs(relativeOscillation(t, beta, gamma) - direct) < 1e-15);
   }
+});
+
+test('las ondas quedan entre las envolventes exactas y la normalización parte del 100 %', () => {
+  const start = Math.log(2);
+  const gamma = 14.134725;
+  for (const beta of [0.5, 0.75]) {
+    assert.equal(normalizedEnvelope(start, beta, start), 1);
+    for (const x of [2, 10, 100, 1000]) {
+      const t = Math.log(x);
+      const amplitude = relativeEnvelope(t, beta, gamma);
+      assert.ok(Math.abs(relativeOscillation(t, beta, gamma)) <= amplitude);
+      assert.ok(Math.abs(amplitude - x ** (beta - 1) / Math.hypot(beta, gamma)) < 1e-15);
+      assert.ok(Math.abs(normalizedEnvelope(t, beta, start) - amplitude / relativeEnvelope(start, beta, gamma)) < 1e-15);
+    }
+  }
+  assert.ok(normalizedEnvelope(Math.log(1000), 0.5, start) < normalizedEnvelope(Math.log(1000), 0.75, start));
 });

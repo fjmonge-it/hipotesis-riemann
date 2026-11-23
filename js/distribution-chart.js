@@ -78,7 +78,7 @@ export function drawDistributionChart(figure, model, errorChart) {
       <text x="49" y="16">${errorChart ? 'Error de la estimación' : 'Cantidad acumulada'}</text>
       ${axes}${horizontal}
       <path class="axis" d="M49 22V${bottom}H${right}"/>
-      <text x="${width / 2}" y="198" text-anchor="middle">Límite del recuento, x</text>
+      <text x="${width / 2}" y="198" text-anchor="middle">Números examinados</text>
     </g>
     ${errorChart ? '<path class="line-error" data-li d="' + errorPath.join('') + '"/>'
       : '<path class="line-li" data-li d="' + estimatePath.join('') + '"/><path class="line-primes" d="' + staircase.join('') + '"/>'}

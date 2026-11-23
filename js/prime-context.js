@@ -1,6 +1,6 @@
-import { comparisonReading, relativeOscillation } from './distribution.js';
+import { comparisonReading, normalizedEnvelope, relativeEnvelope, relativeOscillation } from './distribution.js';
 import { primesUpTo } from './primes.js';
-import { numberLabel, plot } from './v2-chart.js';
+import { plot } from './v2-chart.js';
 
 export function initPrimeCount(root) {
   const input = root.querySelector('input');
@@ -28,32 +28,57 @@ export function initPrimeCount(root) {
 
 export function initOscillations(root) {
   const input = root.querySelector('select');
-  const figure = root.querySelector('figure');
+  const wave = root.querySelector('[data-wave]');
+  const envelope = root.querySelector('[data-envelope]');
   const result = root.querySelector('[role=status]');
   const gamma = 14.134725;
   const tMin = Math.log(2);
   const tMax = Math.log(1000);
-  const styles = ['line-primes', 'line-li'];
+  const samples = Array.from({ length: 480 }, (_, i) => tMin + (tMax - tMin) * i / 479);
+  const horizontalTicks = [[2, '2'], [10, '10'], [100, '100'], [1000, '1.000']]
+    .map(([x, text]) => [Math.log(x), text]);
+  const percent = new Intl.NumberFormat('es-ES', { style: 'percent', maximumFractionDigits: 0 });
+  const axes = {
+    minX: tMin, maxX: tMax, horizontalTicks, xLabel: 'Número estudiado, x',
+    formatY: n => percent.format(n).replace('-', '−'),
+  };
+  const cases = [
+    { beta: .5, style: 'line-primes' },
+    { beta: .75, style: 'line-li' },
+  ];
+  const series = (active, value, outline = false) => active.map(({ beta, style }) => ({
+    style: style + (outline ? ' wave-envelope' : ''),
+    points: samples.map(t => [t, value(t, beta)]),
+  }));
+
   function update() {
-    const betas = input.value === 'ambas' ? [.5, .75] : [Number(input.value)];
-    const series = betas.map(beta => ({
-      style: styles[beta === .5 ? 0 : 1],
-      points: Array.from({ length: 480 }, (_, i) => {
-        const t = tMin + (tMax - tMin) * i / 479;
-        return [t, relativeOscillation(t, beta, gamma)];
-      }),
-    }));
-    const max = .065;
-    result.textContent = 'En x = 1.000: ' + betas.map(beta => 'β = ' + numberLabel(beta)
-      + ', contribución relativa ' + numberLabel(relativeOscillation(tMax, beta, gamma))).join(' · ') + '.';
-    plot(figure, {
-      series, minX: tMin, maxX: tMax, minY: -max, maxY: max,
-      xLabel: 'ln(x)', yLabel: 'Contribución dividida por x',
-      label: 'Oscilaciones ilustrativas con frecuencia fija. ' + result.textContent,
+    const active = cases.filter(({ beta }) => input.value === 'ambas' || beta === Number(input.value));
+    for (const item of root.querySelectorAll('[data-beta]')) {
+      item.hidden = !active.some(({ beta }) => beta === Number(item.dataset.beta));
+    }
+    const both = active.length === 2;
+    result.textContent = both
+      ? 'Ambas curvas parten del 100 % de su propia amplitud en x = 2. La de la recta crítica baja más deprisa.'
+      : 'Se muestra ' + (active[0].beta === .5 ? 'el caso de la recta crítica.' : 'el caso hipotético fuera de la recta.');
+    plot(wave, {
+      ...axes, minY: -.06, maxY: .06, yLabel: 'Contribución relativa',
+      series: [
+        ...series(active, (t, beta) => relativeEnvelope(t, beta, gamma), true),
+        ...series(active, (t, beta) => -relativeEnvelope(t, beta, gamma), true),
+        ...series(active, (t, beta) => relativeOscillation(t, beta, gamma)),
+      ],
+      label: 'Oscilaciones ilustrativas con sus límites de amplitud. ' + result.textContent,
+    });
+    plot(envelope, {
+      ...axes, maxY: 1, yLabel: 'Amplitud que queda',
+      series: series(active, (t, beta) => normalizedEnvelope(t, beta, tMin)),
+      label: 'Amplitudes en proporción a su valor de partida. ' + result.textContent,
     });
   }
   root.hidden = false;
   input.addEventListener('change', update);
   update();
-  new ResizeObserver(update).observe(figure);
+  const observer = new ResizeObserver(update);
+  observer.observe(wave);
+  observer.observe(envelope);
 }

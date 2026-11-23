@@ -270,3 +270,14 @@ summary + p { margin-top: .55rem; }
 #experimento-ceros #mostrar-recta { padding: .45rem .8rem; background: var(--accent); color: #fff; border-color: var(--accent); }
 #experimento-ceros #mostrar-recta:hover { background: #084c42; }
 .experiment button:disabled { opacity: .65; cursor: default; }
+
+.strip-detail { padding-top: .75rem; border-top: 1px solid var(--rule); }
+.strip-detail h4 { margin: 0 0 .4rem; }
+.strip-fill { fill: #b7d8bc; stroke: var(--muted); stroke-dasharray: 3 4; }
+.oscillation-legend { margin: 1rem 0; }
+#oscilaciones h4 { margin: .7rem 0 .4rem; }
+.wave-envelope { opacity: .36; stroke-width: 1.2; }
+.euler-expanded, .euler-factors { display: block; margin: .25rem 0 .8rem; }
+.euler-factors { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .8rem; }
+.euler-factors > span { white-space: nowrap; }
+.euler-factors math { font-size: 1.6em; vertical-align: middle; }

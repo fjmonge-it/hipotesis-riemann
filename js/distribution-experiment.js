@@ -46,13 +46,13 @@ export function initDistributionExperiment(root) {
     slider.setAttribute('aria-valuetext', formatInteger(x));
     results.innerHTML = `
       <div><dt>Primos hasta ${formatInteger(x)}, π(x)</dt><dd><strong>${formatInteger(count)}</strong></dd></div>
-      <div class="result-simple"><dt>Estimación x/ln(x)</dt><dd><strong>≈ ${formatDecimal(simple)}</strong><span>E₁ ≈ ${formatDecimal(simpleError)}</span></dd></div>
-      <div class="result-product"><dt>Estimación li(x)</dt><dd><strong>≈ ${formatDecimal(estimate)}</strong><span>E₂ ≈ ${formatDecimal(error)}</span></dd></div>`;
+      <div class="result-simple"><dt>Estimación x/ln(x)</dt><dd><strong>≈ ${formatDecimal(simple)}</strong><span>Error de esta estimación ≈ ${formatDecimal(simpleError)}</span></dd></div>
+      <div class="result-product"><dt>Estimación li(x)</dt><dd><strong>≈ ${formatDecimal(estimate)}</strong><span>Error de esta estimación ≈ ${formatDecimal(error)}</span></dd></div>`;
     const closer = Math.abs(error) < Math.abs(simpleError) ? 'li(x)' : Math.abs(error) > Math.abs(simpleError) ? 'x/ln(x)' : '';
     closerReading.textContent = closer ? 'La estimación más cercana aquí es ' + closer + '.'
       : 'Las dos estimaciones quedan a la misma distancia.';
     summary.textContent = 'En x = ' + formatInteger(x) + ' hay ' + formatInteger(count) + ' primos. '
-      + 'Errores: E₁ ≈ ' + formatDecimal(simpleError) + ' y E₂ ≈ ' + formatDecimal(error) + '.';
+      + 'Error de x/ln(x): ' + formatDecimal(simpleError) + '. Error de li(x): ' + formatDecimal(error) + '.';
     for (const button of shortcuts) {
       button.setAttribute('aria-pressed', String(model.limit === 100 && x === Number(button.dataset.reading)));
     }

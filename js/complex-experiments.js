@@ -140,18 +140,44 @@ export function initZeroExplorer(root) {
 
 export function initZeroMap(root) {
   const control = root.querySelector('select');
-  const svg = root.querySelector('svg');
+  const svg = root.querySelector('[data-overview]');
+  const detail = root.querySelector('[data-strip-detail]');
+  const detailSvg = detail.querySelector('svg');
   const summary = root.querySelector('[role=status]');
   const mapBounds = { xMin: -9, xMax: 4, yMin: -4, yMax: 32 };
   const mapFrame = { left: 20, top: 18, width: 304, height: 166 };
   const point = (a, b) => project(a, b, mapBounds, mapFrame);
   const axis = point(0, 0);
   const convergence = point(1, 0).x;
+  const detailFrame = { left: 48, top: 20, width: 270, height: 151 };
+  const detailBounds = { xMin: -.1, xMax: 1.1, yMin: 0, yMax: 16 };
+  const zoom = (real, imaginary) => project(real, imaginary, detailBounds, detailFrame);
+  const left = zoom(criticalStrip.left, 0).x;
+  const right = zoom(criticalStrip.right, 0).x;
+  const bottom = zoom(0, 0).y;
+  const first = nontrivialZeros[0];
+  const dot = zoom(first.real, first.imaginary);
+  detailSvg.innerHTML = `
+    <rect class="strip-fill" x="${left}" y="20" width="${right - left}" height="${detailFrame.height}"/>
+    <g class="plane-labels">
+      <text x="48" y="16">Im(s)</text>
+      <text x="318" y="208" text-anchor="end">Re(s)</text>
+      ${[5, 10, 15].map(n => {
+        const { y } = zoom(0, n);
+        return '<path class="grid" d="M' + left + ' ' + y + 'H' + right + '"/><text x="46" y="' + (y + 4) + '" text-anchor="end">' + n + '</text>';
+      }).join('')}
+      <path class="axis" d="M48 ${bottom}H318M${left} 20V${bottom}"/>
+      <text x="${left}" y="190" text-anchor="middle">0</text>
+      <text x="${right}" y="190" text-anchor="middle">1</text>
+    </g>
+    <circle class="example-point" r="5" cx="${dot.x}" cy="${dot.y}"/>`;
+
   function update() {
     const trivial = control.value === 'triviales';
-    const points = trivial ? [-8, -6, -4, -2].map(real => ({ real, imaginary: 0 })) : nontrivialZeros.slice(0, 3);
+    detail.hidden = trivial;
+    const points = trivial ? [-8, -6, -4, -2].map(real => ({ real, imaginary: 0 })) : nontrivialZeros.slice(0, 1);
     summary.textContent = trivial ? 'Ceros triviales sobre el eje real: −8, −6, −4 y −2.'
-      : 'Tres ceros no triviales conocidos dentro de la banda. En el próximo experimento podrás comparar sus posiciones horizontales.';
+      : 'El primer cero no trivial con parte imaginaria positiva está dentro de la banda crítica. La ampliación muestra el mismo punto.';
     svg.setAttribute('aria-label', summary.textContent + ' La serie converge a la derecha de la parte real 1.');
     svg.innerHTML = `
       <defs><pattern id="zona-convergencia" width="7" height="7" patternUnits="userSpaceOnUse">
