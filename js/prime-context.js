@@ -43,6 +43,8 @@ export function initPrimeCount(root) {
 
 export function initOscillations(root) {
   const figure = root.querySelector('figure');
+  const control = root.querySelector('[data-concept-x]');
+  const reading = root.querySelector('[data-concept-reading]');
   const tMin = Math.log(2);
   const tMax = Math.log(1000);
   const ticks = [[2, '2'], [10, '10'], [100, '100'], [1000, '1.000']]
@@ -55,14 +57,20 @@ export function initOscillations(root) {
     }),
   }));
   function draw() {
+    const t = Math.log(Number(control.value));
+    const values = new Intl.NumberFormat('es-ES', { style: 'percent', maximumFractionDigits: 2 });
+    reading.textContent = 'En x = ' + control.options[control.selectedIndex].textContent + ' queda aproximadamente el '
+      + values.format(normalizedEnvelope(t, .5, tMin)) + ' de la amplitud relativa inicial sobre la recta crítica y el '
+      + values.format(normalizedEnvelope(t, .75, tMin)) + ' en el caso hipotético.';
     plot(figure, {
       series, minX: tMin, maxX: tMax, maxY: 1, horizontalTicks: ticks,
-      xLabel: 'Número estudiado', yLabel: 'Importancia relativa',
+      xLabel: 'Número estudiado', yLabel: 'Importancia relativa', referenceX: t,
       formatY: n => percent.format(n),
       label: 'Ambas curvas empiezan en el 100 por ciento. La de la recta crítica disminuye antes que el caso hipotético.',
     });
   }
   root.hidden = false;
   draw();
+  control.addEventListener('change', draw);
   new ResizeObserver(draw).observe(figure);
 }

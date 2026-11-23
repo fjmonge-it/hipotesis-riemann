@@ -308,3 +308,24 @@ summary + p { margin-top: .55rem; }
 
 .v2-expression math, .formula math, #construccion-euler math { font-size: 1.2em; vertical-align: middle; }
 .euler-factors math { font-size: 1.5em; }
+
+.count-results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.count-results > div { background: var(--paper); padding: .8rem; }
+.count-results .count-exact { grid-column: 1 / -1; background: var(--mint); text-align: center; padding: 1rem; }
+.count-results .count-exact strong { font-size: clamp(2.2rem, 8vw, 3.35rem); }
+.count-results dt span { display: block; }
+.count-results .result-simple { border-color: #245a82 !important; }
+.line-simple { stroke: #245a82; }
+.legend .legend-simple::before { border-top-color: #245a82; }
+.error-track { height: .8rem; background: #e5ebe6; border-radius: .3rem; }
+.error-fill { height: 100%; border-radius: inherit; background: #245a82; }
+.error-fill.li { background: var(--rust); }
+.error-item { margin: 1rem 0; }
+.error-item h5 { font-size: 1rem; margin: .3rem 0; }
+.error-item p { margin: .4rem 0; }
+.error-history tr[aria-current="true"] { background: var(--mint); font-weight: 700; }
+@media (max-width: 430px) {
+  .count-results { grid-template-columns: 1fr; }
+  .error-history, #error-doce-trece table { font-size: .88rem; }
+  .error-history :is(th, td), #error-doce-trece :is(th, td) { padding: .35rem .25rem; }
+}
