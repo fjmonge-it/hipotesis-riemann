@@ -184,14 +184,10 @@
         <p id="ejemplo-complejo">El número 2 + 3i se dibuja en (2, 3), dos pasos a la derecha y tres arriba. Si la parte imaginaria es cero, el punto queda en la recta real. Si solo tiene parte imaginaria, queda en el eje vertical.</p>
         <p class="takeaway">Un número complejo puede representarse como un punto con dos coordenadas.</p>
         <h3>¿Qué significa que la zeta tenga un cero?</h3>
-        <p>La zeta puede recibir un número complejo y devolver otro. Un <strong>cero</strong> es una entrada para la que el resultado vale exactamente 0. Eso significa que ambas partes de la salida, real e imaginaria, se anulan.</p>
-        <p>La serie original converge cuando la parte real de <var>s</var> es mayor que 1. Lo escribimos Re(<var>s</var>) &gt; 1. Para estudiar sus ceros usamos la zeta extendida mediante <strong>continuación analítica</strong>. Esta técnica amplía la función conservando los valores de la serie donde sí converge.</p>
-        <details class="math-note" id="continuacion-zeta">
-          <summary>¿Qué ocurre cuando la serie deja de converger?</summary>
-          <p>La serie original converge cuando la parte real de <var>s</var> es mayor que 1. La <strong>continuación analítica</strong> extiende la función al resto del plano complejo, salvo en <var>s</var> = 1, donde tiene un polo y su magnitud crece sin límite al acercarnos al punto.</p>
-          <p>La función extendida da ζ(0) = −1/2, ζ(−1) = −1/12 y ζ(−2) = 0. La serie original diverge en esas entradas. En particular, la suma ordinaria 1 + 2 + 3 + … crece sin límite.</p>
-        </details>
-        <p>Los ceros <strong>triviales</strong> están en −2, −4, −6… Los <strong>no triviales</strong> están en la banda crítica, entre las partes reales 0 y 1, sin incluir los bordes.</p>
+        <p>Hasta ahora usamos exponentes reales. La zeta también admite una entrada como <var>s</var> = 2 + 3i y su resultado puede ser complejo o, en algunos casos, real.</p>
+        <p>Para entender qué es un cero, toma f(x) = x − 3. Al introducir 3 obtenemos cero. Buscamos algo parecido en la zeta: entradas que hagan ζ(s) = 0. Si la salida es compleja, esto exige que tanto su parte real como la imaginaria valgan cero.</p>
+        <p>La serie original converge solo a la derecha de Re(s) = 1. Los ceros quedan fuera de esa región y pertenecen a la <a href="#continuacion-zeta">zeta extendida</a>.</p>
+        <p>Los ceros <strong>triviales</strong> son los enteros pares negativos: −2, −4, −6, −8… Su parte imaginaria es cero. Los <strong>no triviales</strong> están en la banda crítica: su parte real es mayor que 0 y menor que 1.</p>
         <div class="experiment" id="mapa-ceros" hidden>
           <h3>Dos clases de ceros, dos regiones</h3>
           <label>Qué ceros mostrar <select><option value="triviales">Triviales</option><option value="no-triviales">No triviales conocidos</option></select></label>
@@ -199,48 +195,37 @@
           <p role="status"></p>
           <figure class="plane-figure strip-detail" data-strip-detail hidden>
             <h4>Ampliación de la banda crítica</h4>
-            <svg role="img" viewBox="0 0 350 214" aria-label="Ampliación entre las partes reales cero y uno. Un cero no trivial dentro de la banda, a la altura aproximada de 14,13."></svg>
-            <figcaption>La franja verde abarca las partes reales entre 0 y 1. El punto es el mismo del mapa general y está a una altura aproximada de 14,13. Cada eje tiene su propia escala.</figcaption>
+            <label>¿Qué cero quieres examinar?<select data-map-point></select></label>
+            <p data-map-reading role="status"></p>
+            <svg role="img" viewBox="0 0 350 214" aria-label="Ampliación entre las partes reales cero y uno. Los cinco primeros ceros no triviales con parte imaginaria positiva."></svg>
+            <figcaption>La franja verde abarca las partes reales entre 0 y 1. Son los mismos cinco puntos del mapa general. Cada eje tiene su propia escala.</figcaption>
           </figure>
         </div>
+        <p>Los ceros no triviales tienen alturas distintas. <a href="#hipotesis">Veamos qué observó Riemann sobre su posición horizontal.</a></p>
       </section>
 
       <section id="hipotesis" aria-labelledby="titulo-hipotesis">
         <h2 id="titulo-hipotesis">¿Qué afirma la hipótesis de Riemann?</h2>
-        <p class="experiment-question">¿Qué tienen en común los primeros ceros no triviales de la función zeta?</p>
-        <div class="experiment" id="experimento-ceros" hidden role="group" aria-labelledby="titulo-explorador-ceros">
-          <h3 id="titulo-explorador-ceros">Busca una alineación</h3>
-          <div class="experiment-guide">
-            <strong>Prueba este experimento</strong>
-            <ol>
-              <li>Localiza el primer cero dentro de la franja sombreada. Esa es la banda crítica, entre las partes reales 0 y 1.</li>
-              <li>Pasa de uno a tres y a cinco ceros. Selecciona los puntos y compara sus posiciones horizontales.</li>
-              <li>Pulsa «Revelar la recta crítica» para comprobar tu observación.</li>
-            </ol>
-          </div>
-          <div class="experiment-controls zero-controls">
-            <label for="cantidad-ceros">Primeros ceros visibles
-              <select id="cantidad-ceros"><option selected>1</option><option>3</option><option>5</option></select>
-            </label>
-            <label for="cero-elegido">Cero seleccionado<select id="cero-elegido"></select></label>
-            <button type="button" id="mostrar-recta" aria-expanded="false" aria-controls="descubrimiento-ceros">Revelar la recta crítica</button>
-          </div>
-          <div class="prime-selection" role="status">
-            <p data-summary></p>
-            <p id="descubrimiento-ceros" data-discovery hidden></p>
-          </div>
-          <figure class="plane-figure">
-            <svg viewBox="0 0 346 309" role="img"></svg>
-            <figcaption>El anillo señala el cero elegido. Se muestran ceros tabulados con parte imaginaria positiva. Los ejes tienen escalas distintas para que se aprecien la anchura de la banda y las alturas de los puntos.</figcaption>
-          </figure>
-        </div>
-        <p id="ejemplo-ceros">El <a href="#inicio">plano de la cabecera</a> muestra los tres primeros ceros con parte imaginaria positiva. El primero es aproximadamente 0,5 + 14,134725i. Su parte real es exactamente ½ y la parte imaginaria está redondeada.</p>
+        <p>Los ceros no triviales están dentro de la banda crítica. En los casos conocidos, su altura puede cambiar, pero su parte real es ½. En 1859 Riemann formuló una afirmación sobre todos ellos:</p>
         <figure class="formula" id="figura-recta-critica">
-          <blockquote>Todos los ceros no triviales de la función zeta tienen parte real exactamente igual a 1/2.</blockquote>
-          <figcaption>Eso es lo que afirma la hipótesis de Riemann. Los puntos pueden estar a distintas alturas, pero todos quedarían sobre la misma línea vertical.</figcaption>
+          <blockquote>Todos los ceros no triviales de la función zeta tienen parte real igual a ½.</blockquote>
+          <figcaption>La recta vertical Re(s) = ½ se llama recta crítica.</figcaption>
         </figure>
-        <p>Los cinco ceros del experimento están sobre la recta crítica, Re(<var>s</var>) = ½. Se han verificado miles de millones de casos, pero ninguna comprobación finita demuestra la afirmación para todos los ceros. Bastaría un solo cero no trivial fuera de la recta para refutarla.</p>
-        <p><a href="#distribucion">¿Y qué tienen que ver estos puntos del plano complejo con los números primos?</a></p>
+        <p>Se habían comprobado muchísimos ceros antes del anuncio de noviembre de 2026. Toda lista comprobada sigue siendo finita. Una demostración debe justificar la afirmación para todos los ceros, sin excepción.</p>
+        <div class="experiment" id="experimento-ceros" hidden role="group" aria-labelledby="titulo-explorador-ceros">
+          <h3 id="titulo-explorador-ceros">Comprueba cómo se alinean los ceros conocidos</h3>
+          <p>Amplía el número de ceros. La escala vertical cambia para que quepan todos. Selecciona un punto o elige su número para leer las coordenadas.</p>
+          <div class="experiment-controls">
+            <label for="cantidad-ceros">¿Cuántos ceros quieres ver?
+              <select id="cantidad-ceros"><option selected>1</option><option>3</option><option>5</option><option>10</option><option>20</option><option>50</option></select>
+            </label>
+            <label for="cero-elegido">¿Qué cero quieres examinar?<select id="cero-elegido"></select></label>
+          </div>
+          <p class="prime-selection" role="status" data-summary></p>
+          <figure class="plane-figure"><svg role="img"></svg><figcaption>La banda verde va de 0 a 1 en el eje real. La línea discontinua marca su centro y el anillo señala el cero seleccionado.</figcaption></figure>
+        </div>
+        <p id="ejemplo-ceros">El primer cero con parte imaginaria positiva está aproximadamente en 0,5 + 14,134725i. Su parte real es exactamente ½.</p>
+        <p>Alinear puntos en un gráfico ilustra la hipótesis. <a href="#distribucion">¿Por qué importa esa posición para entender la distribución de los primos?</a></p>
       </section>
 
       <section id="distribucion" aria-labelledby="titulo-distribucion">
