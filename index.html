@@ -230,59 +230,47 @@
 
       <section id="distribucion" aria-labelledby="titulo-distribucion">
         <h2 id="titulo-distribucion">El orden escondido detrás del desorden</h2>
-        <p class="experiment-question">Si los primos aparecen de forma irregular, ¿podemos predecir cuántos encontraremos?</p>
-        <p>π(<var>x</var>), «pi de equis», cuenta los primos hasta <var>x</var>, incluido <var>x</var> si es primo. Aquí π es el nombre de una función de recuento. π(10) = 4 porque encontramos 2, 3, 5 y 7. π(100) = 25.</p>
+        <p>Empezamos midiendo separaciones irregulares entre primos. Después, Euler enlazó los primos con la zeta y Riemann nos llevó a su recta crítica. ¿Qué tiene que ver la posición de esos ceros con el reparto de los primos?</p>
+        <p>En vez de buscar el siguiente primo, vamos a preguntar cuántos encontramos hasta un número determinado. Compararemos el recuento con dos estimaciones y veremos qué nos dicen los ceros sobre las diferencias.</p>
+        <h3>Cómo contamos los primos</h3>
+        <p>π(<var>x</var>), «pi de equis», cuenta los primos menores o iguales que <var>x</var>. Aquí π es el nombre de una función de recuento, distinto del número de las circunferencias. π(10) = 4 porque aparecen 2, 3, 5 y 7. π(100) = 25.</p>
+        <p>Al llegar a un primo, el recuento suma uno. Al pasar por un compuesto, se mantiene. Por eso su gráfica forma escalones.</p>
         <div class="experiment" id="primer-recuento" hidden>
-          <h3>Cuenta del 2 al 30</h3>
-          <label class="exponent-control">Número examinado <var>x</var> <input type="range" min="2" max="30" value="10"></label>
+          <h4>Cuenta del 2 al 30</h4>
+          <label class="exponent-control">¿Hasta qué número quieres contar? <output>10</output><input type="range" min="2" max="30" value="10"></label>
+          <p data-count-strip class="count-strip"></p>
           <p role="status"></p>
-          <figure class="experiment-chart"><svg role="img"></svg><figcaption>El recuento sube únicamente al pasar por un primo.</figcaption></figure>
+          <figure class="experiment-chart"><svg role="img"></svg><figcaption>Los números marcados con un punto son primos. La última casilla examinada lleva un recuadro.</figcaption></figure>
         </div>
-        <h3>¿Podemos estimar el recuento?</h3>
-        <p>Una primera estimación es <var>x</var>/ln(<var>x</var>), el número examinado dividido por su logaritmo natural. La <strong>integral logarítmica</strong> li(<var>x</var>) se acerca mejor a la tendencia a gran escala, aunque en un punto concreto puede quedar más lejos.</p>
-        <details class="math-note">
-          <summary>Ver definición matemática avanzada</summary>
-          <p>Para <var>x</var> &gt; 1, li(<var>x</var>) = Ei(ln <var>x</var>). Si <var>x</var> ≥ 2, es li(2) más el área bajo 1/ln(<var>t</var>) entre 2 y <var>x</var>. El simulador conserva la definición estándar con li(2) ≈ 1,045164.</p>
-        </details>
+        <h3>¿Y si queremos contar hasta un número enorme?</h3>
+        <p>Contar uno a uno da el dato exacto, pero una estimación permite anticipar la cantidad a gran escala. La primera fórmula divide el número estudiado por su logaritmo natural: <var>x</var>/ln(<var>x</var>). El logaritmo natural crece lentamente y ayuda a reflejar que los primos se hacen menos frecuentes.</p>
+        <p>La segunda estimación, li(<var>x</var>), se llama <strong>integral logarítmica</strong>. Tiene en cuenta de manera más gradual cómo cambia la frecuencia esperada. Suele acercarse más a la tendencia a gran escala. Por ejemplo, hasta 100.000 hay 9.592 primos: las estimaciones dan aproximadamente 8.686 y 9.630, respectivamente.</p>
         <div class="experiment" id="experimento-distribucion" hidden role="group" aria-labelledby="titulo-recuento">
           <h3 id="titulo-recuento">Cuenta y compara</h3>
-          <p class="experiment-guide"><strong>Prueba este experimento.</strong> Empieza en 100 y compara el recuento y la estimación. Amplía el intervalo a 1.000, 10.000 y 100.000. ¿Siguen de cerca la misma tendencia?</p>
+          <p>Elige un número máximo. El recuento exacto forma escalones; las dos líneas discontinuas muestran las estimaciones. Toca las gráficas para examinar un número intermedio. Con el teclado, enfoca una gráfica y usa las flechas, Inicio o Fin.</p>
           <div class="experiment-controls">
-            <label for="limite-distribucion">¿Hasta qué número quieres explorar?
+            <label for="limite-distribucion">¿Hasta qué número queremos estimar los primos?
               <select id="limite-distribucion"><option value="100" selected>100</option><option value="1000">1.000</option><option value="10000">10.000</option><option value="100000">100.000</option></select>
             </label>
-            <label class="exponent-control" for="x-distribucion">¿Qué número quieres examinar?
-              <input type="range" id="x-distribucion" min="2" max="100" value="100">
-            </label>
-            <label for="x-exacto">O escribe un número exacto
-              <input type="number" id="x-exacto" min="2" max="100" value="100">
-            </label>
-          </div>
-          <div class="experiment-controls" role="group" aria-label="Estimaciones visibles en ambas gráficas">
-            <label class="check-control"><input type="checkbox" data-estimate-toggle="simple" checked> <span>Mostrar x/ln(x)</span></label>
-            <label class="check-control"><input type="checkbox" data-estimate-toggle="li" checked> <span>Mostrar li(x)</span></label>
           </div>
           <dl class="experiment-results" data-results></dl>
           <p data-closer></p>
           <figure class="experiment-chart" id="grafico-recuento">
+            <h4>¿Cuántos primos hay y cuántos estiman las fórmulas?</h4>
             <ul class="legend" aria-label="Leyenda"><li class="legend-primes">π(x), recuento real</li><li class="legend-simple">x/ln(x)</li><li class="legend-li">li(x)</li></ul>
-            <svg role="img" aria-label="Recuento escalonado de primos y estimación continua"></svg>
-            <figcaption>Cada escalón corresponde a un primo. Las estimaciones se dibujan uniendo muestras de sus curvas. Puedes pulsar ambas gráficas o usar el deslizador para mover el cursor. A escalas grandes algunos escalones son demasiado pequeños para distinguirlos.</figcaption>
+            <svg tabindex="0" role="slider" aria-label="Número estudiado en la gráfica de recuento"></svg>
+            <figcaption>Los escalones suben al encontrar un primo. A gran escala, algunos quedan muy juntos.</figcaption>
           </figure>
-          <h3>¿Cuánto se equivoca la estimación?</h3>
-          <p>El error es lo que queda al restar la estimación al recuento real. Si es positivo, la estimación se quedó corta. Si es negativo, se pasó.</p>
-          <p class="experiment-guide"><strong>Prueba este experimento.</strong> Compara 12 y 13 en el intervalo hasta 100. ¿Qué cambia al incorporar un primo?</p>
-          <div class="quick-values distribution-shortcuts" role="group" aria-label="Comparar dos recuentos consecutivos">
-            <button type="button" data-reading="12"><var>x</var> = 12</button>
-            <button type="button" data-reading="13"><var>x</var> = 13</button>
-          </div>
+          <h4>Qué significa el error</h4>
+          <p>Si estimamos 30 primos y hay 25, la diferencia es de 5. Restamos la estimación al recuento real, así que el error es −5. Un error positivo indica que la fórmula se quedó corta.</p>
+          <p>Hasta 100 hay 25 primos. La fórmula x/ln(x) da aproximadamente 21,71 y li(x) da 30,13. En este caso concreto x/ln(x) se acerca más.</p>
           <figure class="experiment-chart" id="grafico-desviacion">
+            <h4>¿Cuánto se separa cada estimación de la realidad?</h4>
             <ul class="legend" aria-label="Leyenda"><li class="legend-simple">Error de x/ln(x)</li><li class="legend-li">Error de li(x)</li></ul>
-            <svg role="img" aria-label="Desviación del recuento respecto a la estimación, con una línea de referencia en cero"></svg>
-            <figcaption>El eje horizontal coincide con el de arriba. La escala vertical muestra la diferencia ampliada. La línea horizontal discontinua marca el cero y la línea vertical señala el mismo valor de <var>x</var> en ambas gráficas.</figcaption>
+            <svg tabindex="0" role="slider" aria-label="Número estudiado en la gráfica de errores"></svg>
+            <figcaption>El eje horizontal muestra los mismos números en ambas gráficas. El vertical indica cuántos primos faltan o sobran respecto a la estimación. La línea discontinua en cero indica coincidencia. El cursor vertical es común a las dos gráficas.</figcaption>
           </figure>
-          <p class="experiment-insight" data-summary></p>
-          <p class="visually-hidden" data-announcement role="status"></p>
+          <p class="experiment-insight" data-summary role="status"></p>
         </div>
         <div id="ejemplo-distribucion">
           <p>Para comparar, π(1.000) = 168, π(10.000) = 1.229 y π(100.000) = 9.592. La desviación E(<var>x</var>) = π(<var>x</var>) − li(<var>x</var>) es positiva si el recuento supera la estimación, negativa si queda por debajo y cero si coincide. En 100 hay 25 primos y la estimación es aproximadamente 30,12614. La diferencia es de unos −5,12614.</p>
@@ -311,53 +299,33 @@
           <figcaption>Entre 2 y 100, el recuento da un salto cada vez que aparece un primo. El segundo gráfico amplía la diferencia con una escala propia y marca el nivel cero.</figcaption>
         </figure>
         </div>
-        <h3>¿Cómo influye un cero en las oscilaciones?</h3>
-        <p>La estimación se queda a veces más cerca del recuento real y a veces más lejos. En las fórmulas relacionadas con ese recuento, cada cero de la zeta aporta una oscilación. Su posición horizontal influye en cuánto pesa esa contribución cuando estudiamos números cada vez mayores.</p>
-        <p>Vamos a comparar un caso sobre la recta crítica con otro imaginado fuera de ella. Así veremos por qué importa que la parte real de un cero sea ½.</p>
+        <h3>Lo que los ceros cuentan sobre las fluctuaciones</h3>
+        <p>Las diferencias suben y bajan al cambiar el número estudiado. Pueden fluctuar sin cambiar de signo. ¿De dónde viene ese vaivén?</p>
+        <p>Recordemos a Euler: la zeta guarda información sobre los primos. En las fórmulas que describen su reparto, cada cero aporta una contribución que puede actuar en uno u otro sentido. La parte imaginaria influye en lo rápido que oscila. La parte real, la coordenada horizontal, influye en su tamaño. Las contribuciones pueden reforzarse o compensarse entre sí.</p>
+        <p>La hipótesis afirma que todos los ceros no triviales tienen parte real ½. Si esa posición controla cuánto pesa cada contribución, saber dónde están todos pasa a ser decisivo.</p>
+        <h3>¿Por qué importa dónde está situado un cero?</h3>
+        <p>Compara un cero sobre la recta crítica, con parte real ½, con uno imaginado cuya parte real fuese ¾. Vamos a mirar cuánto pesa cada contribución respecto al tamaño del número estudiado.</p>
         <div class="experiment" id="oscilaciones" hidden>
-          <h4>Compara dos contribuciones relativas</h4>
-          <label>Situación que quieres explorar
-            <select>
-              <option value="ambas">Comparar ambos casos</option>
-              <option value="0.5">Sobre la recta crítica (β = ½)</option>
-              <option value="0.75">Fuera de la recta (β = ¾, caso hipotético)</option>
-            </select>
-          </label>
-          <ul class="legend oscillation-legend" aria-label="Casos mostrados en ambas gráficas">
-            <li data-beta="0.5">Sobre la recta crítica (β = ½)</li>
-            <li class="legend-li" data-beta="0.75">Fuera de la recta (β = ¾, hipotético)</li>
-          </ul>
-          <figure class="experiment-chart" data-wave>
-            <h4>Cómo cambia la oscilación al estudiar números mayores</h4>
-            <svg role="img"></svg>
-            <figcaption>Las ondas muestran cuánto pesa cada contribución en relación con el número estudiado. Las líneas tenues delimitan su amplitud. El eje horizontal usa una escala logarítmica: multiplicar por diez ocupa siempre el mismo espacio.</figcaption>
-          </figure>
           <figure class="experiment-chart" data-envelope>
-            <h4>Cuánta amplitud queda</h4>
             <ul class="legend" aria-label="Casos comparados">
-              <li data-beta="0.5">Sobre la recta crítica (β = ½)</li>
-              <li class="legend-li" data-beta="0.75">Fuera de la recta (β = ¾, hipotético)</li>
+              <li>Sobre la recta crítica (½)</li>
+              <li class="legend-li">Fuera de la recta (¾, hipotético)</li>
             </ul>
             <svg role="img"></svg>
-            <figcaption>Cada curva toma como 100 % su propia amplitud en 2. Así podemos comparar el ritmo al que se reduce la importancia relativa de cada contribución.</figcaption>
+            <figcaption>Cada curva empieza en el 100 % de su propia amplitud relativa en 2. En el eje horizontal, multiplicar por diez ocupa siempre el mismo espacio.</figcaption>
           </figure>
-          <p role="status"></p>
         </div>
-        <p class="takeaway">La posición horizontal de un cero influye en cuánto pesa su contribución a las fluctuaciones. En la recta crítica esa importancia relativa disminuye más deprisa que en el caso hipotético. Por eso importa saber dónde están todos los ceros no triviales.</p>
-        <p>El caso con parte real ¾ es hipotético. Las curvas ilustran contribuciones individuales. El error real del recuento depende del efecto combinado de muchos ceros, cuyas aportaciones pueden compensarse.</p>
-        <details class="v2-details">
-          <summary>Ver qué fórmulas hay detrás de las gráficas</summary>
-          <p>Para un cero ρ = β + iγ, β es su parte real y γ su parte imaginaria. En la fórmula explícita para ψ(x), que cuenta primos y sus potencias con pesos, aparecen términos relacionados con x<sup>ρ</sup>/ρ. La primera gráfica toma la parte real de ese término y la divide por x, con γ = 14,134725 fijo en los dos casos.</p>
-          <p>La amplitud absoluta es x<sup>β</sup>/|ρ| y crece en los dos ejemplos. La amplitud relativa es x<sup>β−1</sup>/|ρ| y disminuye. Es proporcional a 1/√x para β = ½ y a 1/x<sup>¼</sup> para β = ¾. En la segunda gráfica se elimina la diferencia de partida dividiendo cada envolvente por su valor en x = 2.</p>
-        </details>
-        <h3>De la recta crítica al error</h3>
-        <p>En las fórmulas que cuentan primos aparecen contribuciones de los ceros de la zeta. Su parte real influye en cuánto puede crecer su contribución a las fluctuaciones. Por eso saber dónde se sitúan todos los ceros ayuda a acotar el error total.</p>
-        <figure class="formula">
-          <div class="equation">|π(<var>x</var>) − li(<var>x</var>)| ≤ <var>C</var> · √<var>x</var> · ln(<var>x</var>)</div>
-          <figcaption>Si la hipótesis es cierta, existe una constante positiva <var>C</var> para la que esta desigualdad se cumple cuando <var>x</var> es suficientemente grande. Las barras miden el tamaño del error sin su signo.</figcaption>
-        </figure>
-        <p>Una <strong>cota</strong> garantiza cuánto puede llegar a medir el error. La desigualdad describe un máximo permitido, no el error concreto en cada punto. Los errores absolutos pueden crecer, mientras que su tamaño respecto a la tendencia principal quedaría controlado. Esta es la formulación histórica de la consecuencia. La sección siguiente recoge el anuncio y la verificación formal de noviembre de 2026. La gráfica solo muestra un intervalo finito de ejemplos.</p>
-        <p class="takeaway">La hipótesis de Riemann no nos dice exactamente dónde aparecerá el siguiente primo. Nos permitiría controlar con gran precisión cuánto puede desviarse su distribución de la tendencia esperada.</p>
+        <p>Las dos contribuciones pierden peso relativo, pero la de la recta crítica lo pierde antes. Las curvas ilustran aportaciones individuales. No representan el error real, que depende de muchos ceros, ni prueban que el error absoluto vaya disminuyendo.</p>
+        <div id="conclusion-matematica">
+          <h3>De la posición de los ceros a la precisión del recuento</h3>
+          <p>Si todos los ceros no triviales están sobre la recta crítica, podemos garantizar cuánto se separa como máximo el recuento de la estimación mediante li(x) para números suficientemente grandes. A ese máximo permitido se le llama <strong>cota superior</strong>. El error concreto puede ser menor.</p>
+          <details class="v2-details">
+            <summary>Ver la cota en notación matemática</summary>
+            <p>|π(x) − li(x)| ≤ C · √x · ln(x). Restamos la estimación al recuento y tomamos su tamaño sin signo. Para números suficientemente grandes existe una constante positiva C que hace de la expresión de la derecha una cota. La desigualdad acota el error; no calcula su valor en cada número.</p>
+          </details>
+          <p class="takeaway">Euler enlazó la zeta con los primos. Sus ceros intervienen en las fluctuaciones, y su posición permite controlar con gran precisión la diferencia entre el recuento y su tendencia. Ese control no predice el siguiente primo ni su distancia al anterior.</p>
+        </div>
+        <p>Esta garantía depende de una afirmación sobre todos los ceros. <a href="#importancia">Veamos por qué importa una demostración universal.</a></p>
       </section>
 
       <section id="importancia" aria-labelledby="titulo-importancia">

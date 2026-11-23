@@ -75,10 +75,10 @@ export function drawDistributionChart(figure, model, errorChart) {
   svg.setAttribute('viewBox', '0 0 ' + width + ' 203');
   svg.innerHTML = `
     <g class="plane-labels">
-      <text x="49" y="16">${errorChart ? 'Error de la estimación' : 'Cantidad acumulada'}</text>
+      <text x="49" y="16">${errorChart ? 'Error de la estimación' : 'Cantidad de primos'}</text>
       ${axes}${horizontal}
       <path class="axis" d="M49 22V${bottom}H${right}"/>
-      <text x="${width / 2}" y="198" text-anchor="middle">Números examinados</text>
+      <text x="${width / 2}" y="198" text-anchor="middle">Números estudiados</text>
     </g>
     ${errorChart ? '<path class="line-error" data-li d="' + errorPath.join('') + '"/>'
       : '<path class="line-li" data-li d="' + estimatePath.join('') + '"/><path class="line-primes" d="' + staircase.join('') + '"/>'}
