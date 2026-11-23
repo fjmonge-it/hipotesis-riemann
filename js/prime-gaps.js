@@ -37,11 +37,15 @@ export function consecutivePrimes(start, count) {
 }
 
 export function summarizeGaps(pairs) {
-  return pairs.reduce((stats, pair) => ({
-    min: Math.min(stats.min, pair.gap),
-    max: pair.gap > stats.max.gap ? pair : stats.max,
-    mean: stats.mean + pair.gap / pairs.length,
-  }), { min: Infinity, max: pairs[0], mean: 0 });
+  let min = Infinity;
+  let max = pairs[0];
+  let total = 0;
+  for (const pair of pairs) {
+    min = Math.min(min, pair.gap);
+    if (pair.gap > max.gap) max = pair;
+    total += pair.gap;
+  }
+  return { min, max, mean: total / pairs.length };
 }
 
 const decimal = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 2 });
@@ -108,7 +112,7 @@ export function initPrimeGaps(root) {
   new ResizeObserver(draw).observe(figure);
 }
 
-export function initPrimeGame(root) {
+export function initPrimeSequence(root) {
   const start = root.querySelector('[data-start]');
   const count = root.querySelector('[data-count]');
   const selector = root.querySelector('[data-pair-select]');

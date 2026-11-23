@@ -51,6 +51,10 @@ export function initZetaExperiment(root, compare = false) {
       + formatValue(inspected ** -s) + ' y vale ' + formatValue(sums[inspected - 1])
       + '. El producto vale ' + formatValue(point?.value ?? 1) + '.' + added;
     const svg = chart.querySelector('svg');
+    const width = svg.viewBox.baseVal.width;
+    const x = 76 + (width - 110) * Math.log(inspected) / Math.log(sums.length);
+    const bottom = width < 360 ? 158 : 176;
+    svg.querySelector('[data-zeta-cursor]').setAttribute('d', 'M' + x + ' 28V' + bottom);
     svg.setAttribute('aria-valuenow', inspected);
     svg.setAttribute('aria-valuetext', root.querySelector('[data-euler-point]').textContent);
   }
@@ -136,7 +140,7 @@ export function initZetaExperiment(root, compare = false) {
         + '. El último es ' + primes.at(-1) + ', el mayor primo menor o igual que ' + n + '.';
       root.querySelector('[data-prime-factors]').innerHTML = primes.map(p => {
         const power = p ** s;
-        const factor = Number.isSafeInteger(power) ? numberLabel(power) + ' / ' + numberLabel(power - 1)
+        const factor = Number.isInteger(s) && Number.isSafeInteger(power) ? numberLabel(power) + ' / ' + numberLabel(power - 1)
           : '≈ ' + formatValue(1 / (1 - p ** -s));
         return '<tr><th scope="row">' + numberLabel(p) + '</th><td>' + factor + '</td></tr>';
       }).join('');

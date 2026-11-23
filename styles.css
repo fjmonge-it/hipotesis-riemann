@@ -291,3 +291,4 @@ summary + p { margin-top: .55rem; }
 .count-strip .count-prime::after { content: '·'; padding-left: .12em; }
 .count-strip .not-counted { background: transparent; color: var(--muted); }
 .count-strip .count-selected { border: 2px solid var(--ink); padding-block: calc(.15rem - 1px); }
+#experimento-ceros .critical { stroke: var(--muted); }

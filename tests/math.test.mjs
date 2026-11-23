@@ -63,10 +63,11 @@ test('el producto se acerca a los valores de referencia al aumentar N', () => {
 test('los ceros no triviales tabulados conservan las coordenadas redondeadas de referencia', () => {
   // Independently checked with mpmath.zetazero at 25 significant digits.
   const ordinates = [14.1347251417347, 21.0220396387716, 25.0108575801457, 30.4248761258595, 32.9350615877392];
-  assert.equal(nontrivialZeros.length, ordinates.length);
-  for (const [index, zero] of nontrivialZeros.entries()) {
+  assert.equal(nontrivialZeros.length, 50);
+  for (const [index, expected] of ordinates.entries()) {
+    const zero = nontrivialZeros[index];
     assert.equal(zero.real, 0.5);
-    assert.ok(Math.abs(zero.imaginary - ordinates[index]) <= 0.5e-6);
+    assert.ok(Math.abs(zero.imaginary - expected) <= 0.5e-6);
   }
 });
 

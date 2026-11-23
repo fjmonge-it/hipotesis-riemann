@@ -58,7 +58,8 @@ export function renderZetaChart(figure, { sums, products, reference, compare, ca
       <path class="axis" d="M${left} ${top}V${bottom}H${right}"/>
       <path class="line-primes" d="${sumPath}"/>
       ${compare ? '<path class="line-li" d="' + productPath + '"/>' : ''}
-      <circle class="prime-dots" cx="${right}" cy="${coord(y(sums.at(-1)))}" r="3.5"/>
+      ${compare ? '<path class="coordinate-guide" data-zeta-cursor/>' : ''}
+      <circle class="prime-dots" data-zeta-end cx="${right}" cy="${coord(y(sums.at(-1)))}" r="3.5"/>
     </svg>
     <figcaption>${caption} El eje horizontal deja más espacio a los primeros pasos.</figcaption>`;
 }

@@ -26,7 +26,7 @@ export function initComplexPlane(root) {
       ${grid}
       <path class="axis" d="M39 ${origin.y}H301M${origin.x} 16V278"/>
       <text x="176" y="164">0</text>
-      <text x="303" y="151">Real</text><text x="170" y="14" text-anchor="middle">Imaginaria</text>
+      <text x="303" y="151">Real</text><text x="170" y="17" text-anchor="middle">Imaginaria</text>
     </g>
     <path class="coordinate-guide"/><circle class="example-point" r="6"/>`;
   const point = chart.querySelector('circle');
@@ -84,7 +84,7 @@ export function initZeroExplorer(root) {
     const bottom = position(0, 0).y;
     const ticks = Array.from({ length: scale.max / scale.step }, (_, i) => (i + 1) * scale.step);
     const selection = position(visible[active].real, visible[active].imaginary);
-    chart.setAttribute('aria-label', 'Primeros ' + visible.length + ' ceros sobre la recta crítica. ' + summary.textContent);
+    chart.setAttribute('aria-label', (visible.length === 1 ? 'Primer cero sobre la recta crítica. ' : 'Primeros ' + visible.length + ' ceros sobre la recta crítica. ') + summary.textContent);
     chart.innerHTML = `
       <rect class="strip-fill" x="${left}" y="${frame.top}" width="${right - left}" height="${frame.height}"/>
       <g class="plane-labels">
@@ -100,8 +100,8 @@ export function initZeroExplorer(root) {
       </g>
       ${visible.map((zero, index) => {
         const p = position(zero.real, zero.imaginary);
-        return '<circle data-zero="' + index + '" fill="var(--accent)" r="' + (visible.length > 20 ? 1.9 : 3.6)
-          + '" cx="' + p.x + '" cy="' + p.y + '"/>';
+        return '<ellipse data-zero="' + index + '" fill="var(--accent)" rx="' + (visible.length > 20 ? 4 : 3.6)
+          + '" ry="' + (visible.length > 20 ? .85 : 3.6) + '" cx="' + p.x + '" cy="' + p.y + '"/>';
       }).join('')}
       <circle class="selected-ring" r="6" cx="${selection.x}" cy="${selection.y}"/>`;
   }
@@ -187,7 +187,7 @@ export function initZeroMap(root) {
       <rect fill="url(#zona-convergencia)" x="${convergence}" y="18" width="${324 - convergence}" height="166"/>
       <path class="axis" d="M20 ${axis.y}H324M${axis.x} 18V184"/>
       <g class="plane-labels">
-        <text x="${axis.x - 6}" y="15" text-anchor="end">Im(s)</text><text x="324" y="219" text-anchor="end">Re(s)</text>
+        <text x="${axis.x - 6}" y="17" text-anchor="end">Im(s)</text><text x="324" y="219" text-anchor="end">Re(s)</text>
         ${[-8, -6, -4, -2, 0, 1, 3].map(a => '<text x="' + point(a, 0).x + '" y="201" text-anchor="middle">' + display(a) + '</text>').join('')}
         ${[10, 20, 30].map(b => '<text x="' + (axis.x - 5) + '" y="' + (point(0, b).y + 4) + '" text-anchor="end">' + b + '</text>').join('')}
       </g>

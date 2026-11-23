@@ -1,4 +1,4 @@
-import { initPrimeGaps, initPrimeGame } from './prime-gaps.js';
+import { initPrimeGaps, initPrimeSequence } from './prime-gaps.js';
 import { initPrimeCount, initOscillations } from './prime-context.js';
 import { initComplexPlane, initZeroExplorer, initZeroMap } from './complex-experiments.js';
 import { initDistributionExperiment } from './distribution-experiment.js';
@@ -28,7 +28,7 @@ initZeroExplorer(document.querySelector('#experimento-ceros'));
 initDistributionExperiment(document.querySelector('#experimento-distribucion'));
 
 initPrimeGaps(document.querySelector('#distancias-primos'));
-initPrimeGame(document.querySelector('#juego-primos'));
+initPrimeSequence(document.querySelector('#explorador-secuencia'));
 initZeroMap(document.querySelector('#mapa-ceros'));
 initPrimeCount(document.querySelector('#primer-recuento'));
 initOscillations(document.querySelector('#oscilaciones'));
