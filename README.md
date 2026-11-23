@@ -68,3 +68,27 @@ Las pruebas de `tests/experiments.test.mjs` cubren la proyección, la banda
 crítica, el recuento, la definición estándar de li(x) y la coherencia de las
 lecturas con los datos de los gráficos. Los cinco ceros tabulados se
 contrastaron de forma independiente con `mpmath.zetazero`.
+
+## Segunda versión
+
+- Los saltos se calculan exactamente entre primos consecutivos. Para los
+  intervalos densos se dibuja el máximo de cada tramo y se guarda su pareja.
+  El juego busca primos mediante división por candidatos hasta la raíz.
+- La serie finita de la zeta se puede explorar hasta 100.000 términos. Para
+  s ≤ 1 se omite el límite y se indica que la serie diverge. Para N > 1.000,
+  la gráfica de sumas parciales muestra muestras espaciadas logarítmicamente.
+  Los resultados numéricos se calculan usando todos los términos elegidos.
+- Euler conserva el intervalo original y muestra la lista de factores reales.
+- El mapa de ceros separa las dos clases de ceros. La hipótesis se explora
+  revelando uno, tres y cinco puntos antes de mostrar la recta crítica.
+- Las gráficas de recuento y de error comparten lectura y controles. Los
+  escalones son exactos y las curvas de las estimaciones unen muestras.
+  La oscilación relativa ilustra una sola contribución y usa un ejemplo
+  hipotético de parte real ¾, con frecuencia fija.
+- El comunicado de Lean FRO y Mathlib Initiative se contrastó con su
+  [fuente oficial](https://github.com/leanprover-community/blog/blob/d01066fd27759b7abae93e1b137090f3b5996a0f/posts/riemann_hypothesis.md).
+  El estado institucional se enlaza a Clay para consulta directa.
+
+Además de las pruebas previas, `tests/v2.test.mjs` comprueba los primos
+grandes y el récord de saltos, el caso divergente de zeta, los factores de
+Euler, las dos estimaciones y el modelo relativo de oscilación.
