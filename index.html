@@ -66,36 +66,40 @@
           </svg>
           <figcaption>Los puntos verdes señalan los primos. Los segmentos de arriba muestran la distancia entre cada pareja consecutiva. De 7 a 11 hay 4; de 11 a 13 hay 2. Las distancias no siguen una secuencia constante.</figcaption>
         </figure>
-        <h3>Distancias entre primos consecutivos</h3>
-        <p>Vamos a estudiar muchas parejas para ver si las distancias siguen algún patrón. La distancia media es la suma de todas las distancias dividida entre la cantidad de parejas. La mayor distancia es la separación más grande encontrada en el intervalo.</p>
-        <div class="experiment" id="distancias-primos" hidden>
-          <div class="experiment-controls">
-            <label>¿Hasta qué número quieres estudiar los primos?<select data-limit><option value="100">100</option><option value="1000">1.000</option><option value="10000">10.000</option><option value="100000">100.000</option><option value="1000000">1.000.000</option></select></label>
-          </div>
-          <dl class="distance-cards" aria-live="polite">
-            <div><dt>Distancia media</dt><dd><strong data-mean></strong><p>Promedio de todas las parejas consecutivas del intervalo.</p></dd></div>
-            <div><dt>Mayor distancia encontrada</dt><dd><strong data-maximum></strong><p data-maximum-pair></p></dd></div>
-          </dl>
-          <div class="distance-figures">
-            <figure data-mean-chart><h4>Cómo cambia la media</h4><svg role="img"></svg><figcaption>El círculo marca el intervalo elegido.</figcaption></figure>
-            <figure data-maximum-chart><h4>Cómo cambia la mayor distancia</h4><svg role="img"></svg><figcaption>Las dos gráficas tienen escalas verticales distintas.</figcaption></figure>
+        <div id="comparacion-distancias">
+          <h3>Distancias entre primos consecutivos</h3>
+          <p>Vamos a estudiar muchas parejas para ver si las distancias siguen algún patrón. La distancia media es la suma de todas las distancias dividida entre la cantidad de parejas. La mayor distancia es la separación más grande encontrada en el intervalo.</p>
+          <div class="experiment" id="distancias-primos" hidden>
+            <div class="experiment-controls">
+              <label>¿Hasta qué número quieres estudiar los primos?<select data-limit><option value="100">100</option><option value="1000">1.000</option><option value="10000">10.000</option><option value="100000">100.000</option><option value="1000000">1.000.000</option></select></label>
+            </div>
+            <dl class="distance-cards" aria-live="polite">
+              <div><dt>Distancia media</dt><dd><strong data-mean></strong><p>Promedio de todas las parejas consecutivas del intervalo.</p></dd></div>
+              <div><dt>Mayor distancia encontrada</dt><dd><strong data-maximum></strong><p data-maximum-pair></p></dd></div>
+            </dl>
+            <div class="distance-figures">
+              <figure data-mean-chart><h4>Cómo cambia la media</h4><svg role="img"></svg><figcaption>El círculo marca el intervalo elegido.</figcaption></figure>
+              <figure data-maximum-chart><h4>Cómo cambia la mayor distancia</h4><svg role="img"></svg><figcaption>Las dos gráficas tienen escalas verticales distintas.</figcaption></figure>
+            </div>
           </div>
         </div>
         <p>Entre 492.113 y 492.227 hay una distancia de 114. En medio quedan 113 enteros consecutivos compuestos. Aun así, después de una separación grande pueden aparecer primos muy próximos. La media tiende a crecer al estudiar intervalos mayores, aunque las distancias individuales sean irregulares.</p>
-        <h3>Explora cómo se separan los números primos</h3>
-        <p>¿Qué ocurre cuando buscamos primos cerca de un millón o de veinticinco millones? Elige un punto de partida y veremos los primos consecutivos que vienen después. Fíjate en si, tras una separación grande, aparecen de nuevo primos muy próximos.</p>
-        <div class="experiment" id="explorador-secuencia" hidden>
-          <div class="experiment-controls">
-            <label>¿A partir de qué número quieres buscar primos?<select data-start><option value="150000">150.000</option><option value="1000000">1.000.000</option><option value="5000000">5.000.000</option><option value="10000000">10.000.000</option><option value="20000000">20.000.000</option><option value="25000000">25.000.000</option></select></label>
-            <label>¿Cuántos primos consecutivos quieres mostrar?<select data-count><option>5</option><option selected>10</option><option>20</option><option>50</option></select></label>
-            <button type="button" data-more>Mostrar los siguientes 10 primos</button>
+        <div id="presentacion-explorador">
+          <h3>Explora cómo se separan los números primos</h3>
+          <p>¿Qué ocurre cuando buscamos primos cerca de un millón o de veinticinco millones? Elige un punto de partida y veremos los primos consecutivos que vienen después. Fíjate en si, tras una separación grande, aparecen de nuevo primos muy próximos.</p>
+          <div class="experiment" id="explorador-secuencia" hidden>
+            <div class="experiment-controls">
+              <label>¿A partir de qué número quieres buscar primos?<select data-start><option value="150000">150.000</option><option value="1000000">1.000.000</option><option value="5000000">5.000.000</option><option value="10000000">10.000.000</option><option value="20000000">20.000.000</option><option value="25000000">25.000.000</option></select></label>
+              <label>¿Cuántos primos consecutivos quieres mostrar?<select data-count><option>5</option><option selected>10</option><option>20</option><option>50</option></select></label>
+              <button type="button" data-more>Mostrar los siguientes 10 primos</button>
+            </div>
+            <p class="prime-selection" data-current role="status"></p>
+            <p class="prime-sequence" data-sequence></p>
+            <label>¿Qué pareja quieres examinar?<select data-pair-select></select></label>
+            <p data-pair role="status"></p>
+            <figure class="experiment-chart"><svg role="img"></svg><figcaption>La primera barra mide la primera pareja, la segunda mide la siguiente y así sucesivamente. La barra marrón y el punto señalan la pareja elegida. Si hay más de 50 parejas, la gráfica muestra las que rodean a la elegida.</figcaption></figure>
+            <p data-stats></p>
           </div>
-          <p class="prime-selection" data-current role="status"></p>
-          <p class="prime-sequence" data-sequence></p>
-          <label>¿Qué pareja quieres examinar?<select data-pair-select></select></label>
-          <p data-pair role="status"></p>
-          <figure class="experiment-chart"><svg role="img"></svg><figcaption>La primera barra mide la primera pareja, la segunda mide la siguiente y así sucesivamente. La barra marrón y el punto señalan la pareja elegida. Si hay más de 50 parejas, la gráfica muestra las que rodean a la elegida.</figcaption></figure>
-          <p data-stats></p>
         </div>
         <p>¿Existe una herramienta capaz de explicar la regularidad que aparece al mirar muchos primos? <a href="#zeta">Vamos a conocer la función zeta.</a></p>
       </section>
@@ -304,23 +308,25 @@
         <p>Las diferencias pueden aumentar o disminuir. ¿Podemos garantizar cuánto podrían crecer incluso para números que todavía no hemos examinado? Aquí vuelven a aparecer los ceros de la zeta.</p>
         <p>Recordemos a Euler: la zeta guarda información sobre los primos. En las fórmulas que describen su reparto, cada cero aporta una contribución que puede actuar en uno u otro sentido. La parte imaginaria influye en lo rápido que oscila. La parte real, la coordenada horizontal, influye en su tamaño. Las contribuciones pueden reforzarse o compensarse entre sí.</p>
         <p>La hipótesis afirma que todos los ceros no triviales tienen parte real ½. Si esa posición controla cuánto pesa cada contribución, saber dónde están todos pasa a ser decisivo.</p>
-        <h3>¿Por qué es tan importante que todos los ceros estén sobre la recta crítica?</h3>
-        <p>La hipótesis afirma que todos los ceros no triviales tienen parte real ½ y esa coordenada influye en el tamaño de cada contribución. Compara un cero de la recta crítica con un caso hipotético de parte real ¾. Vamos a ver cuánto peso conserva cada contribución respecto al tamaño del número estudiado.</p>
-        <div class="experiment" id="oscilaciones" hidden>
-          <figure class="experiment-chart" data-envelope>
-            <ul class="legend" aria-label="Casos comparados">
-              <li>Sobre la recta crítica (½)</li>
-              <li class="legend-li">Fuera de la recta (¾, hipotético)</li>
-            </ul>
-            <svg role="img"></svg>
-            <figcaption>Tomamos como 100 % la amplitud relativa inicial de cada caso en 2 para comparar a qué ritmo pierden peso. Ese 100 % es la referencia de la comparación y se refiere a la contribución individual, no al error del recuento. En el eje horizontal, multiplicar por diez ocupa siempre el mismo espacio.</figcaption>
-          </figure>
-          <label>¿En qué número quieres comparar las dos curvas?
-            <select data-concept-x><option value="2">2</option><option value="10">10</option><option value="100">100</option><option value="1000" selected>1.000</option></select>
-          </label>
-          <p data-concept-reading role="status"></p>
+        <div id="comparacion-recta">
+          <h3>¿Por qué es tan importante que todos los ceros estén sobre la recta crítica?</h3>
+          <p>La hipótesis afirma que todos los ceros no triviales tienen parte real ½ y esa coordenada influye en el tamaño de cada contribución. Compara un cero de la recta crítica con un caso hipotético de parte real ¾. Vamos a ver cuánto peso conserva cada contribución respecto al tamaño del número estudiado.</p>
+          <div class="experiment" id="oscilaciones" hidden>
+            <figure class="experiment-chart" data-envelope>
+              <ul class="legend" aria-label="Casos comparados">
+                <li>Sobre la recta crítica (½)</li>
+                <li class="legend-li">Fuera de la recta (¾, hipotético)</li>
+              </ul>
+              <svg role="img"></svg>
+              <figcaption>Tomamos como 100 % la amplitud relativa inicial de cada caso en 2 para comparar a qué ritmo pierden peso. Ese 100 % es la referencia de la comparación y se refiere a la contribución individual, no al error del recuento. En el eje horizontal, multiplicar por diez ocupa siempre el mismo espacio.</figcaption>
+            </figure>
+            <label>¿En qué número quieres comparar las dos curvas?
+              <select data-concept-x><option value="2">2</option><option value="10">10</option><option value="100">100</option><option value="1000" selected>1.000</option></select>
+            </label>
+            <p data-concept-reading role="status"></p>
+          </div>
+          <p>Las dos contribuciones pierden peso relativo, pero la de la recta crítica lo pierde antes. Las curvas ilustran aportaciones individuales. No representan el error real, que depende de muchos ceros, ni prueban que el error absoluto vaya disminuyendo.</p>
         </div>
-        <p>Las dos contribuciones pierden peso relativo, pero la de la recta crítica lo pierde antes. Las curvas ilustran aportaciones individuales. No representan el error real, que depende de muchos ceros, ni prueban que el error absoluto vaya disminuyendo.</p>
         <div id="conclusion-matematica">
           <h3>De la posición de los ceros a la precisión del recuento</h3>
           <p>Si todos los ceros no triviales están sobre la recta crítica, podemos garantizar cuánto se separa como máximo el recuento de la estimación mediante li(x) para números suficientemente grandes. A ese máximo permitido se le llama <strong>cota superior</strong>. El error concreto puede ser menor.</p>

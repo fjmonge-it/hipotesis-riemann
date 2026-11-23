@@ -1,7 +1,7 @@
 import { simpleEstimate } from './distribution.js';
 import { project } from './coordinates.js';
 
-const integer = new Intl.NumberFormat('es-ES', { useGrouping: 'always' });
+const integer = new Intl.NumberFormat('es-ES', { useGrouping: 'always', maximumFractionDigits: 0 });
 export const formatInteger = n => integer.format(n);
 const coordinate = n => n.toFixed(2);
 
@@ -49,7 +49,7 @@ export function drawDistributionChart(figure, { limit, samples, sampled }) {
       <path class="axis" d="M54 24V${bottom}H${right}"/>
       <text x="${width / 2}" y="202" text-anchor="middle">Números estudiados</text>
     </g>
-    <path class="line-li" d="${estimatePath.join('')}"/>
+    <path class="line-primes" d="${countPath.join('')}"/>
     <path class="line-simple" d="${simplePath.join('')}"/>
-    <path class="line-primes" d="${countPath.join('')}"/>`;
+    <path class="line-li" d="${estimatePath.join('')}"/>`;
 }

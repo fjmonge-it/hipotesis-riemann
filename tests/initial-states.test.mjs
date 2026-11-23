@@ -24,8 +24,9 @@ test('la hipótesis se explica antes de mostrar desde el principio la recta', ()
   assert.doesNotMatch(article, /id="mostrar-recta"/);
 });
 
-test('el recuento comienza en 100 y las gráficas se pueden enfocar', () => {
+test('el recuento comienza en 100 y ofrece un único selector hasta un millón', () => {
   assert.equal(defaultOption('limite-distribucion'), '100');
   assert.doesNotMatch(article, /id="(?:x-distribucion|x-exacto)"/);
-  assert.match(article, /<svg tabindex="0" role="slider" aria-label="Número estudiado en la gráfica de recuento"/);
+  assert.match(article, /<option value="1000000">1.000.000<\/option>/);
+  assert.doesNotMatch(article, /id="grafico-desviacion"/);
 });

@@ -20,9 +20,9 @@ proyecciones y ceros, recuentos y estimaciones, y estados iniciales.
 
 - `index.html` contiene el recorrido editorial. `styles.css` conserva la
   composición adaptable y la identidad visual.
-- `js/prime-gaps.js` muestra distancias y secuencias consecutivas. Para un
-  intervalo denso, cada barra representa el máximo de su tramo. La media
-  y el máximo global se calculan sobre todas las parejas.
+- `js/prime-gaps.js` muestra secuencias consecutivas y dos indicadores
+  comparados en cinco intervalos. La media y el máximo se calculan sobre
+  todas las parejas, y se conserva la pareja que produce el mayor salto.
 - `js/zeta.js` contiene los cálculos. La referencia para s > 1 usa
   128 términos y una corrección de Euler–Maclaurin hasta B₆. En 1,2 ≤ s ≤ 5
   el resto analítico es menor que 6 × 10⁻¹⁶ antes del redondeo. Para s ≤ 1
@@ -33,10 +33,11 @@ proyecciones y ceros, recuentos y estimaciones, y estados iniciales.
   a 35 cifras y se verificaron evaluando ζ en los ceros sin redondear.
   El navegador usa la tabla redondeada a seis decimales.
 - `js/distribution.js` conserva la integral logarítmica estándar,
-  li(x) = Ei(ln x). Las dos gráficas comparten la selección, por puntero
-  o teclado. Mayús y flecha avanza aproximadamente un centésimo del
-  intervalo. Las estimaciones unen muestras y el recuento mantiene
-  los saltos exactos.
+  li(x) = Ei(ln x). Un único selector actualiza el recuento, las estimaciones,
+  las barras de error absoluto y la fila del historial de error relativo.
+  A partir de 100.000, el gráfico de recuento une muestras. Las lecturas
+  numéricas siempre usan el recuento exacto y los errores se calculan antes
+  de redondear.
 - La gráfica de importancia relativa compara (x/2)^(−1/2) y
   (x/2)^(−1/4). Ambas están normalizadas al 100 % en x = 2.
 
