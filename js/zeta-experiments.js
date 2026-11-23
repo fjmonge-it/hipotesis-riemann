@@ -1,3 +1,4 @@
+import { eulerFactor, numericFraction, zetaTerm, zetaTerms } from './math-format.js';
 import { numberLabel } from './v2-chart.js';
 import { realSeries, zetaEvolution, zetaReference } from './zeta.js';
 import { formatCount, formatGap, formatValue, renderZetaChart } from './zeta-chart.js';
@@ -101,19 +102,20 @@ export function initZetaExperiment(root, compare = false) {
       compare ? zetaEvolution(s, n, true) : realSeries(s, n);
     const divergent = reference === null;
     const a = numberLabel(s);
+    const powerTerms = '1 + ' + [2, 3, 4].map(k => zetaTerm(k, a)).join(' + ') + ' + …';
     if (compare) {
-      const factors = [2, 3, 5].map(p => `<math><mfrac><mn>1</mn><mrow><mn>1</mn><mo>−</mo><mn>1</mn><mo>/</mo><msup><mn>${p}</mn><mn>${a}</mn></msup></mrow></mfrac></math>`);
+      const factors = [2, 3, 5].map(p => eulerFactor(p, a));
       expanded.innerHTML = `
         <strong>Camino A · Primeros términos</strong>
-        <span class="euler-expanded">1 + ${[2, 3, 4].map(k => `1/${k}<sup>${a}</sup>`).join(' + ')} + …</span>
+        <span class="euler-expanded">${powerTerms}</span>
         <strong>Camino B · Primeros factores</strong>
         <span class="euler-factors">${factors.map((factor, i) => '<span>' + (i ? '× ' : '') + factor + '</span>').join('')}<span>× …</span></span>`;
     } else {
-      expanded.innerHTML = '<strong>Con s = ' + a + '</strong> · 1 + '
-        + [2, 3, 4].map(k => '1/' + k + '<sup>' + a + '</sup>').join(' + ') + ' + …'
-        + '<br>Con los denominadores calculados' + (Number.isInteger(s) ? ': ' : ' (aproximados): ')
-        + '1 + ' + [2, 3, 4].map(k => (s < 0 ? numberLabel(k ** -s) : '1/' + numberLabel(k ** s))).join(' + ') + ' + …'
-        + '<br>En números: 1 + ' + [2, 3, 4].map(k => numberLabel(k ** -s)).join(' + ') + ' + …';
+      const terms = zetaTerms(s);
+      expanded.innerHTML = `
+        <p><strong>1. Con potencias</strong><br>${powerTerms}</p>
+        <p><strong>2. Denominadores calculados</strong><br>${Number.isInteger(s) ? '' : '≈ '}1 + ${terms.map(({ denominator }) => numericFraction(1, numberLabel(denominator))).join(' + ')} + …</p>
+        <p><strong>3. Primeros valores decimales</strong><br>${terms.every(({ term }) => Number.isInteger(term)) ? '' : '≈ '}1 + ${terms.map(({ term }) => numberLabel(term)).join(' + ')} + …</p>`;
     }
     const sum = sums.at(-1);
     const sumGap = divergent ? '' : formatGap(reference - sum);
@@ -140,8 +142,8 @@ export function initZetaExperiment(root, compare = false) {
         + '. El último es ' + primes.at(-1) + ', el mayor primo menor o igual que ' + n + '.';
       root.querySelector('[data-prime-factors]').innerHTML = primes.map(p => {
         const power = p ** s;
-        const factor = Number.isInteger(s) && Number.isSafeInteger(power) ? numberLabel(power) + ' / ' + numberLabel(power - 1)
-          : '≈ ' + formatValue(1 / (1 - p ** -s));
+        const factor = Number.isInteger(s) && Number.isSafeInteger(power) ? numericFraction(numberLabel(power), numberLabel(power - 1))
+          : eulerFactor(p, a) + ' ≈ ' + formatValue(1 / (1 - p ** -s));
         return '<tr><th scope="row">' + numberLabel(p) + '</th><td>' + factor + '</td></tr>';
       }).join('');
     }

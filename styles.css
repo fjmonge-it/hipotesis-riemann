@@ -305,3 +305,6 @@ summary + p { margin-top: .55rem; }
 @media (max-width: 760px) {
   .distance-cards, .distance-figures { grid-template-columns: 1fr; }
 }
+
+.v2-expression math, .formula math, #construccion-euler math { font-size: 1.2em; vertical-align: middle; }
+.euler-factors math { font-size: 1.5em; }

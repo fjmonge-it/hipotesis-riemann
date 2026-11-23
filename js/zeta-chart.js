@@ -61,5 +61,5 @@ export function renderZetaChart(figure, { sums, products, reference, compare, ca
       ${compare ? '<path class="coordinate-guide" data-zeta-cursor/>' : ''}
       <circle class="prime-dots" data-zeta-end cx="${right}" cy="${coord(y(sums.at(-1)))}" r="3.5"/>
     </svg>
-    <figcaption>${caption} El eje horizontal deja más espacio a los primeros pasos.</figcaption>`;
+    <figcaption>${compare ? "" : "La línea muestra el resultado acumulado. El eje horizontal indica cuántos términos sumamos y el vertical, el resultado obtenido. "}${caption} El eje horizontal deja más espacio a los primeros pasos.</figcaption>`;
 }

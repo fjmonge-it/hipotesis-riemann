@@ -108,6 +108,9 @@ export function initZeroExplorer(root) {
   function update() {
     visible = nontrivialZeros.slice(0, Number(count.value));
     scale = zeroScale(visible.at(-1).imaginary);
+    root.querySelector('[data-zero-conclusion]').textContent = visible.length === 1
+      ? 'Hemos representado el primer cero no trivial con parte imaginaria positiva. Está en la recta crítica, donde la parte real es ½. Comprobar casos finitos deja abierta la afirmación sobre todos los ceros.'
+      : 'Hemos representado los primeros ' + visible.length + ' ceros no triviales con parte imaginaria positiva. Están a alturas distintas, pero todos tienen parte real ½. Comprobar estos casos finitos no demuestra la propiedad para todos los ceros.';
     const keep = Math.min(Number(selected.value), visible.length - 1);
     selected.replaceChildren(...visible.map((_, i) => new Option('Cero ' + (i + 1), i)));
     selected.value = keep;
