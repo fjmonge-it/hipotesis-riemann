@@ -98,35 +98,36 @@
 
       <section id="zeta" aria-labelledby="titulo-zeta">
         <h2 id="titulo-zeta">Una máquina matemática llamada función zeta</h2>
-        <p class="experiment-question">¿Cómo puede una suma de infinitos términos acercarse a un número finito?</p>
-        <p>Una función asigna una salida a cada entrada que admite. Por ejemplo, la regla «multiplica por dos» recibe 3 y devuelve 6. La zeta recibe un exponente <var>s</var>. En su representación original, elevamos cada entero positivo a ese exponente y sumamos los inversos. La serie infinita converge solo si Re(<var>s</var>) &gt; 1. Con entradas reales, esto significa <var>s</var> &gt; 1.</p>
+        <p class="experiment-question">¿Qué es la zeta y cómo construye su suma?</p>
+        <p>Una función es una regla que recibe una entrada y devuelve un resultado. Por ejemplo, «multiplica por dos» recibe 3 y devuelve 6.</p>
+        <p>La función zeta recibe un exponente <var>s</var>. Elevamos a ese exponente cada número natural y colocamos el resultado en el denominador de una fracción con numerador 1. Por ejemplo, cuando <var>s</var> = 2, el número 3 da una fracción con denominador 3² = 9.</p>
+        <p>Esta representación infinita converge si Re(<var>s</var>) &gt; 1. Para los exponentes reales con los que empezaremos, la condición es sencillamente <var>s</var> &gt; 1. Más adelante veremos qué significa Re(<var>s</var>).</p>
         <figure class="formula">
           <div class="equation">ζ(<var>s</var>) = 1 + 1/2<sup><var>s</var></sup> + 1/3<sup><var>s</var></sup> + 1/4<sup><var>s</var></sup> + …</div>
-          <figcaption>ζ se lee «zeta». Elevamos cada entero positivo a <var>s</var> y sumamos los inversos. Con <var>s</var> = 2, empezamos por 1, 1/4 y 1/9.</figcaption>
+          <figcaption>ζ se lee «zeta». Los puntos suspensivos indican que seguimos sumando fracciones indefinidamente.</figcaption>
         </figure>
         <div class="experiment" id="experimento-zeta" hidden role="group" aria-labelledby="experimento-zeta-titulo">
-          <h3 id="experimento-zeta-titulo">Acércate al límite</h3>
-          <div class="experiment-guide">
-            <strong>Prueba este experimento</strong>
-            <ol>
-              <li>Con <var>s</var> = 2, pasa de 10 a 1.000 sumandos y fíjate en cuánto falta para el límite.</li>
-              <li>Repite con <var>s</var> = 1,2. Después elige <var>s</var> = 0,5 y compara 500 y 10.000 términos. ¿Sigue habiendo un límite?</li>
-            </ol>
-          </div>
+          <h3 id="experimento-zeta-titulo">Construye la suma de la función zeta</h3>
+          <p>Elige un exponente y observa cómo cambian los denominadores. Después decide cuántas fracciones sumar. Cuando nos detenemos tras un número concreto de términos obtenemos una <strong>suma parcial</strong>.</p>
+          <p>Si esas sumas se acercan a un valor finito al añadir términos, la serie converge y ese valor es su límite. Compara, por ejemplo, lo que ocurre al pasar de 500 a 10.000 términos con <var>s</var> = 2 y con <var>s</var> = 0,5.</p>
           <div data-controls></div>
           <p class="v2-expression" data-expanded></p>
           <dl class="experiment-results" data-results></dl>
           <figure class="experiment-chart" data-chart></figure>
-          <figure class="experiment-chart" data-terms><svg role="img"></svg><figcaption>Los primeros ocho términos. Cada barra muestra cuánto aporta un sumando.</figcaption></figure>
-          <figure class="experiment-chart" data-zeta-values><svg role="img"></svg><figcaption>ζ(s) en el intervalo real mostrado, de 1,1 a 5. El punto desaparece cuando la serie diverge.</figcaption></figure>
           <p class="experiment-insight" data-insight></p>
         </div>
         <p id="ejemplo-zeta">Con <var>s</var> = 2, diez términos dan aproximadamente 1,549768 y mil términos dan 1,643935. El límite es aproximadamente 1,644934. Los términos siguen añadiendo cantidades positivas, cada vez menores.</p>
-        <p>Cuando la suma se acerca a un valor finito, decimos que <strong>converge</strong>. Esta serie converge para todo exponente real mayor que 1, incluidos los decimales. Por ejemplo, ζ(1,5) ≈ 2,612375 y ζ(2,5) ≈ 1,341487. En el <a href="#continuacion-zeta">plano complejo</a>, la serie converge si la parte real de <var>s</var> es mayor que 1.</p>
-        <h3>Qué hay más allá de la serie original</h3>
-        <p>La <strong>continuación analítica</strong> prolonga de forma única la función conservando sus valores donde la serie converge. La zeta extendida tiene valores en todo el plano complejo salvo en 1, donde tiene un polo.</p>
-        <p>¿Cómo puede dar cero si empieza sumando fracciones positivas? Los ceros triviales y no triviales pertenecen a esa extensión. Por ejemplo, ζ(−2) = 0 corresponde a la función extendida. La suma ordinaria 1 + 4 + 9 + 16 + … crece sin límite.</p>
-        <p class="takeaway">La función zeta muestra que una suma infinita puede acercarse a un valor finito. Cambiar el exponente modifica la velocidad de ese acercamiento.</p>
+        <p>Los exponentes pueden ser decimales. Con 1,2, por ejemplo, la suma infinita tiene valor finito, pero se acerca a él más despacio que con 2. Con exponentes reales menores o iguales que 1, las sumas parciales crecen sin límite.</p>
+        <div id="continuacion-zeta">
+          <h3>¿Por qué necesitamos ampliar la función zeta?</h3>
+          <p>La suma original solo permite obtener valores en la región donde converge. Si queremos estudiar otras entradas necesitamos una manera rigurosa de extender la función. La <strong>continuación analítica</strong> conserva sus valores originales. Sus propiedades analíticas determinan de manera única la extensión, que tiene un valor finito en todo el plano complejo salvo en <var>s</var> = 1.</p>
+          <div class="closing-topics">
+            <div><h4>Suma original con <var>s</var> = −2</h4><p>1 + 4 + 9 + 16 + … crece sin límite.</p></div>
+            <div><h4>Función zeta extendida</h4><p>ζ(−2) = 0.</p></div>
+          </div>
+          <p>El cero pertenece a la función extendida. La suma ordinaria sigue siendo divergente. Más adelante distinguiremos ceros triviales y no triviales.</p>
+        </div>
+        <p>Ya sabemos cómo se construye esta suma. <a href="#euler">Veamos qué relación encontró Euler con los primos.</a></p>
       </section>
 
       <section id="euler" aria-labelledby="titulo-euler">

@@ -47,13 +47,13 @@ export function renderZetaChart(figure, { sums, products, reference, compare, ca
     <ul class="legend" aria-label="Leyenda">
       <li>Suma parcial</li>
       ${compare ? '<li class="legend-li">Producto parcial</li>' : ''}
-      ${reference !== null ? '<li class="legend-limit">Límite ζ(s)</li>' : ''}
+      ${reference !== null ? '<li class="legend-limit">Valor límite</li>' : ''}
     </ul>
     <svg viewBox="0 0 ${width} ${bottom + 56}" role="img" aria-label="${label}">
       <g class="plot-text">
-        <text x="66" y="17">Valor</text>
+        <text x="66" y="17">Resultado de la suma</text>
         ${grid}${marks}
-        <text x="${width / 2}" y="${bottom + 48}" text-anchor="middle">Límite N · escala logarítmica</text>
+        <text x="${width / 2}" y="${bottom + 48}" text-anchor="middle">${compare ? 'Último número incluido' : 'Número de términos sumados'}</text>
       </g>
       <path class="axis" d="M${left} ${top}V${bottom}H${right}"/>
       <path class="line-primes" d="${sumPath}"/>
